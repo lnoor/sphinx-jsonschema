@@ -88,4 +88,4 @@ def setup(app):
     Add the directive to Sphinx.
     """
     app.add_directive('jsonschema', JsonSchema)
-    return {'version': '0.1.0'}
+    return {'version': '1.0'}

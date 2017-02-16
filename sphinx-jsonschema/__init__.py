@@ -14,15 +14,13 @@
 """
 
 import json
-
-from docutils.parsers.rst import Directive, states
-from docutils import nodes, statemachine
-
+from docutils.parsers.rst import Directive
 from .wide_format import WideFormat
 
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
+    option_spec = {'display_if': str}
     
     def __init__(self, directive, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
         """Constructor
@@ -31,6 +29,7 @@ class JsonSchema(Directive):
         """
         assert directive == 'jsonschema'
         
+        self.options = options
         self.state = state
         self.lineno = lineno
         self.statemachine = state_machine
@@ -47,6 +46,9 @@ class JsonSchema(Directive):
         The schema is transformed into a table specification and
         the Sphinx table builder is used to render it.
         """
+        if 'display_if' in self.options:
+            if '$$display' not in self.schema or self.options['display_if'] != self.schema['$$display']:
+                return []
         format = WideFormat()
         cols, head, body = format.transform(self.schema, self.lineno)
         table = self.state.build_table((cols, head, body), self.lineno)

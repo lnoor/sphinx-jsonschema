@@ -17,6 +17,9 @@ import json
 from docutils.parsers.rst import Directive
 from .wide_format import WideFormat
 
+# TODO find out if app is accessible from Directive
+_glob_app = None
+
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
@@ -28,6 +31,8 @@ class JsonSchema(Directive):
         Finds out where the schema is located and fetches it.
         """
         assert directive == 'jsonschema'
+        
+        # state_machine.document.source_file => filename of current document
         
         self.options = options
         self.state = state
@@ -50,9 +55,7 @@ class JsonSchema(Directive):
             if '$$display' not in self.schema or self.options['display_if'] != self.schema['$$display']:
                 return []
         format = WideFormat()
-        cols, head, body = format.transform(self.schema, self.lineno)
-        table = self.state.build_table((cols, head, body), self.lineno)
-        return [table]
+        return format.transform(self.schema, self.state, self.lineno, _glob_app)
 
     def _load_external(self, file_or_url):
         """Load external schema
@@ -89,5 +92,8 @@ def setup(app):
     
     Add the directive to Sphinx.
     """
+    # app.srcdir => source directory
+    global _glob_app
+    _glob_app = app
     app.add_directive('jsonschema', JsonSchema)
     return {'version': '1.0'}

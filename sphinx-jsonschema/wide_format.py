@@ -11,12 +11,15 @@
     :licence: GPL v3, see LICENCE for details.
 """
 
+import string
 from docutils import statemachine
+from docutils import nodes
+from docutils.nodes import fully_normalize_name as normalize_name
 
 class WideFormat:
     """Formatter varying width
     
-    This formatter extends the table for each nesting level.
+    This formatter extends the table width for each nesting level.
     """
     
     KV_SIMPLE = [
@@ -37,7 +40,7 @@ class WideFormat:
     SINGLEOBJECTS = ['not']
     """Expect a single object parameter."""
     
-    def transform(self, schema, lineno = 0):
+    def transform(self, schema, state, lineno, app):
         """Main entry point.
         
         The :py:`transform` function is called to convert the schema.
@@ -46,9 +49,15 @@ class WideFormat:
         :param:`lineno`: The line number of the directive in the rst file.
         :returns: A complex type describing the layout and contents of the table.
         """
+        self.app = app
+        self.trans = None
         self.lineno = lineno
+        self.state = state
         body = self._dispatch(schema)
-        return self._cover(schema, body)
+        cols, head, body = self._cover(schema, body)
+        table = self.state.build_table((cols, head, body), self.lineno)
+        return self._wrap_in_section(schema, table)
+        
 
     def _dispatch(self, schema, label=None):
         # Main driver of the recursive schema traversal.
@@ -85,6 +94,7 @@ class WideFormat:
         
         return rows
 
+
     def _cover(self, schema, body):
         # Patch up and finish the table.
         head = []
@@ -111,6 +121,45 @@ class WideFormat:
         return [1] * nrcols, head, body
 
 
+    def _wrap_in_section(self, schema, table):
+        
+        result = list()
+        if '$$target' in schema:
+            # Wrap section and table in a target (anchor) node so
+            # that it can be referenced from other sections.
+            labels = self.app.env.domaindata['std']['labels']
+            anonlabels = self.app.env.domaindata['std']['anonlabels']
+            docname = self.app.env.docname
+
+            anchor = normalize_name(schema['$$target'])
+            targetnode = nodes.target()
+            targetnode['ids'].append(anchor)
+            targetnode['names'].append(anchor)
+            targetnode.line = self.lineno
+            result.append(targetnode)
+            anonlabels[anchor] = docname, targetnode['ids'][0]
+            labels[anchor] = docname, targetnode['ids'][0], anchor
+            
+        if 'title' in schema:
+            # Wrap the resulting table in a section giving it a caption and an
+            # entry in the table of contents.
+            memo = self.state.memo
+            mylevel = memo.section_level
+            memo.section_level += 1
+            section_node = nodes.section()
+            textnodes, title_messages = self.state.inline_text(schema['title'], self.lineno)
+            titlenode = nodes.title(schema['title'], '', *textnodes)
+            name = normalize_name(titlenode.astext())
+            section_node['names'].append(name)
+            section_node += titlenode
+            section_node += title_messages
+            self.state.document.note_implicit_target(section_node, section_node)
+            section_node += table
+            memo.section_level = mylevel
+            result.append(section_node)
+        else:
+            result.append(table)
+        return result
     
     def _objecttype(self, schema):
         # create description and type rows

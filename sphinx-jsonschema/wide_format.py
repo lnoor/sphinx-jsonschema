@@ -16,7 +16,7 @@ from docutils import statemachine
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
 
-class WideFormat:
+class WideFormat(object):
     """Formatter varying width
     
     This formatter extends the table width for each nesting level.
@@ -40,7 +40,14 @@ class WideFormat:
     SINGLEOBJECTS = ['not']
     """Expect a single object parameter."""
     
-    def transform(self, schema, state, lineno, app):
+    def __init__(self, state, lineno, app):
+        super(WideFormat, self).__init__()
+        self.app = app
+        self.trans = None
+        self.lineno = lineno
+        self.state = state
+        
+    def transform(self, schema):
         """Main entry point.
         
         The :py:`transform` function is called to convert the schema.
@@ -49,10 +56,6 @@ class WideFormat:
         :param:`lineno`: The line number of the directive in the rst file.
         :returns: A complex type describing the layout and contents of the table.
         """
-        self.app = app
-        self.trans = None
-        self.lineno = lineno
-        self.state = state
         body = self._dispatch(schema)
         cols, head, body = self._cover(schema, body)
         table = self.state.build_table((cols, head, body), self.lineno)
@@ -71,6 +74,9 @@ class WideFormat:
                 rows = self._arraytype(schema)
             else:
                 rows = self._simpletype(schema)
+
+        if '$ref' in schema:
+            rows.append(self._line(self._cell(':ref:`'+schema['$ref']+'`')))
 
         for k in self.COMBINATORS:
             # combinators belong at this level as alternative to type
@@ -188,25 +194,15 @@ class WideFormat:
     
     def _simpletype(self, schema):
         rows = []
-        
+
         if 'description' in schema:
             rows.append(self._line(self._cell(schema['description'])))
             
         if 'type' in schema:
-            rows.append(
-                self._line(
-                    self._cell('type'), 
-                    self._decodetype(schema['type'])
-                )
-            )
+            rows.append(self._line(self._cell('type'), self._decodetype(schema['type'])))
 
         if 'enum' in schema:
-            rows.append(
-                self._line(
-                    self._cell('enum'),
-                    self._cell(', '.join([str(e) for e in schema['enum']]))
-                )
-            )
+            rows.append(self._line(self._cell('enum'), self._cell(', '.join([str(e) for e in schema['enum']]))))
         
         rows.extend(self._kvpairs(schema, self.KV_SIMPLE))
         return rows

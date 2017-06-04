@@ -54,8 +54,8 @@ class JsonSchema(Directive):
         if 'display_if' in self.options:
             if '$$display' not in self.schema or self.options['display_if'] != self.schema['$$display']:
                 return []
-        format = WideFormat()
-        return format.transform(self.schema, self.state, self.lineno, _glob_app)
+        format = WideFormat(self.state, self.lineno, _glob_app)
+        return format.transform(self.schema)
 
     def _load_external(self, file_or_url):
         """Load external schema

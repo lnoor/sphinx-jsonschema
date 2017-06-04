@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+F# -*- coding: utf-8 -*-
 
 """
     WideFormat layout engine

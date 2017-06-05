@@ -1,4 +1,4 @@
-F# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
     WideFormat layout engine
@@ -83,7 +83,7 @@ class WideFormat(object):
             if k in schema:
                 items = []
                 for s in schema[k]:
-                    items.append(self._dispatch(s, self._cell('-')))
+                    items.extend(self._dispatch(s, self._cell('-')))
                 rows.extend(self._prepend(self._cell(k), items))
 
         for k in self.SINGLEOBJECTS:

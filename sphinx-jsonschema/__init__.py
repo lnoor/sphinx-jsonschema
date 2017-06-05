@@ -13,6 +13,7 @@
     :licence: GPL v3, see LICENCE for details.
 """
 
+import os.path
 import json
 from docutils.parsers.rst import Directive
 from .wide_format import WideFormat
@@ -31,8 +32,6 @@ class JsonSchema(Directive):
         Finds out where the schema is located and fetches it.
         """
         assert directive == 'jsonschema'
-        
-        # state_machine.document.source_file => filename of current document
         
         self.options = options
         self.state = state
@@ -73,6 +72,10 @@ class JsonSchema(Directive):
             text = requests.get(file_or_url)
             self.schema = json.loads(text.content)
         else:
+            if not os.path.isabs(file_or_url):
+                # state_machine.document.source_file => filename of current document
+                dname = os.path.dirname(self.statemachine.input_lines.source(0))
+                file_or_url = os.path.join(dname, file_or_url)
             with open(file_or_url) as file:
                 self.schema = json.load(file)
 

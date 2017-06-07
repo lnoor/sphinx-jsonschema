@@ -136,15 +136,17 @@ class WideFormat(object):
             labels = self.app.env.domaindata['std']['labels']
             anonlabels = self.app.env.domaindata['std']['anonlabels']
             docname = self.app.env.docname
+            targets = list(schema['$$target'])
 
-            anchor = normalize_name(schema['$$target'])
             targetnode = nodes.target()
-            targetnode['ids'].append(anchor)
-            targetnode['names'].append(anchor)
+            for target in targets:
+                anchor = normalize_name(target)
+                targetnode['ids'].append(anchor)
+                targetnode['names'].append(anchor)
+                anonlabels[anchor] = docname, targetnode['ids'][0]
+                labels[anchor] = docname, targetnode['ids'][0], anchor
             targetnode.line = self.lineno
             result.append(targetnode)
-            anonlabels[anchor] = docname, targetnode['ids'][0]
-            labels[anchor] = docname, targetnode['ids'][0], anchor
             
         if 'title' in schema:
             # Wrap the resulting table in a section giving it a caption and an

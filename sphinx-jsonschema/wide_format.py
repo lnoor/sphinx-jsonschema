@@ -136,7 +136,9 @@ class WideFormat(object):
             labels = self.app.env.domaindata['std']['labels']
             anonlabels = self.app.env.domaindata['std']['anonlabels']
             docname = self.app.env.docname
-            targets = list(schema['$$target'])
+            targets = schema['$$target']
+            if not isinstance(targets, list):
+                targets = [targets]
 
             targetnode = nodes.target()
             for target in targets:

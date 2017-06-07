@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='sphinx-jsonschema',
-    version='1.0',
+    version='1.1',
     
     description='Sphinx extension to display JSON Schema',
     long_description=long_description,
@@ -39,6 +39,6 @@ setup(
         '': ['LICENSE']
     },
     
-    install_requires=['docutils', 'requests']
+    install_requires=['docutils', 'requests', 'json-pointer']
 )
         

@@ -15,55 +15,39 @@
 
 import os.path
 import json
+import json_pointer
+
 from docutils.parsers.rst import Directive
 from .wide_format import WideFormat
 
-# TODO find out if app is accessible from Directive
+# TODO find out if app is accessible in some other way
 _glob_app = None
 
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
-    option_spec = {'display_if': str}
     
     def __init__(self, directive, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
-        """Constructor
-        
-        Finds out where the schema is located and fetches it.
-        """
         assert directive == 'jsonschema'
         
         self.options = options
         self.state = state
         self.lineno = lineno
         self.statemachine = state_machine
+
         if len(arguments) == 1:
-            self._load_external(arguments[0])
+            filename, pointer = self._splitpointer(arguments[0])
+            self._load_external(filename)
+            if pointer:
+                self.schema = json_pointer.Pointer(pointer).get(self.schema)
         else:
             self._load_internal(content)
 
     def run(self):
-        """Print the schema
-        
-        Currently only the WideFormat layout is supported.
-        
-        The schema is transformed into a table specification and
-        the Sphinx table builder is used to render it.
-        """
-        if 'display_if' in self.options:
-            if '$$display' not in self.schema or self.options['display_if'] != self.schema['$$display']:
-                return []
         format = WideFormat(self.state, self.lineno, _glob_app)
         return format.transform(self.schema)
 
     def _load_external(self, file_or_url):
-        """Load external schema
-        
-        Loads the schema from a web URL or a local file, depending
-        on whether the resource name starts with 'http' or not.
-        
-        The imported schema is stored in the `schema` property.
-        """
         if file_or_url.startswith('http'):
             try:
                 import requests
@@ -73,30 +57,25 @@ class JsonSchema(Directive):
             self.schema = json.loads(text.content)
         else:
             if not os.path.isabs(file_or_url):
-                # state_machine.document.source_file => filename of current document
+                # file relative to the path of the current rst file
                 dname = os.path.dirname(self.statemachine.input_lines.source(0))
                 file_or_url = os.path.join(dname, file_or_url)
             with open(file_or_url) as file:
                 self.schema = json.load(file)
 
     def _load_internal(self, text):
-        """Load embedded schema
-        
-        Loads the schema from the block following the directive.
-        
-        The imported schema is stored in the `schema` property.
-        """
         if text is None or len(text) == 0:
             raise Exception("JSONSCHEMA requires either filename, http url or inline content")
         self.schema = json.loads('\n'.join(text))
 
+    def _splitpointer(self, path):
+        val = path.split('#', 1)
+        if len(val) == 1:
+            val.append(None)
+        return val
+
 def setup(app):
-    """Bind into Sphinx
-    
-    Add the directive to Sphinx.
-    """
-    # app.srcdir => source directory
     global _glob_app
     _glob_app = app
     app.add_directive('jsonschema', JsonSchema)
-    return {'version': '1.0'}
+    return {'version': '1.1'}

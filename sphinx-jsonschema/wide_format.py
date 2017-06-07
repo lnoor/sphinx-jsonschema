@@ -17,28 +17,19 @@ from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
 
 class WideFormat(object):
-    """Formatter varying width
-    
-    This formatter extends the table width for each nesting level.
-    """
     
     KV_SIMPLE = [
         'multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 
         'exclusiveMinimum', 'maxLength', 'minLength', 'pattern',
         'default', 'format']
-    """Simple key-value pairs used in simple type definitions."""
     
     KV_ARRAY  = ['maxItems', 'minItems', 'uniqueItems']
-    """Key-value pairs used in array type definitions."""
     
     KV_OBJECT = ['maxProperties', 'minProperties']
-    """Key-value pairs used in object type definitions."""
     
     COMBINATORS = ['allOf', 'anyOf', 'oneOf']
-    """Combinators let you select from an array of schemas."""
     
     SINGLEOBJECTS = ['not']
-    """Expect a single object parameter."""
     
     def __init__(self, state, lineno, app):
         super(WideFormat, self).__init__()
@@ -48,14 +39,6 @@ class WideFormat(object):
         self.state = state
         
     def transform(self, schema):
-        """Main entry point.
-        
-        The :py:`transform` function is called to convert the schema.
-        
-        :param:`schema`: The schema to convert to a table.
-        :param:`lineno`: The line number of the directive in the rst file.
-        :returns: A complex type describing the layout and contents of the table.
-        """
         body = self._dispatch(schema)
         cols, head, body = self._cover(schema, body)
         table = self.state.build_table((cols, head, body), self.lineno)

@@ -207,11 +207,15 @@ class WideFormat(object):
             rows.append(self._line(self._cell(key)))
             
             for prop in schema[key].keys():
+                # insert spaces around the regexp OR operator
+                # allowing the regexp to be split over multiple lines.
+                proplist = prop.split('|')
+                dispprop = ' | '.join(proplist)
                 bold = ''
                 if 'required' in schema:
                     if prop in schema['required']:
                         bold = '**'
-                label = self._cell('- '+bold+prop+bold)
+                label = self._cell('- '+bold+dispprop+bold)
                 obj = schema[key][prop]
                 rows.extend(self._dispatch(obj, label))
         return rows

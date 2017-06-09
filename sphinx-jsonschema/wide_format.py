@@ -206,7 +206,7 @@ class WideFormat(object):
         if key in schema:
             rows.append(self._line(self._cell(key)))
             
-            for prop in sorted(schema[key].keys()):
+            for prop in schema[key].keys():
                 bold = ''
                 if 'required' in schema:
                     if prop in schema['required']:

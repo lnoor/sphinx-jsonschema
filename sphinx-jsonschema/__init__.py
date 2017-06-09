@@ -16,6 +16,7 @@
 import os.path
 import json
 import json_pointer
+from collections import OrderedDict
 
 from docutils.parsers.rst import Directive
 from .wide_format import WideFormat
@@ -61,12 +62,12 @@ class JsonSchema(Directive):
                 dname = os.path.dirname(self.statemachine.input_lines.source(0))
                 file_or_url = os.path.join(dname, file_or_url)
             with open(file_or_url) as file:
-                self.schema = json.load(file)
+                self.schema = json.load(file, object_pairs_hook=OrderedDict)
 
     def _load_internal(self, text):
         if text is None or len(text) == 0:
             raise Exception("JSONSCHEMA requires either filename, http url or inline content")
-        self.schema = json.loads('\n'.join(text))
+        self.schema = json.loads('\n'.join(text), object_pairs_hook=OrderedDict)
 
     def _splitpointer(self, path):
         val = path.split('#', 1)

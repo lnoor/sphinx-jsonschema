@@ -37,6 +37,7 @@ class WideFormat(object):
         self.trans = None
         self.lineno = lineno
         self.state = state
+        self.nesting = 0
         
     def transform(self, schema):
         body = self._dispatch(schema)
@@ -48,6 +49,7 @@ class WideFormat(object):
     def _dispatch(self, schema, label=None):
         # Main driver of the recursive schema traversal.
         rows = []
+        self.nesting += 1
 
         if 'type' in schema:
             # select processor for type
@@ -81,16 +83,13 @@ class WideFormat(object):
             # prepend label column if required
             rows = self._prepend(label, rows)
         
+        self.nesting -= 1
         return rows
 
 
     def _cover(self, schema, body):
         # Patch up and finish the table.
         head = []
-        
-        # Outermost title becomes table head
-        if 'title' in schema:
-            head.append(self._line(self._cell(schema['title'])))
         
         # Outermost id becomes schema url
         # NB: disregards interior id's
@@ -182,6 +181,9 @@ class WideFormat(object):
     def _simpletype(self, schema):
         rows = []
 
+        if 'title' in schema and self.nesting > 1:
+            rows.append(self._line(self._cell('*'+schema['title']+'*')))
+        
         if 'description' in schema:
             rows.append(self._line(self._cell(schema['description'])))
             

@@ -128,7 +128,7 @@ class WideFormat(object):
                 targetnode['ids'].append(anchor)
                 targetnode['names'].append(anchor)
                 anonlabels[anchor] = docname, targetnode['ids'][0]
-                labels[anchor] = docname, targetnode['ids'][0], anchor
+                labels[anchor] = docname, targetnode['ids'][0], (schema['title'] if 'title' in schema else anchor)
             targetnode.line = self.lineno
             result.append(targetnode)
             

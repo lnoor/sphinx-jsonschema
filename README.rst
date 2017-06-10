@@ -125,3 +125,23 @@ Licence
 Copyright Leo Noordergraaf, All rights reserved.
 
 This software is made available under the GPL v3.
+
+
+Changelog
+=========
+
+Version 1.2
+-----------
+
+Improved formatting.
+    
+Version 1.1
+-----------
+
+Implemented schema cross referencing.
+    
+Version 1.0
+-----------
+
+Initial release of a functioning plugin.
+    

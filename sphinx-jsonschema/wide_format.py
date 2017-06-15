@@ -16,6 +16,15 @@ from docutils import statemachine
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
 
+
+def str_unicode(text):
+    try:
+        output = unicode(text)
+    except NameError:
+        output = str(text)
+    return output
+
+
 class WideFormat(object):
     
     KV_SIMPLE = [
@@ -191,7 +200,7 @@ class WideFormat(object):
             rows.append(self._line(self._cell('type'), self._decodetype(schema['type'])))
 
         if 'enum' in schema:
-            rows.append(self._line(self._cell('enum'), self._cell(', '.join([str(e) for e in schema['enum']]))))
+            rows.append(self._line(self._cell('enum'), self._cell(', '.join([str_unicode(e) for e in schema['enum']]))))
         
         rows.extend(self._kvpairs(schema, self.KV_SIMPLE))
         return rows
@@ -316,5 +325,5 @@ class WideFormat(object):
 
             # turn string into multiline array of views on lists
             # required by table builder
-            statemachine.ViewList(statemachine.string2lines(str(text)))
+            statemachine.ViewList(statemachine.string2lines(str_unicode(text)))
         ]

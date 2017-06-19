@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='sphinx-jsonschema',
-    version='1.2',
+    version='1.3',
     
     description='Sphinx extension to display JSON Schema',
     long_description=long_description,
@@ -19,17 +19,19 @@ setup(
     author='Leo Noordergraaf',
     author_email='leo@noordergraaf.net',
     
-    licence='GPLv3',
+    license='GPLv3',
     platforms='any',
     
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Plugins',
         'Framework :: Sphinx :: Extension',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Topic :: Software Development :: Documentation',
         'Topic :: Documentation :: Sphinx'
     ],
     

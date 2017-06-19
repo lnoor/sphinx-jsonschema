@@ -11,18 +11,16 @@
     :licence: GPL v3, see LICENCE for details.
 """
 
+from sys import version_info
 import string
 from docutils import statemachine
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
 
-
-def str_unicode(text):
-    try:
-        output = unicode(text)
-    except NameError:
-        output = str(text)
-    return output
+if version_info[0] == 2:
+    str_unicode = unicode
+else:
+    str_unicode = str
 
 
 class WideFormat(object):

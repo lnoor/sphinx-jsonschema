@@ -130,6 +130,11 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.3
+-----------
+
+Add unicode support.
+
 Version 1.2
 -----------
 

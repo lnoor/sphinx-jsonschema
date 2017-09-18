@@ -3,19 +3,19 @@
 """
     sphinx-jsonschema
     -----------------
-    
+
     This package adds the *jsonschema* directive to Sphinx.
-    
+
     Using this directory you can render JSON Schema directly
     in Sphinx.
-    
+
     :copyright: Copyright 2017, Leo Noordergraaf
     :licence: GPL v3, see LICENCE for details.
 """
 
 import os.path
 import json
-import json_pointer
+from jsonpointer import resolve_pointer
 from collections import OrderedDict
 
 from docutils.parsers.rst import Directive
@@ -27,10 +27,10 @@ _glob_app = None
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
-    
+
     def __init__(self, directive, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
         assert directive == 'jsonschema'
-        
+
         self.options = options
         self.state = state
         self.lineno = lineno
@@ -40,7 +40,7 @@ class JsonSchema(Directive):
             filename, pointer = self._splitpointer(arguments[0])
             self._load_external(filename)
             if pointer:
-                self.schema = json_pointer.Pointer(pointer).get(self.schema)
+                self.schema = resolve_pointer(self.schema, pointer)
         else:
             self._load_internal(content)
 

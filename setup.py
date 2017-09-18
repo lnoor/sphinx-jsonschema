@@ -41,5 +41,5 @@ setup(
         '': ['LICENSE']
     },
 
-    install_requires=['docutils', 'requests', 'jsonpointer']
+    install_requires=['docutils', 'requests', 'jsonpointer', 'pyyaml']
 )

@@ -16,6 +16,7 @@
 import os.path
 import json
 from jsonpointer import resolve_pointer
+import yaml
 from collections import OrderedDict
 
 from docutils.parsers.rst import Directive
@@ -55,25 +56,43 @@ class JsonSchema(Directive):
             except ImportError:
                 raise Exception("JSONSCHEMA loading from http requires requests. Try 'pip install requests'")
             text = requests.get(file_or_url)
-            self.schema = json.loads(text.content)
+            self.schema = ordered_load(text.content)
         else:
             if not os.path.isabs(file_or_url):
                 # file relative to the path of the current rst file
                 dname = os.path.dirname(self.statemachine.input_lines.source(0))
                 file_or_url = os.path.join(dname, file_or_url)
             with open(file_or_url) as file:
-                self.schema = json.load(file, object_pairs_hook=OrderedDict)
+                self.schema = ordered_load(file, yaml.SafeLoader)
 
     def _load_internal(self, text):
         if text is None or len(text) == 0:
             raise Exception("JSONSCHEMA requires either filename, http url or inline content")
-        self.schema = json.loads('\n'.join(text), object_pairs_hook=OrderedDict)
+        self.schema = ordered_load('\n'.join(text), yaml.SafeLoader)
 
     def _splitpointer(self, path):
         val = path.split('#', 1)
         if len(val) == 1:
             val.append(None)
         return val
+
+
+def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+    """Allows you to use `pyyaml` to load as OrderedDict.
+
+    Taken from https://stackoverflow.com/a/21912744/1927102
+    """
+    class OrderedLoader(Loader):
+        pass
+
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return object_pairs_hook(loader.construct_pairs(node))
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        construct_mapping)
+    return yaml.load(stream, OrderedLoader)
+
 
 def setup(app):
     global _glob_app

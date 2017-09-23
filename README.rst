@@ -24,6 +24,7 @@ Features
 * Supports JSON Pointer notation on external resources to select a subschema.
 * Supports cross references between schemas.
 * Allows reStructuredText markup in ``title`` and ``description`` fields.
+* Allows JSON Schema definitions in both JSON and YAML format.
 
 Installation
 ============
@@ -129,6 +130,11 @@ This software is made available under the GPL v3.
 
 Changelog
 =========
+
+Version 1.4
+-----------
+
+Chris Holdgraf (https://github.com/choldgraf) contributed Python3 and yaml support.
 
 Version 1.3
 -----------

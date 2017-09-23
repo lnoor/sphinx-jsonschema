@@ -10,8 +10,8 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='sphinx-jsonschema',
-    version='1.3',
-
+    version='1.4',
+    
     description='Sphinx extension to display JSON Schema',
     long_description=long_description,
     url='https://github.com/lnoor/sphinx-jsonschema',

@@ -21,7 +21,7 @@ Contents
     installation
     directive
     schemakeywords
-    examples
+    organization
 
 Indices and tables
 ==================

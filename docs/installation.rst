@@ -17,3 +17,8 @@ append 'sphinx-jsonschema' to the ``extensions`` array.
         'sphinx.ext.autodoc',
         'sphinx-jsonschema'
     ]
+
+Source code
+-----------
+
+The source code for this extension can be found on `GitHub <https://github.com/lnoor/sphinx-jsonschema>`_.

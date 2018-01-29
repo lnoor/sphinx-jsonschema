@@ -39,7 +39,10 @@ class JsonSchema(Directive):
 
         if len(arguments) == 1:
             filename, pointer = self._splitpointer(arguments[0])
-            self._load_external(filename)
+            if filename != '':
+                self._load_external(filename)
+            else:
+                self._load_internal(content)
             if pointer:
                 self.schema = resolve_pointer(self.schema, pointer)
         else:

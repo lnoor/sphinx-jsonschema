@@ -6,6 +6,11 @@ The extension adds a single directive to Sphinx: **jsonschema**.
 You provide it with either a file name, an HTTP(S) URL to a schema
 or you may embed the schema inline.
 
+The schemas are read by a YAML parser.
+This means that you can write the schemas in either json or yaml notation
+and they will be processed identically.
+
+
 To display a schema fetched from a website:
 
 .. code-block:: rst
@@ -69,4 +74,50 @@ which should render as:
         "minLength": 10,
         "maxLength": 100,
         "pattern": "^[A-Z]+$"
+    }
+
+It is also possible to render just a part of an embedded schema using a json pointer (per request `Issue 17 <https://github.com/lnoor/sphinx-jsonschema/issues/17>`_:
+
+.. clode-block:: rst
+
+    .. jsonschema:: #/date
+
+        {
+            "title" : "supertitle1",
+            "type": "object",
+            "properties": {
+                "startdate": {"$ref": "#/date"},
+                "enddate": {"$ref": "#/date"},
+                "manualdate_to1": {"$ref" : "#/manualdate"},
+                "definitions1": {"$ref" : "#/definitions/bind"},
+                "definitions3": {"$ref" : "#/locbind"}
+            },
+            "date": {
+                "title": "Date",
+                "$$target": ["#/date"],
+                "description": "YYYY-MM-DD",
+                "type": "string"
+            }
+        }
+
+which renders:
+
+.. jsonschema:: #/date
+
+    {
+        "title" : "supertitle1",
+        "type": "object",
+        "properties": {
+            "startdate": {"$ref": "#/date"},
+            "enddate": {"$ref": "#/date"},
+            "manualdate_to1": {"$ref" : "#/manualdate"},
+            "definitions1": {"$ref" : "#/definitions/bind"},
+            "definitions3": {"$ref" : "#/locbind"}
+        },
+        "date": {
+            "title": "Date",
+            "$$target": ["#/date"],
+            "description": "YYYY-MM-DD",
+            "type": "string"
+        }
     }

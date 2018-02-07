@@ -3,10 +3,10 @@
 """
     WideFormat layout engine
     ------------------------
-    
+
     In this layout for each nesting level the table is extended by
     one or more columns.
-    
+
     :copyright: Copyright 2017, Leo Noordergraaf
     :licence: GPL v3, see LICENCE for details.
 """
@@ -24,20 +24,20 @@ else:
 
 
 class WideFormat(object):
-    
+
     KV_SIMPLE = [
-        'multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 
+        'multipleOf', 'maximum', 'exclusiveMaximum', 'minimum',
         'exclusiveMinimum', 'maxLength', 'minLength', 'pattern',
         'default', 'format']
-    
+
     KV_ARRAY  = ['maxItems', 'minItems', 'uniqueItems']
-    
+
     KV_OBJECT = ['maxProperties', 'minProperties']
-    
+
     COMBINATORS = ['allOf', 'anyOf', 'oneOf']
-    
+
     SINGLEOBJECTS = ['not']
-    
+
     def __init__(self, state, lineno, app):
         super(WideFormat, self).__init__()
         self.app = app
@@ -45,13 +45,13 @@ class WideFormat(object):
         self.lineno = lineno
         self.state = state
         self.nesting = 0
-        
+
     def transform(self, schema):
         body = self._dispatch(schema)
         cols, head, body = self._cover(schema, body)
         table = self.state.build_table((cols, head, body), self.lineno)
         return self._wrap_in_section(schema, table)
-        
+
 
     def _dispatch(self, schema, label=None):
         # Main driver of the recursive schema traversal.
@@ -66,6 +66,9 @@ class WideFormat(object):
                 rows = self._arraytype(schema)
             else:
                 rows = self._simpletype(schema)
+
+        if 'description' in schema:
+            rows.append(self._line(self._cell(schema['description'])))
 
         if '$ref' in schema:
             rows.append(self._line(self._cell(':ref:`'+schema['$ref']+'`')))
@@ -89,7 +92,7 @@ class WideFormat(object):
         if label is not None:
             # prepend label column if required
             rows = self._prepend(label, rows)
-        
+
         self.nesting -= 1
         return rows
 
@@ -97,12 +100,12 @@ class WideFormat(object):
     def _cover(self, schema, body):
         # Patch up and finish the table.
         head = []
-        
+
         # Outermost id becomes schema url
         # NB: disregards interior id's
         if 'id' in schema:
             body.insert(0, self._line(self._cell(schema['id'])))
-        
+
         # patch up if necessary, all rows should be of equal length
         nrcols = self._square(body)
         # assume len(head[n]) <= nrcols
@@ -117,7 +120,7 @@ class WideFormat(object):
 
 
     def _wrap_in_section(self, schema, table):
-        
+
         result = list()
         if '$$target' in schema:
             # Wrap section and table in a target (anchor) node so
@@ -138,7 +141,7 @@ class WideFormat(object):
                 labels[anchor] = docname, targetnode['ids'][0], (schema['title'] if 'title' in schema else anchor)
             targetnode.line = self.lineno
             result.append(targetnode)
-            
+
         if 'title' in schema:
             # Wrap the resulting table in a section giving it a caption and an
             # entry in the table of contents.
@@ -159,7 +162,7 @@ class WideFormat(object):
         else:
             result.append(table)
         return result
-    
+
     def _objecttype(self, schema):
         # create description and type rows
         rows = self._simpletype(schema)
@@ -172,7 +175,7 @@ class WideFormat(object):
     def _arraytype(self, schema):
         # create description and type rows
         rows = self._simpletype(schema)
-        
+
         if 'items' in schema:
             # add items label
             rows.append(self._line(self._cell('items')))
@@ -184,22 +187,22 @@ class WideFormat(object):
         rows.extend(self._bool_or_object(schema, 'additionalItems'))
         rows.extend(self._kvpairs(schema, self.KV_ARRAY))
         return rows
-    
+
     def _simpletype(self, schema):
         rows = []
 
         if 'title' in schema and self.nesting > 1:
             rows.append(self._line(self._cell('*'+schema['title']+'*')))
-        
+
         if 'description' in schema:
             rows.append(self._line(self._cell(schema['description'])))
-            
+
         if 'type' in schema:
             rows.append(self._line(self._cell('type'), self._decodetype(schema['type'])))
 
         if 'enum' in schema:
             rows.append(self._line(self._cell('enum'), self._cell(', '.join([str_unicode(e) for e in schema['enum']]))))
-        
+
         rows.extend(self._kvpairs(schema, self.KV_SIMPLE))
         return rows
 
@@ -209,15 +212,15 @@ class WideFormat(object):
         # used for `properties`, `patternProperties` and
         # `definitions`.
         rows = []
-        
+
         if key in schema:
             rows.append(self._line(self._cell(key)))
-            
+
             for prop in schema[key].keys():
                 # insert spaces around the regexp OR operator
                 # allowing the regexp to be split over multiple lines.
                 proplist = prop.split('|')
-                dispprop = ' | '.join(proplist)
+                dispprop = self._escape(' | '.join(proplist))
                 bold = ''
                 if 'required' in schema:
                     if prop in schema['required']:
@@ -226,32 +229,35 @@ class WideFormat(object):
                 obj = schema[key][prop]
                 rows.extend(self._dispatch(obj, label))
         return rows
-    
+
     def _bool_or_object(self, schema, key):
         # for those attributes that accept either a boolean or a schema.
         rows = []
-        
+
         if key in schema:
             if type(schema[key]) == bool:
                 rows.append(self._line(self._cell(key), self._cell(schema[key])))
             else:
                 rows.extend(self._dispatch(schema[key], self._cell(key)))
-        
+
         return rows
 
     def _kvpairs(self, schema, keys):
         # render key-value pairs
         rows = []
-        
+
         for k in keys:
             if k in schema:
-                rows.append(self._line(self._cell(k), self._cell(schema[k])))
+                value = schema[k]
+                if k == 'pattern':
+                    value = self._escape(value)
+                rows.append(self._line(self._cell(k), self._cell(value)))
         return rows
-    
+
     def _prepend(self, prepend, rows):
         # prepend a label to a set of rows
         rcnt = len(rows)
-        
+
         if rcnt == 0:
             # return a row with only the label
             return [self._line(prepend)]
@@ -263,7 +269,7 @@ class WideFormat(object):
             for r in range(1, rcnt):
                 rows[r].insert(0, None)
             return rows
-        
+
     def _decodetype(self, typ):
         # render (array of) simple type(s)
         if type(typ) == list:
@@ -278,14 +284,14 @@ class WideFormat(object):
         if nrcols == 0:
             for row in rows:
                 nrcols = max(nrcols, len(row))
-        
+
         # extend each row to contain same number of columns
         for row in rows:
             if len(row) < nrcols:
                 row += [None] * (nrcols - len(row))
-        
+
         return nrcols
-    
+
     def _calc_spans(self, rows, nrcols):
         # calculate colspan
         for row in rows:
@@ -298,7 +304,7 @@ class WideFormat(object):
                     if target is not None:
                         # extend colspan
                         target[1] += 1
-        
+
         # convert arrays to tuples
         # arrays are needed to patch up colspan and rowspan
         # the table builder requires each cell to be a tuple, not an array
@@ -307,11 +313,11 @@ class WideFormat(object):
                 if row[c] is not None:
                     row[c] = tuple(row[c])
 
-    
+
     def _line(self, *cells):
         # turn a number of cells into a list
         return [ c for c in cells ]
-    
+
     def _cell(self, text):
         # Table builder wants all cells as a tuple of 4 fields.
         # Returns a list since it needs to be mutable (tuple isn't).
@@ -325,3 +331,8 @@ class WideFormat(object):
             # required by table builder
             statemachine.ViewList(statemachine.string2lines(str_unicode(text)))
         ]
+
+    def _escape(self, text):
+        text = text.replace('_', '\\_')
+        text = text.replace('*', '\\*')
+        return text

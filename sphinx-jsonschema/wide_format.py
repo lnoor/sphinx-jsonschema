@@ -66,9 +66,9 @@ class WideFormat(object):
                 rows = self._arraytype(schema)
             else:
                 rows = self._simpletype(schema)
-
-        if 'description' in schema:
-            rows.append(self._line(self._cell(schema['description'])))
+        else:
+            if 'description' in schema:
+                rows.append(self._line(self._cell(schema['description'])))
 
         if '$ref' in schema:
             rows.append(self._line(self._cell(':ref:`'+schema['$ref']+'`')))

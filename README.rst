@@ -11,6 +11,7 @@ Forked Notes
 Forking this repo and making changes so that the formatting is improved for use
 with JSON schema dumped via fuhrysteve/marshmallow-jsonschema. Changes to date
 include:
+
 * option to remove "$ref" link
 * option to remove nested titles of fields
 * renamed "enum" section to "options"

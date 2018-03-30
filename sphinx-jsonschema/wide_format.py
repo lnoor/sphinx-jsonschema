@@ -22,6 +22,14 @@ if version_info[0] == 2:
 else:
     str_unicode = str
 
+# TODO: Required fields are bold, instead have "Required: Yes / No"
+# TODO: Move to config file
+config = {
+    'enum_limit': 10,
+    'display_nested_title': False,
+    'display_ref': False,
+}
+
 
 class WideFormat(object):
 
@@ -70,7 +78,7 @@ class WideFormat(object):
             if 'description' in schema:
                 rows.append(self._line(self._cell(schema['description'])))
 
-        if '$ref' in schema:
+        if '$ref' in schema and config.get('display_ref', True):
             rows.append(self._line(self._cell(':ref:`'+schema['$ref']+'`')))
 
         for k in self.COMBINATORS:
@@ -191,7 +199,8 @@ class WideFormat(object):
     def _simpletype(self, schema):
         rows = []
 
-        if 'title' in schema and self.nesting > 1:
+        if ('title' in schema and self.nesting > 1) and \
+                config.get('display_nested_title', True):
             rows.append(self._line(self._cell('*'+schema['title']+'*')))
 
         if 'description' in schema:
@@ -201,7 +210,13 @@ class WideFormat(object):
             rows.append(self._line(self._cell('type'), self._decodetype(schema['type'])))
 
         if 'enum' in schema:
-            rows.append(self._line(self._cell('enum'), self._cell(', '.join([str_unicode(e) for e in schema['enum']]))))
+            # Truncate large collections
+            to_enum = schema['enum'][:]
+            enum_limit = config.get('enum_limit', None)
+            if enum_limit is not None and len(to_enum) > enum_limit:
+                to_enum = to_enum[:enum_limit]
+                to_enum.append(" . . . ")
+            rows.append(self._line(self._cell('options'), self._cell(', '.join([str_unicode(e) for e in to_enum]))))
 
         rows.extend(self._kvpairs(schema, self.KV_SIMPLE))
         return rows

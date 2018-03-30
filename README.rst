@@ -5,6 +5,20 @@
 sphinx-jsonschema
 =================
 
+Forked Notes
+============
+
+Forking this repo and making changes so that the formatting is improved for use
+with JSON schema dumped via fuhrysteve/marshmallow-jsonschema. Changes to date
+include:
+* option to remove "$ref" link
+* option to remove nested titles of fields
+* renamed "enum" section to "options"
+* option to limit enum / options section to 10 options
+
+Intro
+=====
+
 This package contains sphinx-jsonschema, an extension to Sphinx to allow
 authors to display a `JSON Schema <http://json-schema.org>`_ in their
 documentation.

@@ -22,6 +22,7 @@ if version_info[0] == 2:
 else:
     str_unicode = str
 
+# TODO: Required fields are bold, instead have "Required: Yes / No"
 # TODO: Move to config file
 config = {
     'enum_limit': 10,

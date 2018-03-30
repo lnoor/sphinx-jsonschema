@@ -170,4 +170,3 @@ Version 1.0
 -----------
 
 Initial release of a functioning plugin.
-    

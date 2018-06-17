@@ -57,21 +57,21 @@ class JsonSchema(Directive):
             try:
                 import requests
             except ImportError:
-                raise Exception("JSONSCHEMA loading from http requires requests. Try 'pip install requests'")
+                self.error("JSONSCHEMA loading from http requires requests. Try 'pip install requests'")
             text = requests.get(file_or_url)
-            self.schema = ordered_load(text.content)
+            self.schema = self.ordered_load(text.content)
         else:
             if not os.path.isabs(file_or_url):
                 # file relative to the path of the current rst file
                 dname = os.path.dirname(self.statemachine.input_lines.source(0))
                 file_or_url = os.path.join(dname, file_or_url)
             with open(file_or_url) as file:
-                self.schema = ordered_load(file, yaml.SafeLoader)
+                self.schema = self.ordered_load(file, yaml.SafeLoader)
 
     def _load_internal(self, text):
         if text is None or len(text) == 0:
-            raise Exception("JSONSCHEMA requires either filename, http url or inline content")
-        self.schema = ordered_load('\n'.join(text), yaml.SafeLoader)
+            self.error("JSONSCHEMA requires either filename, http url or inline content")
+        self.schema = self.ordered_load('\n'.join(text), yaml.SafeLoader)
 
     def _splitpointer(self, path):
         val = path.split('#', 1)
@@ -80,29 +80,32 @@ class JsonSchema(Directive):
         return val
 
 
-def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
-    """Allows you to use `pyyaml` to load as OrderedDict.
+    def ordered_load(self, stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+        """Allows you to use `pyyaml` to load as OrderedDict.
 
-    Taken from https://stackoverflow.com/a/21912744/1927102
-    """
-    class OrderedLoader(Loader):
-        pass
+        Taken from https://stackoverflow.com/a/21912744/1927102
+        """
+        class OrderedLoader(Loader):
+            pass
 
-    def construct_mapping(loader, node):
-        loader.flatten_mapping(node)
-        return object_pairs_hook(loader.construct_pairs(node))
-    OrderedLoader.add_constructor(
-        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-        construct_mapping)
-    try:
-        result = yaml.load(stream, OrderedLoader)
-    except yaml.scanner.ScannerError:
-        if type(stream) == str:
-            result = json.loads(stream, object_pairs_hook=object_pairs_hook)
-        else:
-            stream.seek(0)
-            result = json.load(stream, object_pairs_hook=object_pairs_hook)
-    return result
+        def construct_mapping(loader, node):
+            loader.flatten_mapping(node)
+            return object_pairs_hook(loader.construct_pairs(node))
+        OrderedLoader.add_constructor(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            construct_mapping)
+        try:
+            try:
+                result = yaml.load(stream, OrderedLoader)
+            except yaml.scanner.ScannerError:
+                if type(stream) == str:
+                    result = json.loads(stream, object_pairs_hook=object_pairs_hook)
+                else:
+                    stream.seek(0)
+                    result = json.load(stream, object_pairs_hook=object_pairs_hook)
+        except Exception as e:
+            self.error(e)
+        return result
 
 
 def setup(app):

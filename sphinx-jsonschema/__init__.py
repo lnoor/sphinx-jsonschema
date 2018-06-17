@@ -112,4 +112,4 @@ def setup(app):
     global _glob_app
     _glob_app = app
     app.add_directive('jsonschema', JsonSchema)
-    return {'version': '1.7'}
+    return {'version': '1.8'}

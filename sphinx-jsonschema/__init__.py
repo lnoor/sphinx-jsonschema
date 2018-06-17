@@ -94,7 +94,15 @@ def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
     OrderedLoader.add_constructor(
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
         construct_mapping)
-    return yaml.load(stream, OrderedLoader)
+    try:
+        result = yaml.load(stream, OrderedLoader)
+    except yaml.scanner.ScannerError:
+        if type(stream) == str:
+            result = json.loads(stream, object_pairs_hook=object_pairs_hook)
+        else:
+            stream.seek(0)
+            result = json.load(stream, object_pairs_hook=object_pairs_hook)
+    return result
 
 
 def setup(app):

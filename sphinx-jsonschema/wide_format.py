@@ -60,9 +60,9 @@ class WideFormat(object):
 
         if 'type' in schema:
             # select processor for type
-            if schema['type'] == 'object':
+            if 'object' in schema['type']:
                 rows = self._objecttype(schema)
-            elif schema['type'] == 'array':
+            elif 'array' in schema['type']:
                 rows = self._arraytype(schema)
             else:
                 rows = self._simpletype(schema)

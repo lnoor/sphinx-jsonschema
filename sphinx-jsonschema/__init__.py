@@ -105,6 +105,7 @@ class JsonSchema(Directive):
                     result = json.load(stream, object_pairs_hook=object_pairs_hook)
         except Exception as e:
             self.error(e)
+            result = {}
         return result
 
 

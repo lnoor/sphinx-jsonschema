@@ -203,6 +203,9 @@ class WideFormat(object):
         if 'enum' in schema:
             rows.append(self._line(self._cell('enum'), self._cell(', '.join([str_unicode(e) for e in schema['enum']]))))
 
+        if 'examples' in schema:
+            rows.extend(self._examples(schema['examples']))
+
         rows.extend(self._kvpairs(schema, self.KV_SIMPLE))
         return rows
 
@@ -278,6 +281,14 @@ class WideFormat(object):
         else:
             # create a single type
             return self._cell('*'+typ+'*')
+
+    def _examples(self, examples):
+        # Render examples as rows
+        rows = []
+        for example in examples:
+            rows.append(self._line(self._cell(example)))
+        rows = self._prepend(self._cell('examples'), rows)
+        return rows
 
     def _square(self, rows, nrcols = 0):
         #determine max. number of columns

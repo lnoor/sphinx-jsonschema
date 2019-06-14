@@ -25,6 +25,7 @@ Features
 * Supports cross references between schemas.
 * Allows reStructuredText markup in ``title`` and ``description`` fields.
 * Allows JSON Schema definitions in both JSON and YAML format.
+* Supports the ``example`` keyword from Draft 7.
 
 Installation
 ============
@@ -51,7 +52,7 @@ Example
 Display a schema fetched from a website::
 
     .. jsonschema:: http://some.domain/with/a/path/spec.json
-    
+
 
 Display a schema located in a file with an absolute path::
 
@@ -66,11 +67,11 @@ With all three of the above you may add JSON Pointer notation to display a subsc
     .. jsonschema:: http://some.domain/with/a/path/spec.json#/path/to/schema
     .. jsonschema:: /home/leo/src/jsonschema/sample.json#/path/to/schema
     .. jsonschema:: jsonschema/sample.json#/path/to/schema
-    
+
 Alternatively you can embed the schema::
 
     .. jsonschema::
-    
+
         {
             "$schema": "This field is ignored for now. Perhaps use it to indicate schema version in display?",
             "title": "Test data set 1: **Simple type**",
@@ -131,6 +132,11 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.9
+-----------
+
+Tom Walter (https://github.com/EvilPuppetMaster) contributed the ``example`` support.
+
 Version 1.4
 -----------
 
@@ -145,14 +151,13 @@ Version 1.2
 -----------
 
 Improved formatting.
-    
+
 Version 1.1
 -----------
 
 Implemented schema cross referencing.
-    
+
 Version 1.0
 -----------
 
 Initial release of a functioning plugin.
-    

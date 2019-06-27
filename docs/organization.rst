@@ -1,5 +1,5 @@
 
-Orginization
+Organization
 ============
 
 As stated earlier, I needed this to manage and document rather large schemas.

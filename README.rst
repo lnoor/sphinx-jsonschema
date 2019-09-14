@@ -119,7 +119,42 @@ Occasionally a schema will be addressed from several other schemas using differe
 In that case the value of ``$$target`` should be a list enumerating all different references to the
 schema.
 
+$$description
+   sphinx-jsonschema extends JSON Schema with the ``$$description`` key.
 
+This key serves the same purpose as the ``description`` key and can be used in the same way.
+It differs from ``description`` in that it allows an array of strings as value instead of a
+single string.
+
+This allows you to write::
+
+   {
+      ...
+      "description": "+------------+------------+-----------+ \n| Header 1   | Header 2   | Header 3  | \n+============+============+===========+ \n| body row 1 | column 2   | column 3  | \n+------------+------------+-----------+ \n| body row 2 | Cells may span columns.| \n+------------+------------+-----------+ \n| body row 3 | Cells may  | - Cells   | \n+------------+ span rows. | - contain | \n| body row 4 |            | - blocks. | \n+------------+------------+-----------+",
+      ...
+   }
+
+as::
+
+   {
+      ...
+      "$$description": [
+         "+------------+------------+-----------+",
+         "| Header 1   | Header 2   | Header 3  |",
+         "+============+============+===========+",
+         "| body row 1 | column 2   | column 3  |",
+         "+------------+------------+-----------+",
+         "| body row 2 | Cells may span columns.|",
+         "+------------+------------+-----------+",
+         "| body row 3 | Cells may  | - Cells   |",
+         "+------------+ span rows. | - contain |",
+         "| body row 4 |            | - blocks. |",
+         "+------------+------------+-----------+"
+      ],
+      ...
+   }
+
+Which clearly is much more readable and maintainable.
 
 Licence
 =======
@@ -131,6 +166,13 @@ This software is made available under the GPL v3.
 
 Changelog
 =========
+
+Version 1.10
+------------
+
+Ivan Vysotskyy (https://github.com/ivysotskyi) contributed the idea to use an array with
+the ``description`` key resulting in the new ``$$description`` key.
+
 
 Version 1.9
 -----------

@@ -29,3 +29,43 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+Changelog
+=========
+
+Version 1.10
+------------
+
+Ivan Vysotskyy (https://github.com/ivysotskyi) contributed the idea to use an array with
+the ``description`` key resulting in the new ``$$description`` key.
+
+
+Version 1.9
+-----------
+
+Tom Walter (https://github.com/EvilPuppetMaster) contributed the ``example`` support.
+
+Version 1.4
+-----------
+
+Chris Holdgraf (https://github.com/choldgraf) contributed Python3 and yaml support.
+
+Version 1.3
+-----------
+
+Add unicode support.
+
+Version 1.2
+-----------
+
+Improved formatting.
+
+Version 1.1
+-----------
+
+Implemented schema cross referencing.
+
+Version 1.0
+-----------
+
+Initial release of a functioning plugin.

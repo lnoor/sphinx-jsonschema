@@ -2,6 +2,44 @@
 Schema extensions
 =================
 
+$$description
+-------------
+
+The standard defines the ``description`` key as having a string value.
+Since the JSON file format has no provision for some form of line continuation
+this can result in unwieldy long strings.
+
+To remedy the ``$$description`` key is introduced.
+It can be used with and just like the ``description`` key.
+It accepts an array of strings which it combines into a single string which is
+then processed just like the ``description``.
+
+This makes it possible to create something like:
+
+.. code-block:: rst
+
+    {
+        ...
+        "description": "The usual single string description",
+        "$$description": [
+            "+------------+------------+-----------+",
+            "| Header 1   | Header 2   | Header 3  |",
+            "+============+============+===========+",
+            "| body row 1 | column 2   | column 3  |",
+            "+------------+------------+-----------+",
+            "| body row 2 | Cells may span columns.|",
+            "+------------+------------+-----------+",
+            "| body row 3 | Cells may  | - Cells   |",
+            "+------------+ span rows. | - contain |",
+            "| body row 4 |            | - blocks. |",
+            "+------------+------------+-----------+"
+        ],
+        ...
+    }
+
+$$target
+--------
+
 After some experimentation I concluded that I needed to extend JSON Schema with a single key.
 Most of the time sphinx-jsonschema just does the 'sensible' thing.
 
@@ -75,4 +113,3 @@ This is why ``$target`` is allowed to have an array of strings as value in refer
         "$$target": ["referenced.json#/something", "../service1/referenced.json#/something"],
         ...
     }
-    

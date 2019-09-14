@@ -78,7 +78,7 @@ which should render as:
 
 It is also possible to render just a part of an embedded schema using a json pointer (per request `Issue 17 <https://github.com/lnoor/sphinx-jsonschema/issues/17>`_:
 
-.. clode-block:: rst
+.. code-block:: rst
 
     .. jsonschema:: #/date
 

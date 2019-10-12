@@ -167,6 +167,11 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.11
+------------
+
+Solved a divergence of the standard reported by bbasic (https://github.com/bbasics).
+
 Version 1.10
 ------------
 

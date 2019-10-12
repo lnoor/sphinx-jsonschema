@@ -33,12 +33,16 @@ Indices and tables
 Changelog
 =========
 
+Version 1.11
+------------
+
+Solved a divergence of the standard reported by bbasic (https://github.com/bbasics).
+
 Version 1.10
 ------------
 
 Ivan Vysotskyy (https://github.com/ivysotskyi) contributed the idea to use an array with
 the ``description`` key resulting in the new ``$$description`` key.
-
 
 Version 1.9
 -----------

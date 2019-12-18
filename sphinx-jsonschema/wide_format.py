@@ -70,6 +70,7 @@ class WideFormat(object):
 
         if '$ref' in schema:
             rows.append(self._line(self._cell(':ref:`' + schema['$ref'] + '`')))
+            del schema['$ref']
 
         for k in self.COMBINATORS:
             # combinators belong at this level as alternative to type
@@ -78,11 +79,13 @@ class WideFormat(object):
                 for s in schema[k]:
                     items.extend(self._dispatch(s, self._cell('-')))
                 rows.extend(self._prepend(self._cell(k), items))
+                del schema[k]
 
         for k in self.SINGLEOBJECTS:
             # combinators belong at this level as alternative to type
             if k in schema:
                 rows.extend(self._dispatch(schema[k], self._cell(k)))
+                del schema[k]
 
         # definitions aren't really type equiv's but still best place for them
         rows.extend(self._objectproperties(schema, 'definitions'))
@@ -102,6 +105,7 @@ class WideFormat(object):
         # NB: disregards interior id's
         if 'id' in schema:
             body.insert(0, self._line(self._cell(schema['id'])))
+            del schema['id']
 
         # patch up if necessary, all rows should be of equal length
         nrcols = self._square(body)
@@ -137,6 +141,7 @@ class WideFormat(object):
                 labels[anchor] = docname, targetnode['ids'][0], (schema['title'] if 'title' in schema else anchor)
             targetnode.line = self.lineno
             result.append(targetnode)
+            del schema['$$target']
 
         if 'title' in schema:
             # Wrap the resulting table in a section giving it a caption and an
@@ -155,6 +160,7 @@ class WideFormat(object):
             section_node += table
             memo.section_level = mylevel
             result.append(section_node)
+            del schema['title']
         else:
             result.append(table)
         return result
@@ -179,6 +185,7 @@ class WideFormat(object):
             for item in items:
                 label = self._cell('-')
                 rows.extend(self._dispatch(item, label))
+            del schema['items']
 
         rows.extend(self._bool_or_object(schema, 'additionalItems'))
         rows.extend(self._kvpairs(schema, self.KV_ARRAY))
@@ -189,6 +196,7 @@ class WideFormat(object):
 
         if 'title' in schema and self.nesting > 1:
             rows.append(self._line(self._cell('*' + schema['title'] + '*')))
+            del schema['title']
 
         self._check_description(schema, rows)
 
@@ -196,6 +204,7 @@ class WideFormat(object):
             rows.append(
                 self._line(self._cell('type'),
                            self._decodetype(schema['type'])))
+            del schema['type']
 
         if 'enum' in schema:
             rows.append(
@@ -203,9 +212,11 @@ class WideFormat(object):
                     self._cell('enum'),
                     self._cell(', '.join(
                         [str_unicode(e) for e in schema['enum']]))))
+            del schema['enum']
 
         if 'examples' in schema:
             rows.extend(self._examples(schema['examples']))
+            del schema['examples']
 
         rows.extend(self._kvpairs(schema, self.KV_SIMPLE))
         return rows
@@ -231,6 +242,7 @@ class WideFormat(object):
                 label = self._cell('- ' + bold + dispprop + bold)
                 obj = schema[key][prop]
                 rows.extend(self._dispatch(obj, label))
+            del schema[key]
         return rows
 
     def _bool_or_object(self, schema, key):
@@ -240,8 +252,10 @@ class WideFormat(object):
         if key in schema:
             if type(schema[key]) == bool:
                 rows.append(self._line(self._cell(key), self._cell(schema[key])))
+                del schema[key]
             else:
                 rows.extend(self._dispatch(schema[key], self._cell(key)))
+                del schema[key]
 
         return rows
 
@@ -255,6 +269,7 @@ class WideFormat(object):
                 if k == 'pattern':
                     value = self._escape(value)
                 rows.append(self._line(self._cell(k), self._cell(value)))
+                del schema[k]
         return rows
 
     def _prepend(self, prepend, rows):
@@ -293,11 +308,14 @@ class WideFormat(object):
     def _check_description(self, schema, rows):
         if 'description' in schema:
             rows.append(self._line(self._cell(schema['description'])))
+            del schema['description']
         if '$$description' in schema:
             if isinstance(schema['$$description'], list):
                 rows.append(self._line(self._cell('\n'.join(schema['$$description']))))
+                del schema['$$description']
             else:
                 rows.append(self._line(self._cell(schema['$$description'])))
+                del schema['$$description']
 
     def _square(self, rows, nrcols=0):
         # determine max. number of columns

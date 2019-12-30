@@ -25,7 +25,7 @@ Features
 * Supports cross references between schemas.
 * Allows reStructuredText markup in ``title`` and ``description`` fields.
 * Allows JSON Schema definitions in both JSON and YAML format.
-* Supports the ``example`` keyword from Draft 7.
+* Supports the ``examples`` keyword from Draft 7.
 
 Installation
 ============

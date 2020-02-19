@@ -66,7 +66,8 @@ class JsonSchema(Directive):
                 dname = os.path.dirname(self.statemachine.input_lines.source(0))
                 file_or_url = os.path.join(dname, file_or_url)
             with open(file_or_url) as file:
-                self.schema = self.ordered_load(file, yaml.SafeLoader)
+                text = file.read()
+            self.schema = self.ordered_load(text, yaml.SafeLoader)
 
     def _load_internal(self, text):
         if text is None or len(text) == 0:
@@ -80,7 +81,7 @@ class JsonSchema(Directive):
         return val
 
 
-    def ordered_load(self, stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+    def ordered_load(self, text, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
         """Allows you to use `pyyaml` to load as OrderedDict.
 
         Taken from https://stackoverflow.com/a/21912744/1927102
@@ -95,15 +96,14 @@ class JsonSchema(Directive):
             yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
             construct_mapping)
         try:
+            text = text.replace('\\', '\\\\')
             try:
-                result = yaml.load(stream, OrderedLoader)
+                result = yaml.load(text, OrderedLoader)
             except yaml.scanner.ScannerError:
-                if type(stream) == str:
-                    result = json.loads(stream, object_pairs_hook=object_pairs_hook)
-                else:
-                    stream.seek(0)
-                    result = json.load(stream, object_pairs_hook=object_pairs_hook)
+                # will it load as plain json?
+                result = json.loads(text, object_pairs_hook=object_pairs_hook)
         except Exception as e:
+            print("exception: ",e)
             self.error(e)
             result = {}
         return result
@@ -113,4 +113,4 @@ def setup(app):
     global _glob_app
     _glob_app = app
     app.add_directive('jsonschema', JsonSchema)
-    return {'version': '1.12'}
+    return {'version': '1.13'}

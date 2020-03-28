@@ -6,7 +6,7 @@
     In this layout for each nesting level the table is extended by
     one or more columns.
 
-    :copyright: Copyright 2017, Leo Noordergraaf
+    :copyright: Copyright 2017-2020, Leo Noordergraaf
     :licence: GPL v3, see LICENCE for details.
 """
 

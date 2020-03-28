@@ -33,8 +33,8 @@ Indices and tables
 Changelog
 =========
 
-Versions 1.12 and 1.13
-----------------------
+Versions 1.12, 1.13 and 1.14
+----------------------------
 
 Solved several minor bugs.
 

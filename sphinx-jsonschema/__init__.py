@@ -9,7 +9,7 @@
     Using this directory you can render JSON Schema directly
     in Sphinx.
 
-    :copyright: Copyright 2017, Leo Noordergraaf
+    :copyright: Copyright 2017-2020, Leo Noordergraaf
     :licence: GPL v3, see LICENCE for details.
 """
 
@@ -31,6 +31,8 @@ class JsonSchema(Directive):
 
     def __init__(self, directive, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
         assert directive == 'jsonschema'
+
+        #breakpoint()
 
         self.options = options
         self.state = state
@@ -96,7 +98,8 @@ class JsonSchema(Directive):
             yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
             construct_mapping)
         try:
-            text = text.replace('\\', '\\\\')
+            text = text.replace('\\(', '\\\\(')
+            text = text.replace('\\)', '\\\\)')
             try:
                 result = yaml.load(text, OrderedLoader)
             except yaml.scanner.ScannerError:
@@ -113,4 +116,4 @@ def setup(app):
     global _glob_app
     _glob_app = app
     app.add_directive('jsonschema', JsonSchema)
-    return {'version': '1.13'}
+    return {'version': '1.14'}

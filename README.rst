@@ -167,8 +167,14 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
-Versions 1.12 and 1.13
-----------------------
+Version 1.15
+------------
+
+Add support for the ``dependencies`` key.
+
+
+Versions 1.12 and 1.13 and 1.14
+-------------------------------
 
 Solved several minor bugs.
 

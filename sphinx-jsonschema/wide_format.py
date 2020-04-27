@@ -65,6 +65,7 @@ class WideFormat(object):
 #            else:                                      # to fix: #31
 #                rows = self._simpletype(schema)
         else:
+            rows = self._objecttype(schema)
             self._check_description(schema, rows)
         rows.extend(self._simpletype(schema))           # to fix: #31
 
@@ -171,6 +172,7 @@ class WideFormat(object):
         rows.extend(self._objectproperties(schema, 'properties'))
         rows.extend(self._objectproperties(schema, 'patternProperties'))
         rows.extend(self._bool_or_object(schema, 'additionalProperties'))
+        rows.extend(self._dependencies(schema, 'dependencies'))
         rows.extend(self._kvpairs(schema, self.KV_OBJECT))
         return rows
 
@@ -243,6 +245,26 @@ class WideFormat(object):
                 obj = schema[key][prop]
                 rows.extend(self._dispatch(obj, label))
             del schema[key]
+        return rows
+
+    def _dependencies(self, schema, key):
+        rows = []
+
+        if key in schema:
+            rows.append(self._line(self._cell(key)))
+
+            for prop in schema[key].keys():
+                label = self._cell('- ' + prop)
+                obj = schema[key][prop]
+                if type(obj) == list:
+                    rows.append(
+                        self._line(
+                            label,
+                            self._cell(str_unicode(', '.join(obj)))))
+                    del schema[key]
+                else:
+                    import pdb; pdb.set_trace()
+                    rows.extend(self._dispatch(obj, label))
         return rows
 
     def _bool_or_object(self, schema, key):

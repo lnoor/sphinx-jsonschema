@@ -33,6 +33,11 @@ Indices and tables
 Changelog
 =========
 
+Version 1.15
+------------
+
+Add support for the ``dependencies`` key.
+
 Versions 1.12, 1.13 and 1.14
 ----------------------------
 

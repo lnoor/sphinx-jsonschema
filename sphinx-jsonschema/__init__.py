@@ -98,8 +98,8 @@ class JsonSchema(Directive):
             yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
             construct_mapping)
         try:
-            text = text.replace('\\(', '\\\\(')
-            text = text.replace('\\)', '\\\\)')
+            text = text.replace(b'\\(', b'\\\\(')
+            text = text.replace(b'\\)', b'\\\\)')
             try:
                 result = yaml.load(text, OrderedLoader)
             except yaml.scanner.ScannerError:

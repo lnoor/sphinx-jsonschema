@@ -22,8 +22,6 @@ from collections import OrderedDict
 from docutils.parsers.rst import Directive
 from .wide_format import WideFormat
 
-# TODO find out if app is accessible in some other way
-_glob_app = None
 
 class JsonSchema(Directive):
     optional_arguments = 1
@@ -51,7 +49,7 @@ class JsonSchema(Directive):
             self._load_internal(content)
 
     def run(self):
-        format = WideFormat(self.state, self.lineno, _glob_app)
+        format = WideFormat(self.state, self.lineno, self.state.document.settings.env.app)
         return format.transform(self.schema)
 
     def _load_external(self, file_or_url):
@@ -113,7 +111,5 @@ class JsonSchema(Directive):
 
 
 def setup(app):
-    global _glob_app
-    _glob_app = app
     app.add_directive('jsonschema', JsonSchema)
     return {'version': '1.15'}

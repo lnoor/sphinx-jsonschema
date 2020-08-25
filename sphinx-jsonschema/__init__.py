@@ -16,11 +16,12 @@
 import os.path
 import json
 from jsonpointer import resolve_pointer
+from traceback import format_exception
 import yaml
 from collections import OrderedDict
 
-from docutils import nodes
-from docutils.parsers.rst import Directive
+from docutils import nodes, utils
+from docutils.parsers.rst import Directive, DirectiveError
 from docutils.utils import SystemMessagePropagation
 from docutils.utils.error_reporting import SafeString
 from .wide_format import WideFormat
@@ -34,8 +35,19 @@ class JsonSchema(Directive):
     def run(self):
         try:
             schema, source = self.get_json_data()
+            format = WideFormat(self.state, self.lineno, self.state.document.settings.env.app)
+            return format.transform(schema)
         except SystemMessagePropagation as detail:
             return [detail.args[0]]
+        except DirectiveError as error:
+            raise self.directive_error(error.level, error.msg)
+        except Exception as error:
+            tb = error.__traceback__
+            # loop through all trackback points to only return the last traceback
+            while tb.tb_next:
+                tb = tb.tb_next
+
+            raise self.error(''.join(format_exception(type(error), error, tb, chain=False)))
 
         format = WideFormat(self.state, self.lineno, self.state.document.settings.env.app)
         return format.transform(schema)
@@ -58,10 +70,12 @@ class JsonSchema(Directive):
                     ' have content.' % self.name, nodes.literal_block(
                     self.block_text, self.block_text), line=self.lineno)
                 raise SystemMessagePropagation(error)
+
             source = self.content.source(0)
             schema = '\n'.join(self.content)
         elif filename and filename.startswith('http'):
             source = filename
+
             # To prevent loading on a not existing adress added timeout
             timeout = self.options.get('timeout', 30)
             if timeout < 0:
@@ -69,66 +83,54 @@ class JsonSchema(Directive):
             try:
                 import requests
             except ImportError:
-                error = self.state_machine.reporter.error(
-                    '"%s" directive requires requests when loading from http.'
-                    ' Try "pip install requests".' % self.name, nodes.literal_block(
-                    self.block_text, self.block_text), line=self.lineno)
-                raise SystemMessagePropagation(error)
+                raise self.error('"%s" directive requires requests when loading from http.'
+                                 ' Try "pip install requests".' % self.name)
 
             try:
                 response = requests.get(source, timeout=timeout)
-            except requests.exceptions.Timeout:
-                error = self.state_machine.reporter.error(
-                    u'"%s" directive recieved an timeout when loading from url:\n%s.'
-                    % (self.name, SafeString(source)), line=self.lineno)
-                raise SystemMessagePropagation(error)
+            except requests.exceptions.RequestException as e:
+                raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
+                                 % (self.name, type(e), source))
              
             if response.status_code != 200:
                 # When making a connection to the url a status code will be returned
                 # Normally a OK (200) response would we be returned all other responses
                 # an error will be raised could be seperated futher
-                error = self.state_machine.reporter.error(
-                    u'"%s" directive recieved an "%s" when loading from url:\n%s.'
-                    % (self.name, SafeString(response.reason), SafeString(source)),
-                    line=self.lineno)
-                raise SystemMessagePropagation(error)
+                raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
+                                 % (self.name, response.reason, source))
 
             # response content always binary converting with decode() no specific format defined
             schema = response.content.decode()
         elif filename:
+            document_source = os.path.dirname(self.state.document.current_source)
             if not os.path.isabs(filename):
                 # file relative to the path of the current rst file
-                dname = os.path.dirname(self.state.document.current_source)
-                source = os.path.join(dname, filename)
+                source = os.path.join(document_source, filename)
             else:
                 source = filename
 
-            self.state.document.settings.record_dependencies.add(source)
-            
             try:
                 with open(source) as file:
                     schema = file.read()
             except IOError as error:
-                severe = self.state_machine.reporter.severe(
-                    u'"%s" directive a "%s" occoured while loading file:\n%s'
-                    % (self.name, SafeString(error), SafeString(source)),
-                    line=self.lineno)
-                raise SystemMessagePropagation(severe)
+                raise self.error(u'"%s" directive encountered an IOError while loading file: %s\n%s'
+                                 % (self.name, source, error))
+
+            # Simplifing source path and to the document a new dependency
+            source = utils.relative_path(document_source, source)
+            self.state.document.settings.record_dependencies.add(source)
         else:
-            error = self.state_machine.reporter.error(
-                '"%s" directive has no content or a reference to an external file.'
-                % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            raise SystemMessagePropagation(error)
+            raise self.error('"%s" directive has no content or a reference to an external file.'
+                             % self.name)
 
         try:   
             schema = self.ordered_load(schema)
         except Exception as error:
-            severe = self.state_machine.reporter.severe(
-                    '"%s" directive encountered a %s (%s) while parsing the data'
-                     % (self.name, SafeString(type(error)), SafeString(error)),
+            error = self.state_machine.reporter.error(
+                    '"%s" directive encountered a the following error while parsing the data, %s'
+                     % (self.name, SafeString(format_exception_only(type(error), error),
                     nodes.literal_block(schema, schema), line=self.lineno)
-            raise SystemMessagePropagation(severe)
+            raise SystemMessagePropagation(error)
         
         if pointer:
             try:
@@ -159,21 +161,18 @@ class JsonSchema(Directive):
         def construct_mapping(loader, node):
             loader.flatten_mapping(node)
             return object_pairs_hook(loader.construct_pairs(node))
+
         OrderedLoader.add_constructor(
             yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
             construct_mapping)
+
+        text = text.replace('\\(', '\\\\(')
+        text = text.replace('\\)', '\\\\)')
         try:
-            text = text.replace('\\(', '\\\\(')
-            text = text.replace('\\)', '\\\\)')
-            try:
-                result = yaml.load(text, OrderedLoader)
-            except yaml.scanner.ScannerError:
-                # will it load as plain json?
-                result = json.loads(text, object_pairs_hook=object_pairs_hook)
-        except Exception as e:
-            print("exception: ",e)
-            self.error(e)
-            result = {}
+            result = yaml.load(text, OrderedLoader)
+        except yaml.scanner.ScannerError:
+            # will it load as plain json?
+            result = json.loads(text, object_pairs_hook=object_pairs_hook)
         return result
 
 

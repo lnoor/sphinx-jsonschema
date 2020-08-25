@@ -16,7 +16,7 @@
 import os.path
 import json
 from jsonpointer import resolve_pointer
-from traceback import format_exception
+from traceback import format_exception, format_exception_only
 import yaml
 from collections import OrderedDict
 

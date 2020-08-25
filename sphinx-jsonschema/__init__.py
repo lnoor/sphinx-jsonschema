@@ -19,60 +19,128 @@ from jsonpointer import resolve_pointer
 import yaml
 from collections import OrderedDict
 
+from docutils import nodes
 from docutils.parsers.rst import Directive
+from docutils.utils import SystemMessagePropagation
+from docutils.utils.error_reporting import SafeString
 from .wide_format import WideFormat
 
 
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
-
-    def __init__(self, directive, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
-        assert directive == 'jsonschema'
-
-        #breakpoint()
-
-        self.options = options
-        self.state = state
-        self.lineno = lineno
-        self.statemachine = state_machine
-
-        if len(arguments) == 1:
-            filename, pointer = self._splitpointer(arguments[0])
-            if filename != '':
-                self._load_external(filename)
-            else:
-                self._load_internal(content)
-            if pointer:
-                self.schema = resolve_pointer(self.schema, pointer)
-        else:
-            self._load_internal(content)
+    option_spec = {'timeout': float}
 
     def run(self):
-        format = WideFormat(self.state, self.lineno, self.state.document.settings.env.app)
-        return format.transform(self.schema)
+        try:
+            schema, source = self.get_json_data()
+        except SystemMessagePropagation as detail:
+            return [detail.args[0]]
 
-    def _load_external(self, file_or_url):
-        if file_or_url.startswith('http'):
+        format = WideFormat(self.state, self.lineno, self.state.document.settings.env.app)
+        return format.transform(schema)
+
+    def get_json_data(self):
+        """
+        Get JSON data from the directive content, from an external
+        file, or from a URL reference.
+        """
+        if self.arguments:
+            filename, pointer = self._splitpointer(self.arguments[0])
+        else:
+            filename = None
+            pointer = None
+
+        if self.content:
+            if filename:
+                error = self.state_machine.reporter.error(
+                    '"%s" directive may not both specify an external file and'
+                    ' have content.' % self.name, nodes.literal_block(
+                    self.block_text, self.block_text), line=self.lineno)
+                raise SystemMessagePropagation(error)
+            source = self.content.source(0)
+            schema = '\n'.join(self.content)
+        elif filename and filename.startswith('http'):
+            source = filename
+            # To prevent loading on a not existing adress added timeout
+            timeout = self.options.get('timeout', 30)
+            if timeout < 0:
+                timeout = None
             try:
                 import requests
             except ImportError:
-                self.error("JSONSCHEMA loading from http requires requests. Try 'pip install requests'")
-            text = requests.get(file_or_url)
-            self.schema = self.ordered_load(text.content)
-        else:
-            if not os.path.isabs(file_or_url):
-                # file relative to the path of the current rst file
-                dname = os.path.dirname(self.statemachine.input_lines.source(0))
-                file_or_url = os.path.join(dname, file_or_url)
-            with open(file_or_url) as file:
-                text = file.read()
-            self.schema = self.ordered_load(text, yaml.SafeLoader)
+                error = self.state_machine.reporter.error(
+                    '"%s" directive requires requests when loading from http.'
+                    ' Try "pip install requests".' % self.name, nodes.literal_block(
+                    self.block_text, self.block_text), line=self.lineno)
+                raise SystemMessagePropagation(error)
 
-    def _load_internal(self, text):
-        if text is None or len(text) == 0:
-            self.error("JSONSCHEMA requires either filename, http url or inline content")
-        self.schema = self.ordered_load('\n'.join(text), yaml.SafeLoader)
+            try:
+                response = requests.get(source, timeout=timeout)
+            except requests.exceptions.Timeout:
+                error = self.state_machine.reporter.error(
+                    u'"%s" directive recieved an timeout when loading from url:\n%s.'
+                    % (self.name, SafeString(source)), line=self.lineno)
+                raise SystemMessagePropagation(error)
+             
+            if response.status_code != 200:
+                # When making a connection to the url a status code will be returned
+                # Normally a OK (200) response would we be returned all other responses
+                # an error will be raised could be seperated futher
+                error = self.state_machine.reporter.error(
+                    u'"%s" directive recieved an "%s" when loading from url:\n%s.'
+                    % (self.name, SafeString(response.reason), SafeString(source)),
+                    line=self.lineno)
+                raise SystemMessagePropagation(error)
+
+            # response content always binary converting with decode() no specific format defined
+            schema = response.content.decode()
+        elif filename:
+            if not os.path.isabs(filename):
+                # file relative to the path of the current rst file
+                dname = os.path.dirname(self.state.document.current_source)
+                source = os.path.join(dname, filename)
+            else:
+                source = filename
+
+            self.state.document.settings.record_dependencies.add(source)
+            
+            try:
+                with open(source) as file:
+                    schema = file.read()
+            except IOError as error:
+                severe = self.state_machine.reporter.severe(
+                    u'"%s" directive a "%s" occoured while loading file:\n%s'
+                    % (self.name, SafeString(error), SafeString(source)),
+                    line=self.lineno)
+                raise SystemMessagePropagation(severe)
+        else:
+            error = self.state_machine.reporter.error(
+                '"%s" directive has no content or a reference to an external file.'
+                % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            raise SystemMessagePropagation(error)
+
+        try:   
+            schema = self.ordered_load(schema)
+        except Exception as error:
+            severe = self.state_machine.reporter.severe(
+                    '"%s" directive encountered a %s (%s) while parsing the data'
+                     % (self.name, SafeString(type(error)), SafeString(error)),
+                    nodes.literal_block(schema, schema), line=self.lineno)
+            raise SystemMessagePropagation(severe)
+        
+        if pointer:
+            try:
+                schema = resolve_pointer(schema, pointer)
+            except KeyError:
+                error = self.state_machine.reporter.error(
+                    '"%s" directive encountered a KeyError when trying to resolve the pointer'
+                    ' in schema: %s' % (self.name, SafeString(pointer)),
+                    nodes.literal_block(schema, schema), line=self.lineno)
+                raise SystemMessagePropagation(error)
+
+        return schema, source
 
     def _splitpointer(self, path):
         val = path.split('#', 1)
@@ -80,8 +148,7 @@ class JsonSchema(Directive):
             val.append(None)
         return val
 
-
-    def ordered_load(self, text, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+    def ordered_load(self, text, Loader=yaml.SafeLoader, object_pairs_hook=OrderedDict):
         """Allows you to use `pyyaml` to load as OrderedDict.
 
         Taken from https://stackoverflow.com/a/21912744/1927102

@@ -22,6 +22,7 @@ from collections import OrderedDict
 
 from docutils import nodes, utils
 from docutils.parsers.rst import Directive, DirectiveError
+from docutils.parsers.rst import directives
 from docutils.utils import SystemMessagePropagation
 from docutils.utils.error_reporting import SafeString
 from .wide_format import WideFormat
@@ -30,13 +31,17 @@ from .wide_format import WideFormat
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
-    option_spec = {'timeout': float}
+    option_spec = {'seperate_description': directives.flag, 
+                   'seperate_definitions': directives.flag,
+                   'enable_auto_reference': directives.flag,
+                   'enable_auto_target': directives.flag,
+                   'timeout': float}
 
     def run(self):
         try:
-            schema, source = self.get_json_data()
-            format = WideFormat(self.state, self.lineno, self.state.document.settings.env.app)
-            return format.transform(schema)
+            schema, source, pointer = self.get_json_data()
+            format = WideFormat(self.state, self.lineno, source, self.options, self.state.document.settings.env.app)
+            return format.run(schema, pointer)
         except SystemMessagePropagation as detail:
             return [detail.args[0]]
         except DirectiveError as error:
@@ -49,9 +54,6 @@ class JsonSchema(Directive):
 
             raise self.error(''.join(format_exception(type(error), error, tb, chain=False)))
 
-        format = WideFormat(self.state, self.lineno, self.state.document.settings.env.app)
-        return format.transform(schema)
-
     def get_json_data(self):
         """
         Get JSON data from the directive content, from an external
@@ -61,7 +63,7 @@ class JsonSchema(Directive):
             filename, pointer = self._splitpointer(self.arguments[0])
         else:
             filename = None
-            pointer = None
+            pointer = ''
 
         if self.content:
             if filename:
@@ -92,7 +94,7 @@ class JsonSchema(Directive):
                 raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
                                  % (self.name, type(e), source))
              
-            if response.status_code != 200:
+            if response.status_code != 200: 
                 # When making a connection to the url a status code will be returned
                 # Normally a OK (200) response would we be returned all other responses
                 # an error will be raised could be seperated futher
@@ -141,13 +143,17 @@ class JsonSchema(Directive):
                     ' in schema: %s' % (self.name, SafeString(pointer)),
                     nodes.literal_block(schema, schema), line=self.lineno)
                 raise SystemMessagePropagation(error)
+            
+            # add '#' in front for further useage for file target
+            # resove_pointer can't handle the '#'
+            pointer = '#' + pointer
 
-        return schema, source
+        return schema, source, pointer
 
     def _splitpointer(self, path):
-        val = path.split('#', 1)
+        val = path.rsplit('#', 1)
         if len(val) == 1:
-            val.append(None)
+            val.append('')
         return val
 
     def ordered_load(self, text, Loader=yaml.SafeLoader, object_pairs_hook=OrderedDict):

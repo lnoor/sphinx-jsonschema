@@ -11,6 +11,7 @@
 """
 
 from sys import version_info
+from pathlib import Path
 import string
 from docutils import statemachine
 from docutils import nodes
@@ -37,66 +38,123 @@ class WideFormat(object):
 
     SINGLEOBJECTS = ['not']
 
-    def __init__(self, state, lineno, app):
+    def __init__(self, state, lineno, source, options, app):
         super(WideFormat, self).__init__()
         self.app = app
         self.trans = None
         self.lineno = lineno
         self.state = state
+        self.filename = self._get_filename(source)
+        self.options = options
         self.nesting = 0
+        self.ref_titles = {}
+        
+
+    def run(self, schema, pointer=''):
+        result = []
+        target = self._target(schema, pointer)
+        section = self._section(schema)
+
+        table, definitions = self.transform(schema)
+
+        if target:
+            result.append(target)
+
+        if section:
+            section += table
+            section += definitions
+            result.append(section)
+        else:
+            if table:
+                result.append(table)
+            if definitions:
+                result.extend(definitions)
+        
+        return result
 
     def transform(self, schema):
-        body = self._dispatch(schema)
-        cols, head, body = self._cover(schema, body)
-        table = self.state.build_table((cols, head, body), self.lineno)
-        return self._wrap_in_section(schema, table)
-
-    def _dispatch(self, schema, label=None):
-        # Main driver of the recursive schema traversal.
-        rows = []
-        self.nesting += 1
-
-        if 'type' in schema:
-            # select processor for type
-            if 'object' in schema['type']:
-                rows = self._objecttype(schema)
-            elif 'array' in schema['type']:
-                rows = self._arraytype(schema)
-#            else:                                      # to fix: #31
-#                rows = self._simpletype(schema)
+        body, definitions = self._dispatch(schema)
+        if len(body) > 0:
+            cols, head, body = self._cover(schema, body)
+            table = self.state.build_table((cols, head, body), self.lineno)
         else:
-            rows = self._objecttype(schema)
-            self._check_description(schema, rows)
-        rows.extend(self._simpletype(schema))           # to fix: #31
+            table = None
+        return table, definitions
 
-        if '$ref' in schema:
-            rows.append(self._line(self._cell(':ref:`' + schema['$ref'] + '`')))
-            del schema['$ref']
+    def _target(self, schema, pointer=''):
+        # Wrap section and table in a target (anchor) node so
+        # that it can be referenced from other sections.
+        labels = self.app.env.domaindata['std']['labels']
+        anonlabels = self.app.env.domaindata['std']['anonlabels']
+        docname = self.app.env.docname
+       
+        targets = []
 
-        for k in self.COMBINATORS:
-            # combinators belong at this level as alternative to type
-            if k in schema:
-                items = []
-                for s in schema[k]:
-                    items.extend(self._dispatch(s, self._cell('-')))
-                rows.extend(self._prepend(self._cell(k), items))
-                del schema[k]
+        if '$$target' in schema:
+            if not isinstance(schema['$$target'], list):
+                targets.append(schema['$$target'])
+            else:
+                targets.extend(schema['$$target'])
+            del schema['$$target']
 
-        for k in self.SINGLEOBJECTS:
-            # combinators belong at this level as alternative to type
-            if k in schema:
-                rows.extend(self._dispatch(schema[k], self._cell(k)))
-                del schema[k]
+        if 'enable_auto_target' in self.options:
+            # When schema's multiple schema's are writen with content but without a pointer
+            # you get multiple equal named targets, all $ref will link to the last created schema
+            # The same applies if you would load files with equal name into your documentation
+            targets.append(self.filename + pointer)
 
-        # definitions aren't really type equiv's but still best place for them
-        rows.extend(self._objectproperties(schema, 'definitions'))
+        if targets:
+            targetnode = nodes.target()
+            anchorid = nodes.make_id((schema['title'] if 'title' in schema else targets[0]))
+            targetnode['ids'].append(anchorid)
+            targetnode['names'].append(anchorid)
+            targetnode.line = self.lineno
+                
+            for target in targets:
+                anchor = normalize_name(target)
+                anonlabels[anchor] = docname, targetnode['ids'][0]
+                labels[anchor] = docname, targetnode['ids'][0], (schema['title'] if 'title' in schema else target)
+            
+            return targetnode
+        
+        return None
 
-        if label is not None:
-            # prepend label column if required
-            rows = self._prepend(label, rows)
+    def _section(self, schema):
+        if 'title' in schema:
+            # Wrap the resulting table in a section giving it a caption and an
+            # entry in the table of contents.
+            # unable to use self.state.section() to make a section as style is unkown
+            # all sections will be placed inside current section 
+            section_node = nodes.section()
+            textnodes, title_messages = self.state.inline_text(schema['title'], self.lineno)
+            titlenode = nodes.title(schema['title'], '', *textnodes)
+            name = normalize_name(titlenode.astext())
+            section_node['names'].append(name)
+            section_node += titlenode
+            section_node += title_messages
+            self.state.document.note_implicit_target(section_node, section_node)
 
-        self.nesting -= 1
-        return rows
+            if self.nesting == 0:
+                self.ref_titles[self.nesting] = schema['title']
+
+            if 'seperate_description' in self.options:
+                self._get_description(schema, section_node)
+            
+            del schema['title']
+            return section_node
+        
+        return None
+
+    def _get_description(self, schema, node):
+        if 'description' in schema:
+            self.state.nested_parse(self._convert_content(schema['description']), self.lineno, node)
+            del schema['description']
+
+        if '$$description' in schema:
+            if isinstance(schema['$$description'], list):
+                schema['$$description'] = '\n'.join(schema['$$description'])
+            self.state.nested_parse(self._convert_content(schema['description']), self.lineno, node)
+            del schema['$$description']
 
     def _cover(self, schema, body):
         # Patch up and finish the table.
@@ -104,9 +162,13 @@ class WideFormat(object):
 
         # Outermost id becomes schema url
         # NB: disregards interior id's
+        # to support both 'id' draft 4 only and '$id' from draft 6 
         if 'id' in schema:
             body.insert(0, self._line(self._cell(schema['id'])))
             del schema['id']
+        elif '$id' in schema:
+            body.insert(0, self._line(self._cell(schema['$id'])))
+            del schema['$id']
 
         # patch up if necessary, all rows should be of equal length
         nrcols = self._square(body)
@@ -120,51 +182,56 @@ class WideFormat(object):
         # All columns have same width, to change alter the first element
         return [1] * nrcols, head, body
 
-    def _wrap_in_section(self, schema, table):
-
-        result = list()
-        if '$$target' in schema:
-            # Wrap section and table in a target (anchor) node so
-            # that it can be referenced from other sections.
-            labels = self.app.env.domaindata['std']['labels']
-            anonlabels = self.app.env.domaindata['std']['anonlabels']
-            docname = self.app.env.docname
-            targets = schema['$$target']
-            if not isinstance(targets, list):
-                targets = [targets]
-
-            targetnode = nodes.target()
-            for target in targets:
-                anchor = normalize_name(target)
-                targetnode['ids'].append(anchor)
-                targetnode['names'].append(anchor)
-                anonlabels[anchor] = docname, targetnode['ids'][0]
-                labels[anchor] = docname, targetnode['ids'][0], (schema['title'] if 'title' in schema else anchor)
-            targetnode.line = self.lineno
-            result.append(targetnode)
-            del schema['$$target']
-
-        if 'title' in schema:
-            # Wrap the resulting table in a section giving it a caption and an
-            # entry in the table of contents.
-            memo = self.state.memo
-            mylevel = memo.section_level
-            memo.section_level += 1
-            section_node = nodes.section()
-            textnodes, title_messages = self.state.inline_text(schema['title'], self.lineno)
-            titlenode = nodes.title(schema['title'], '', *textnodes)
-            name = normalize_name(titlenode.astext())
-            section_node['names'].append(name)
-            section_node += titlenode
-            section_node += title_messages
-            self.state.document.note_implicit_target(section_node, section_node)
-            section_node += table
-            memo.section_level = mylevel
-            result.append(section_node)
-            del schema['title']
+    def _dispatch(self, schema, label=None):
+        # Main driver of the recursive schema traversal.
+        rows = []
+        self.nesting += 1
+        
+        if 'definitions' in schema and 'seperate_definitions' in self.options:
+            definitions = self._definitions(schema)
         else:
-            result.append(table)
-        return result
+            definitions = None
+
+        if 'type' in schema:
+            # select processor for type
+            if 'object' in schema['type']:
+                rows = self._objecttype(schema)
+            elif 'array' in schema['type']:
+                rows = self._arraytype(schema)
+        #    else:                                      # to fix: #31
+        #        rows = self._simpletype(schema)
+        else:
+            rows = self._objecttype(schema)
+            self._check_description(schema, rows)
+        rows.extend(self._simpletype(schema))           # to fix: #31
+
+        if '$ref' in schema:
+            rows.extend(self._reference(schema))
+
+        for k in self.COMBINATORS:
+            # combinators belong at this level as alternative to type
+            if k in schema:
+                items = []
+                for s in schema[k]:
+                    items.extend(self._dispatch(s, self._cell('-'))[0])
+                rows.extend(self._prepend(self._cell(k), items))
+                del schema[k]
+
+        for k in self.SINGLEOBJECTS:
+            # combinators belong at this level as alternative to type
+            if k in schema:
+                rows.extend(self._dispatch(schema[k], self._cell(k))[0])
+                del schema[k]
+
+        # definitions aren't really type equiv's but still best place for them
+        rows.extend(self._objectproperties(schema, 'definitions'))
+
+        if label is not None:
+            # prepend label column if required
+            rows = self._prepend(label, rows)
+
+        self.nesting -= 1
+        return rows, definitions
 
     def _objecttype(self, schema):
         # create description and type rows
@@ -186,7 +253,11 @@ class WideFormat(object):
             items = schema['items'] if type(schema['items']) == list else [schema['items']]
             for item in items:
                 label = self._cell('-')
-                rows.extend(self._dispatch(item, label))
+                if isinstance(item, dict):
+                    rows.extend(self._dispatch(item, label)[0])
+                else:
+                    rows.append(self._line(label, self._cell(item)))
+                
             del schema['items']
 
         rows.extend(self._bool_or_object(schema, 'additionalItems'))
@@ -242,10 +313,38 @@ class WideFormat(object):
                     if prop in schema['required']:
                         bold = '**'
                 label = self._cell('- ' + bold + dispprop + bold)
-                obj = schema[key][prop]
-                rows.extend(self._dispatch(obj, label))
+                
+                if isinstance(schema[key][prop], dict):
+                    obj = schema[key][prop]
+                    rows.extend(self._dispatch(obj, label)[0])
+                else:
+                    rows.append(self._line(label, self._cell(schema[key][prop])))
             del schema[key]
         return rows
+
+    def _definitions(self, schema):
+        target = {}
+        for name, item in schema['definitions'].items():
+            # add title by the name of the object if title not defined
+            if 'title' not in item:
+                item['title'] = name
+            
+            target[name] = item['title']
+
+        # To automate $ref to definitions titles save a copy
+        # of the schema before continueing the recursive build
+        # so reference can be set with the correct title 
+        if self.nesting in self.ref_titles:
+            self.ref_titles[self.nesting].update(target)
+        else:
+            self.ref_titles[self.nesting] = target
+
+        result = []
+        for name, item in schema['definitions'].items():
+            result.extend(self.run(item, '#/definitions/' + name))
+
+        del schema['definitions']
+        return result
 
     def _dependencies(self, schema, key):
         rows = []
@@ -261,12 +360,44 @@ class WideFormat(object):
                         self._line(
                             label,
                             self._cell(str_unicode(', '.join(obj)))))
-                    del schema[key]
                 else:
                     import pdb; pdb.set_trace()
-                    rows.extend(self._dispatch(obj, label))
+                    rows.extend(self._dispatch(obj, label)[0])
+            del schema[key]
         return rows
 
+    def _reference(self, schema):
+        if 'enable_auto_reference' in self.options:
+            # first check if references is to own schema
+            # when definitions is seperated automated they will be linked to the title
+            # otherwise it will only be a string 
+            if schema['$ref'] == '#' or schema['$ref'] == '#/': 
+                if self.ref_titles.get(0, False):
+                    row = (self._line(self._cell('`' + self.ref_titles[0] + '`_')))
+                else:
+                    row = (self._line(self._cell(schema['$ref'])))
+            elif schema['$ref'].startswith("#/definitions/"):
+                # removing '#/definitions/' from string
+                reference = schema['$ref'][14:].split('/')
+                target_name = reference[-1]
+                ref_length = len(reference)
+                if (self.ref_titles.get(ref_length, False) and
+                        target_name in self.ref_titles[ref_length]):
+                    ref_title = self.ref_titles[ref_length][target_name]
+                    row = (self._line(self._cell('`' + ref_title + '`_')))
+                else:
+                    row = (self._line(self._cell(schema['$ref'])))
+            elif schema['$ref'].startswith("http"):
+                row = (self._line(self._cell(schema['$ref'])))
+            elif "#/" in schema['$ref']:
+                row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref'], True) + '`')))
+            else:
+                row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref']) + '#/`')))
+        else:
+            row = (self._line(self._cell(':ref:`' + schema['$ref'] + '`')))
+        del schema['$ref']
+        return [row]
+        
     def _bool_or_object(self, schema, key):
         # for those attributes that accept either a boolean or a schema.
         rows = []
@@ -276,7 +407,7 @@ class WideFormat(object):
                 rows.append(self._line(self._cell(key), self._cell(schema[key])))
                 del schema[key]
             else:
-                rows.extend(self._dispatch(schema[key], self._cell(key)))
+                rows.extend(self._dispatch(schema[key], self._cell(key))[0])
                 del schema[key]
 
         return rows
@@ -388,8 +519,24 @@ class WideFormat(object):
 
             # turn string into multiline array of views on lists
             # required by table builder
-            statemachine.ViewList(statemachine.string2lines(str_unicode(text)))
+            self._convert_content(text)
         ]
+
+    def _convert_content(self, text):
+        list_lines = statemachine.string2lines(str_unicode(text))
+        # Adding a source and line number to each line text warnings may appear when writing if there are issues with a line
+        # if left None the warnings would be counted but don't appear in the output then you don't know the source of it
+        items = [(self.state.document.current_source, self.lineno)] * len(list_lines)
+
+        return statemachine.StringList(list_lines, items=items)
+
+    def _get_filename(self, path, include_pointer=False):
+        # gets from filepath or url the name of file
+        if '#/' in path:
+            path, pointer = path.rsplit('#/', 1)
+        if include_pointer:
+            return Path(path).name + '#/' + pointer
+        return Path(path).name
 
     def _escape(self, text):
         text = text.replace('\\', '\\\\')

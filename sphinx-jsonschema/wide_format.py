@@ -392,7 +392,7 @@ class WideFormat(object):
             elif "#/" in schema['$ref']:
                 row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref'], True) + '`')))
             else:
-                row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref']) + '#/`')))
+                row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref']) + '`')))
         else:
             row = (self._line(self._cell(':ref:`' + schema['$ref'] + '`')))
         del schema['$ref']

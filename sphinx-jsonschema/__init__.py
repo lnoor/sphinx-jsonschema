@@ -66,61 +66,11 @@ class JsonSchema(Directive):
             pointer = ''
 
         if self.content:
-            if filename:
-                error = self.state_machine.reporter.error(
-                    '"%s" directive may not both specify an external file and'
-                    ' have content.' % self.name, nodes.literal_block(
-                    self.block_text, self.block_text), line=self.lineno)
-                raise SystemMessagePropagation(error)
-
-            source = self.content.source(0)
-            schema = '\n'.join(self.content)
+            schema, source = self.from_content(filename)
         elif filename and filename.startswith('http'):
-            source = filename
-
-            # To prevent loading on a not existing adress added timeout
-            timeout = self.options.get('timeout', 30)
-            if timeout < 0:
-                timeout = None
-            try:
-                import requests
-            except ImportError:
-                raise self.error('"%s" directive requires requests when loading from http.'
-                                 ' Try "pip install requests".' % self.name)
-
-            try:
-                response = requests.get(source, timeout=timeout)
-            except requests.exceptions.RequestException as e:
-                raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
-                                 % (self.name, type(e), source))
-             
-            if response.status_code != 200: 
-                # When making a connection to the url a status code will be returned
-                # Normally a OK (200) response would we be returned all other responses
-                # an error will be raised could be seperated futher
-                raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
-                                 % (self.name, response.reason, source))
-
-            # response content always binary converting with decode() no specific format defined
-            schema = response.content.decode()
+            schema, source = self.from_url(filename)
         elif filename:
-            document_source = os.path.dirname(self.state.document.current_source)
-            if not os.path.isabs(filename):
-                # file relative to the path of the current rst file
-                source = os.path.join(document_source, filename)
-            else:
-                source = filename
-
-            try:
-                with open(source) as file:
-                    schema = file.read()
-            except IOError as error:
-                raise self.error(u'"%s" directive encountered an IOError while loading file: %s\n%s'
-                                 % (self.name, source, error))
-
-            # Simplifing source path and to the document a new dependency
-            source = utils.relative_path(document_source, source)
-            self.state.document.settings.record_dependencies.add(source)
+            schema, source = self.from_file(filename)
         else:
             raise self.error('"%s" directive has no content or a reference to an external file.'
                              % self.name)
@@ -149,6 +99,68 @@ class JsonSchema(Directive):
             pointer = '#' + pointer
 
         return schema, source, pointer
+
+    def from_content(self, filename):
+        if filename:
+                error = self.state_machine.reporter.error(
+                    '"%s" directive may not both specify an external file and'
+                    ' have content.' % self.name, nodes.literal_block(
+                    self.block_text, self.block_text), line=self.lineno)
+                raise SystemMessagePropagation(error)
+
+        source = self.content.source(0)
+        data = '\n'.join(self.content)
+        return data, source
+
+    def from_url(self, url):
+        # To prevent loading on a not existing adress added timeout
+        timeout = self.options.get('timeout', 30)
+        if timeout < 0:
+            timeout = None
+
+        try:
+            import requests
+        except ImportError:
+            raise self.error('"%s" directive requires requests when loading from http.'
+                                ' Try "pip install requests".' % self.name)
+
+        try:
+            response = requests.get(url, timeout=timeout)
+        except requests.exceptions.RequestException as e:
+            raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
+                                % (self.name, type(e), url))
+            
+        if response.status_code != 200: 
+            # When making a connection to the url a status code will be returned
+            # Normally a OK (200) response would we be returned all other responses
+            # an error will be raised could be seperated futher
+            raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
+                                % (self.name, response.reason, url))
+
+        # response content always binary converting with decode() no specific format defined
+        data = response.content.decode()
+        return data, url
+
+    def from_file(self, filename):
+        document_source = os.path.dirname(self.state.document.current_source)
+        if not os.path.isabs(filename):
+            # file relative to the path of the current rst file
+            source = os.path.join(document_source, filename)
+        else:
+            source = filename
+
+        try:
+            with open(source) as file:
+                data = file.read()
+        except IOError as error:
+            raise self.error(u'"%s" directive encountered an IOError while loading file: %s\n%s'
+                                % (self.name, source, error))
+
+        # Simplifing source path and to the document a new dependency
+        source = utils.relative_path(document_source, source)
+        self.state.document.settings.record_dependencies.add(source)
+
+        return data, source
 
     def _splitpointer(self, path):
         val = path.rsplit('#', 1)

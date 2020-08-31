@@ -213,8 +213,11 @@ class WideFormat(object):
             if k in schema:
                 items = []
                 for s in schema[k]:
-                    items.extend(self._dispatch(s, self._cell('-'))[0])
-                rows.extend(self._prepend(self._cell(k), items))
+                    content = self._dispatch(s)[0]
+                    if content:
+                        items.extend(self._prepend(self._cell('-'), content))
+                if items:
+                    rows.extend(self._prepend(self._cell(k),items))
                 del schema[k]
 
         for k in self.SINGLEOBJECTS:

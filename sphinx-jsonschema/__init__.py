@@ -79,8 +79,8 @@ class JsonSchema(Directive):
             schema = self.ordered_load(schema)
         except Exception as error:
             error = self.state_machine.reporter.error(
-                    '"%s" directive encountered a the following error while parsing the data, %s'
-                     % (self.name, SafeString(format_exception_only(type(error), error))),
+                    '"%s" directive encountered a the following error while parsing the data.\n %s'
+                     % (self.name, SafeString("".join(format_exception_only(type(error), error)))),
                     nodes.literal_block(schema, schema), line=self.lineno)
             raise SystemMessagePropagation(error)
         

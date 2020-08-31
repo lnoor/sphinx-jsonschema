@@ -27,7 +27,7 @@ class WideFormat(object):
     KV_SIMPLE = [
         'multipleOf', 'maximum', 'exclusiveMaximum', 'minimum',
         'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'default',
-        'format'
+        'format', 'const'
     ]
 
     KV_ARRAY = ['maxItems', 'minItems', 'uniqueItems']
@@ -37,6 +37,8 @@ class WideFormat(object):
     COMBINATORS = ['allOf', 'anyOf', 'oneOf']
 
     SINGLEOBJECTS = ['not']
+
+    CONDITIONAL = ["if", "then", "else"]
 
     def __init__(self, state, lineno, source, options, app):
         super(WideFormat, self).__init__()
@@ -49,7 +51,7 @@ class WideFormat(object):
         self.nesting = 0
         self.ref_titles = {}
         self.target_pointer = '#'
-        
+
     def run(self, schema, pointer=''):
         # To set the correct auto target for a nested definitions we need to save 
         # the current pointer that may be used inside recursive run append on
@@ -219,23 +221,7 @@ class WideFormat(object):
         if '$ref' in schema:
             rows.extend(self._reference(schema))
 
-        for k in self.COMBINATORS:
-            # combinators belong at this level as alternative to type
-            if k in schema:
-                items = []
-                for s in schema[k]:
-                    content = self._dispatch(s)[0]
-                    if content:
-                        items.extend(self._prepend(self._cell('-'), content))
-                if items:
-                    rows.extend(self._prepend(self._cell(k),items))
-                del schema[k]
-
-        for k in self.SINGLEOBJECTS:
-            # combinators belong at this level as alternative to type
-            if k in schema:
-                rows.extend(self._dispatch(schema[k], self._cell(k))[0])
-                del schema[k]
+        rows.extend(self._complexstructures(schema))
 
         # definitions aren't really type equiv's but still best place for them
         rows.extend(self._objectproperties(schema, 'definitions'))
@@ -353,12 +339,49 @@ class WideFormat(object):
         else:
             self.ref_titles[self.nesting] = target
 
+        
         result = []
         for name, item in schema['definitions'].items():
-            result.extend(self.run(item, '#/definitions/' + name))
+            result.extend(self.run(item, '/definitions/' + name))
 
         del schema['definitions']
         return result
+
+    def _complexstructures(self, schema):
+        rows = []
+
+        for k in self.COMBINATORS:
+            # combinators belong at this level as alternative to type
+            if k in schema:
+                items = []
+                for s in schema[k]:
+                    content = self._dispatch(s)[0]
+                    if content:
+                        items.extend(self._prepend(self._cell('-'), content))
+                if items:
+                    rows.extend(self._prepend(self._cell(k), items))
+                del schema[k]
+
+        for k in self.SINGLEOBJECTS:
+            # combinators belong at this level as alternative to type
+            if k in schema:
+                rows.extend(self._dispatch(schema[k], self._cell(k))[0])
+                del schema[k]
+
+        if self.CONDITIONAL[0] in schema:
+            # only if 'if' in schema there would be a needs to go through if, then & else
+            items = []
+            for k in self.CONDITIONAL:
+                if k in schema:
+                    content = self._dispatch(schema[k])[0]
+                    if content:
+                        items.append(self._prepend(self._cell(k), content))
+                    del schema[k]
+            if len(items) >= 2:
+                for item in items:
+                    rows.extend(item)
+        
+        return rows
 
     def _dependencies(self, schema, key):
         rows = []

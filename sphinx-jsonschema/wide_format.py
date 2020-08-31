@@ -48,14 +48,22 @@ class WideFormat(object):
         self.options = options
         self.nesting = 0
         self.ref_titles = {}
+        self.target_pointer = '#'
         
-
     def run(self, schema, pointer=''):
+        # To set the correct auto target for a nested definitions we need to save 
+        # the current pointer that may be used inside recursive run append on
+        before = self.target_pointer
+        self.target_pointer += pointer
+
         result = []
-        target = self._target(schema, pointer)
+        target = self._target(schema, self.target_pointer)
         section = self._section(schema)
 
         table, definitions = self.transform(schema)
+
+        # restore to previous pointer
+        self.target_pointer = before
 
         if target:
             result.append(target)
@@ -101,7 +109,10 @@ class WideFormat(object):
             # When schema's multiple schema's are writen with content but without a pointer
             # you get multiple equal named targets, all $ref will link to the last created schema
             # The same applies if you would load files with equal name into your documentation
-            targets.append(self.filename + pointer)
+            if len(pointer) > 1:
+                targets.append(self.filename + pointer)
+            else:
+                targets.append(self.filename)
 
         if targets:
             targetnode = nodes.target()
@@ -380,16 +391,21 @@ class WideFormat(object):
                 else:
                     row = (self._line(self._cell(schema['$ref'])))
             elif schema['$ref'].startswith("#/definitions/"):
-                # removing '#/definitions/' from string
-                reference = schema['$ref'][14:].split('/')
+                reference = schema['$ref'][2:].split('/')
+                # removing definitions from list otherwise nesting level will be to deep
+                reference = [v for v in reference if v != "definitions"]
                 target_name = reference[-1]
                 ref_length = len(reference)
+                # Check if there are definitions availible to make a reference
                 if (self.ref_titles.get(ref_length, False) and
                         target_name in self.ref_titles[ref_length]):
                     ref_title = self.ref_titles[ref_length][target_name]
                     row = (self._line(self._cell('`' + ref_title + '`_')))
                 else:
                     row = (self._line(self._cell(schema['$ref'])))
+            elif schema['$ref'].startswith("#/"):
+                # Other references to own schema should not be defined as :ref: only as string
+                row = (self._line(self._cell(schema['$ref'])))
             elif schema['$ref'].startswith("http"):
                 row = (self._line(self._cell(schema['$ref'])))
             elif "#/" in schema['$ref']:

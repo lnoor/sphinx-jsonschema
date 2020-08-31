@@ -93,10 +93,6 @@ class JsonSchema(Directive):
                     ' in schema: %s' % (self.name, SafeString(pointer)),
                     nodes.literal_block(schema, schema), line=self.lineno)
                 raise SystemMessagePropagation(error)
-            
-            # add '#' in front for further useage for file target
-            # resove_pointer can't handle the '#'
-            pointer = '#' + pointer
 
         return schema, source, pointer
 

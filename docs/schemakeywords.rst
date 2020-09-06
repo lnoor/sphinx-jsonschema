@@ -40,7 +40,7 @@ This makes it possible to create something like:
 $$target
 --------
 
-After some experimentation I concluded that I needed to extend JSON Schema with a single key.
+After some experimentation I concluded that I needed to extend JSON Schema.
 Most of the time sphinx-jsonschema just does the 'sensible' thing.
 
 The ``$ref`` key in JSON Schema posed a problem.
@@ -129,7 +129,7 @@ The title is the link label.
 
 The `$$target` is needed because **sphinx-jsonschema** does not resolve `$ref` like
 a validator using the `id` key etc. The value of `$$target` should match the corresponding
-`$ref` value exactly. When the schema is referenced from mulitple locations using different
+`$ref` value exactly. When the schema is referenced from multiple locations using different
 values for `$ref` then the value of `$$target` may be an array of strings instead of a single
 string.
 
@@ -220,7 +220,7 @@ Some blahblah about calling people.
 .. sidebar:: Benefits
 
     This method lets you arrange the schema parts to match the structure of your documentation
-    and also allows you to create mulitple copies of a schema in your documentation.
+    and also allows you to create multiple copies of a schema in your documentation.
 
 .. jsonschema:: #/calls
 

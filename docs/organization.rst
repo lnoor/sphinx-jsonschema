@@ -4,9 +4,7 @@ Organization
 
 As stated earlier, I needed this to manage and document rather large schemas.
 I wanted to organize these schemas in such a way that the number of levels
-remained under control. Have a look at the documentation and schemas at the
-`Nextpertise API documentation <http://api.nextpertise.nl/documentation>`_ for
-an example.
+remained under control.
 
 To achieve this I wanted the schemas to be able to reference other (reusable) schemas
 using the ``$ref`` keyword. These subschemas, should be documented somewhere else but

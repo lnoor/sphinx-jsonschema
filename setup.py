@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='sphinx-jsonschema',
-    version='1.15',     # don't forget: must match __init__.py::setup() return value
+    version='1.16',     # don't forget: must match __init__.py::setup() return value
 
     description='Sphinx extension to display JSON Schema',
     long_description=long_description,
@@ -29,7 +29,6 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Documentation',
         'Topic :: Documentation :: Sphinx'

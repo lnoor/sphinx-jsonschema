@@ -31,10 +31,10 @@ from .wide_format import WideFormat
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
-    option_spec = {'seperate_description': directives.flag, 
-                   'seperate_definitions': directives.flag,
-                   'enable_auto_reference': directives.flag,
-                   'enable_auto_target': directives.flag,
+    option_spec = {'lift_description': directives.flag,
+                   'lift_definitions': directives.flag,
+                   'auto_reference': directives.flag,
+                   'auto_target': directives.flag,
                    'timeout': float}
 
     def run(self):
@@ -48,7 +48,7 @@ class JsonSchema(Directive):
             raise self.directive_error(error.level, error.msg)
         except Exception as error:
             tb = error.__traceback__
-            # loop through all trackback points to only return the last traceback
+            # loop through all traceback points to only return the last traceback
             while tb.tb_next:
                 tb = tb.tb_next
 
@@ -75,7 +75,7 @@ class JsonSchema(Directive):
             raise self.error('"%s" directive has no content or a reference to an external file.'
                              % self.name)
 
-        try:   
+        try:
             schema = self.ordered_load(schema)
         except Exception as error:
             error = self.state_machine.reporter.error(
@@ -83,7 +83,7 @@ class JsonSchema(Directive):
                      % (self.name, SafeString("".join(format_exception_only(type(error), error)))),
                     nodes.literal_block(schema, schema), line=self.lineno)
             raise SystemMessagePropagation(error)
-        
+
         if pointer:
             try:
                 schema = resolve_pointer(schema, pointer)
@@ -98,11 +98,12 @@ class JsonSchema(Directive):
 
     def from_content(self, filename):
         if filename:
-                error = self.state_machine.reporter.error(
-                    '"%s" directive may not both specify an external file and'
-                    ' have content.' % self.name, nodes.literal_block(
-                    self.block_text, self.block_text), line=self.lineno)
-                raise SystemMessagePropagation(error)
+            error = self.state_machine.reporter.error(
+                '"%s" directive may not both specify an external file and'
+                ' have content.' % self.name,
+                nodes.literal_block(self.block_text, self.block_text),
+                line=self.lineno)
+            raise SystemMessagePropagation(error)
 
         source = self.content.source(0)
         data = '\n'.join(self.content)
@@ -118,19 +119,19 @@ class JsonSchema(Directive):
             import requests
         except ImportError:
             raise self.error('"%s" directive requires requests when loading from http.'
-                                ' Try "pip install requests".' % self.name)
+                             ' Try "pip install requests".' % self.name)
 
         try:
             response = requests.get(url, timeout=timeout)
         except requests.exceptions.RequestException as e:
             raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
                                 % (self.name, type(e), url))
-            
-        if response.status_code != 200: 
+
+        if response.status_code != 200:
             # When making a connection to the url a status code will be returned
             # Normally a OK (200) response would we be returned all other responses
-            # an error will be raised could be seperated futher
-            raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
+            # an error will be raised could be separated futher
+            raise self.error(u'"%s" directive received an "%s" when loading from url: %s.'
                                 % (self.name, response.reason, url))
 
         # response content always binary converting with decode() no specific format defined
@@ -192,4 +193,4 @@ class JsonSchema(Directive):
 
 def setup(app):
     app.add_directive('jsonschema', JsonSchema)
-    return {'version': '1.15'}
+    return {'version': '1.16'}

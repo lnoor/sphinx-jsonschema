@@ -10,7 +10,7 @@ Also I can imagine that other display layouts are desired.
 
 I only tested it for use with the `draft 4 <http://json-schema.org/specification-links.html#draft-4>`_ specification of JSON Schema.
 I was pleasantly surprised to find that the software is useful to others as well.
-Therefore it made sense to document intended use.
+Therefore it made sense to document its intended use.
 
 Contents
 ========
@@ -32,6 +32,15 @@ Indices and tables
 
 Changelog
 =========
+
+Version 1.16
+------------
+
+WouterTuinstra (https://github.com/WouterTuinstra) reimplemented support for ``dependencies`` and properly this time.
+He also improved error handling and reporting and added a couple of options improving the handling of references.
+As a bonus he included an option that 'lifts' the description out of the table and places it directly under the title.
+
+In addition to all that he also implemented support for the ``if``, ``then`` and ``else`` keywords.
 
 Version 1.15
 ------------

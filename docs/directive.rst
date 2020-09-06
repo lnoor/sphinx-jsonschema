@@ -10,8 +10,8 @@ The schemas are read by a YAML parser.
 This means that you can write the schemas in either json or yaml notation
 and they will be processed identically.
 
-Useage
-------
+Usage
+-----
 
 To display a schema fetched from a website:
 
@@ -127,29 +127,30 @@ which renders:
 Options
 -------
 
-There a couple of options implemented into jsonschema that change the display or functionality of the schema.
-The options are:
+There a couple of options implemented in **sphinx-jsonschema** that control the way a schema is rendered or processed.
+These options are:
 
-- seperate_description
-- seperate_definitions
-- enable_auto_target
-- enable_auto_reference
+- lift_description
+- lift_definitions
+- auto_target
+- auto_reference
 
-Seperate Description
-++++++++++++++++++++
+Lift Description
+++++++++++++++++
 
-To seperate the ``description`` from the table you will need to have a title defined and the 
-flag **\:seperate_description:** otherwise it will be included into the table:
+Lifts the ``description`` from the table and places it between the title and the table.
+You will need to have a title defined and the flag **\:lift_description:** otherwise it will be included into
+the table:
 
 .. code-block::
 
     .. jsonschema::
-        :seperate_description:
+        :lift_description:
 
         {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "id": "http://example.com/schemas/example.json",
-            "title": "Example Seperate Description",
+            "title": "Example Separate Description",
             "description": "This is just a tiny example of a schema rendered by `sphinx-jsonschema <http://github.com/lnoor/sphinx-jsonschema>`_.\n\nWhereby the description can shown as text outside the table, and you can still use *reStructuredText* in a description.",
             "type": "string",
             "minLength": 10,
@@ -160,12 +161,12 @@ flag **\:seperate_description:** otherwise it will be included into the table:
 which renders:
 
 .. jsonschema::
-    :seperate_description:
+    :lift_description:
 
     {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "id": "http://example.com/schemas/example.json",
-        "title": "Example Seperate Description",
+        "title": "Example Separate Description",
         "description": "This is just a tiny example of a schema rendered by `sphinx-jsonschema <http://github.com/lnoor/sphinx-jsonschema>`_.\n\nWhereby the description can shown as text outside the table, and you can still use *reStructuredText* in a description.",
         "type": "string",
         "minLength": 10,
@@ -173,17 +174,17 @@ which renders:
         "pattern": "^[A-Z]+$"
     }
 
-Seperate Definitions
-++++++++++++++++++++
+Lift Definitions
+++++++++++++++++
 
-To seperate the ``definitions`` from the table you will need to have the flag **\:seperate_description:** included. 
+To separate the ``definitions`` from the table you will need to have the flag **\:lift_definitions:** included.
 For each item inside the ``definitions`` it will make a new section with title and a table of the items inside.
-It's advised to enable also **\:enable_auto_reference:** flag to auto link ``$ref`` to a local ``definitions`` title. 
+It's advised to also use the **\:auto_reference:** flag to auto link ``$ref`` to a local ``definitions`` title.
 
 .. code-block:: rst
 
     .. jsonschema::
-        :seperate_definitions:
+        :lift_definitions:
 
         {
             "title": "Example with definitions",
@@ -212,7 +213,7 @@ It's advised to enable also **\:enable_auto_reference:** flag to auto link ``$re
 which renders:
 
 .. jsonschema::
-    :seperate_definitions:
+    :lift_definitions:
 
     {
         "title": "Example with definitions",
@@ -241,19 +242,20 @@ which renders:
 Auto Target and Reference
 +++++++++++++++++++++++++
 
-With the **\:enable_auto_target:** flag there will be a target created with filename and optional pointer. 
-When you would include auto target on multiple JSON schema with identical filenames it will cause a conflict 
-within your build only the last build target will be used by the references. 
-this also applies if you would embed the schema directly into your documentation only the filename will be the document name.
+With the **\:auto_target:** flag there will be a target created with filename and optional pointer.
+When you would include auto target on multiple JSON schemas with identical file names it will cause a conflict
+within your build only the last build target will be used by the references.
+This also applies if you would embed the schema directly into your documentation; in that case the document name is used
+as the file name.
 
-With the **\:enable_auto_reference:** flag there will be more logic applied to reduce the amount of undefined label warnings.
-It will check if it's referencing to it self and if there would be a title to link to,
-when there are titles in the same page that have an identical name it will cause linking issues. 
-If you didn't seperate definitions from the schema the ``$ref`` will become a text field without a linked reference.
-if the ``$ref`` would point to an other schema from the path it will extract the filename it expected 
-to be included into your documentation with a **\:enable_auto_target:**.
+With the **\:auto_reference:** flag there will be more logic applied to reduce the amount of undefined label warnings.
+It will check if it is referencing to itself and if there would be a title to link to,
+when there are titles in the same page that have an identical name it will cause linking issues.
+If you didn't separate definitions from the schema the ``$ref`` will become a text field without a linked reference.
+If the ``$ref`` would point to an other schema from the path it will extract the filename it expected
+to be included into your documentation with **\:auto_target:**.
 
-Mainly the **\:enable_auto_reference:** flag infuence behavoir of the existing ``$$target`` methode and could potentially break links.
+Mainly the **\:auto_reference:** flag influences behavior of the existing ``$$target`` method and could potentially break links.
 
 | See below the schema whereby both options are included.
   For each section it will create a target in this example filename of the document as the schema is added as context and it's pointer if there would be one.
@@ -263,9 +265,9 @@ Mainly the **\:enable_auto_reference:** flag infuence behavoir of the existing `
 .. code-block:: rst
 
     .. jsonschema::
-        :seperate_definitions:
-        :enable_auto_reference:
-        :enable_auto_target:
+        :lift_definitions:
+        :auto_reference:
+        :auto_target:
 
     {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -292,9 +294,9 @@ Mainly the **\:enable_auto_reference:** flag infuence behavoir of the existing `
 which renders:
 
 .. jsonschema::
-    :seperate_definitions:
-    :enable_auto_reference:
-    :enable_auto_target:
+    :lift_definitions:
+    :auto_reference:
+    :auto_target:
 
     {
         "$schema": "http://json-schema.org/draft-07/schema#",

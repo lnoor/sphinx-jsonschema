@@ -53,7 +53,7 @@ class WideFormat(object):
         self.target_pointer = '#'
 
     def run(self, schema, pointer=''):
-        # To set the correct auto target for a nested definitions we need to save 
+        # To set the correct auto target for a nested definitions we need to save
         # the current pointer that may be used inside recursive run append on
         before = self.target_pointer
         self.target_pointer += pointer
@@ -79,7 +79,7 @@ class WideFormat(object):
                 result.append(table)
             if definitions:
                 result.extend(definitions)
-        
+
         return result
 
     def transform(self, schema):
@@ -97,7 +97,7 @@ class WideFormat(object):
         labels = self.app.env.domaindata['std']['labels']
         anonlabels = self.app.env.domaindata['std']['anonlabels']
         docname = self.app.env.docname
-       
+
         targets = []
 
         if '$$target' in schema:
@@ -107,7 +107,7 @@ class WideFormat(object):
                 targets.extend(schema['$$target'])
             del schema['$$target']
 
-        if 'enable_auto_target' in self.options:
+        if 'auto_target' in self.options:
             # When schema's multiple schema's are writen with content but without a pointer
             # you get multiple equal named targets, all $ref will link to the last created schema
             # The same applies if you would load files with equal name into your documentation
@@ -122,22 +122,22 @@ class WideFormat(object):
             targetnode['ids'].append(anchorid)
             targetnode['names'].append(anchorid)
             targetnode.line = self.lineno
-                
+
             for target in targets:
                 anchor = normalize_name(target)
                 anonlabels[anchor] = docname, targetnode['ids'][0]
                 labels[anchor] = docname, targetnode['ids'][0], (schema['title'] if 'title' in schema else target)
-            
+
             return targetnode
-        
+
         return None
 
     def _section(self, schema):
         if 'title' in schema:
             # Wrap the resulting table in a section giving it a caption and an
             # entry in the table of contents.
-            # unable to use self.state.section() to make a section as style is unkown
-            # all sections will be placed inside current section 
+            # unable to use self.state.section() to make a section as style is unknown
+            # all sections will be placed inside current section
             section_node = nodes.section()
             textnodes, title_messages = self.state.inline_text(schema['title'], self.lineno)
             titlenode = nodes.title(schema['title'], '', *textnodes)
@@ -150,12 +150,12 @@ class WideFormat(object):
             if self.nesting == 0:
                 self.ref_titles[self.nesting] = schema['title']
 
-            if 'seperate_description' in self.options:
+            if 'lift_description' in self.options:
                 self._get_description(schema, section_node)
-            
+
             del schema['title']
             return section_node
-        
+
         return None
 
     def _get_description(self, schema, node):
@@ -175,7 +175,7 @@ class WideFormat(object):
 
         # Outermost id becomes schema url
         # NB: disregards interior id's
-        # to support both 'id' draft 4 only and '$id' from draft 6 
+        # to support both 'id' draft 4 only and '$id' from draft 6
         if 'id' in schema:
             body.insert(0, self._line(self._cell(schema['id'])))
             del schema['id']
@@ -199,8 +199,8 @@ class WideFormat(object):
         # Main driver of the recursive schema traversal.
         rows = []
         self.nesting += 1
-        
-        if 'definitions' in schema and 'seperate_definitions' in self.options:
+
+        if 'definitions' in schema and 'lift_definitions' in self.options:
             definitions = self._definitions(schema)
         else:
             definitions = None
@@ -257,7 +257,7 @@ class WideFormat(object):
                     rows.extend(self._dispatch(item, label)[0])
                 else:
                     rows.append(self._line(label, self._cell(item)))
-                
+
             del schema['items']
 
         rows.extend(self._bool_or_object(schema, 'additionalItems'))
@@ -313,7 +313,7 @@ class WideFormat(object):
                     if prop in schema['required']:
                         bold = '**'
                 label = self._cell('- ' + bold + dispprop + bold)
-                
+
                 if isinstance(schema[key][prop], dict):
                     obj = schema[key][prop]
                     rows.extend(self._dispatch(obj, label)[0])
@@ -328,18 +328,18 @@ class WideFormat(object):
             # add title by the name of the object if title not defined
             if 'title' not in item:
                 item['title'] = name
-            
+
             target[name] = item['title']
 
         # To automate $ref to definitions titles save a copy
-        # of the schema before continueing the recursive build
-        # so reference can be set with the correct title 
+        # of the schema before continuing the recursive build
+        # so reference can be set with the correct title
         if self.nesting in self.ref_titles:
             self.ref_titles[self.nesting].update(target)
         else:
             self.ref_titles[self.nesting] = target
 
-        
+
         result = []
         for name, item in schema['definitions'].items():
             result.extend(self.run(item, '/definitions/' + name))
@@ -380,7 +380,7 @@ class WideFormat(object):
             if len(items) >= 2:
                 for item in items:
                     rows.extend(item)
-        
+
         return rows
 
     def _dependencies(self, schema, key):
@@ -404,11 +404,11 @@ class WideFormat(object):
         return rows
 
     def _reference(self, schema):
-        if 'enable_auto_reference' in self.options:
+        if 'auto_reference' in self.options:
             # first check if references is to own schema
-            # when definitions is seperated automated they will be linked to the title
-            # otherwise it will only be a string 
-            if schema['$ref'] == '#' or schema['$ref'] == '#/': 
+            # when definitions is separated automated they will be linked to the title
+            # otherwise it will only be a string
+            if schema['$ref'] == '#' or schema['$ref'] == '#/':
                 if self.ref_titles.get(0, False):
                     row = (self._line(self._cell('`' + self.ref_titles[0] + '`_')))
                 else:
@@ -419,7 +419,7 @@ class WideFormat(object):
                 reference = [v for v in reference if v != "definitions"]
                 target_name = reference[-1]
                 ref_length = len(reference)
-                # Check if there are definitions availible to make a reference
+                # Check if there are definitions available to make a reference
                 if (self.ref_titles.get(ref_length, False) and
                         target_name in self.ref_titles[ref_length]):
                     ref_title = self.ref_titles[ref_length][target_name]
@@ -439,7 +439,7 @@ class WideFormat(object):
             row = (self._line(self._cell(':ref:`' + schema['$ref'] + '`')))
         del schema['$ref']
         return [row]
-        
+
     def _bool_or_object(self, schema, key):
         # for those attributes that accept either a boolean or a schema.
         rows = []

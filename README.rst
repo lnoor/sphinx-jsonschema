@@ -1,5 +1,5 @@
 .. sphinx-jsonschema README
-   Copyright: (C) 2017, Leo Noordergraaf
+   Copyright: (C) 2017-2020, Leo Noordergraaf
 
 =================
 sphinx-jsonschema
@@ -8,6 +8,8 @@ sphinx-jsonschema
 This package contains sphinx-jsonschema, an extension to Sphinx to allow
 authors to display a `JSON Schema <http://json-schema.org>`_ in their
 documentation.
+
+A dockerized version can be found at: `Extended Sphinx <https://hub.docker.com/r/lnoor/sphinx-extended>`_.
 
 It arose out of a personal itch and implements what I needed.
 Some features of JSON Schema are (not yet) implemented.
@@ -166,6 +168,11 @@ This software is made available under the GPL v3.
 
 Changelog
 =========
+
+Version 1.16.1
+--------------
+
+Fixed bugs rendering the ``default`` and ``examples`` keywords.
 
 Version 1.16
 ------------

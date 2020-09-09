@@ -13,6 +13,7 @@
 from sys import version_info
 from pathlib import Path
 import string
+import json
 from docutils import statemachine
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
@@ -463,7 +464,10 @@ class WideFormat(object):
                 value = schema[k]
                 if k == 'pattern':
                     value = self._escape(value)
-                rows.append(self._line(self._cell(k), self._cell(value)))
+                if k == 'default':
+                    rows.extend(self._prepend(self._cell(k), self._render_any_value(value)))
+                else:
+                    rows.append(self._line(self._cell(k), self._cell(value)))
                 del schema[k]
         return rows
 
@@ -495,8 +499,7 @@ class WideFormat(object):
     def _examples(self, examples):
         # Render examples as rows
         rows = []
-        for example in examples:
-            rows.append(self._line(self._cell(example)))
+        rows.extend(self._render_any_value(examples))
         rows = self._prepend(self._cell('examples'), rows)
         return rows
 
@@ -511,6 +514,25 @@ class WideFormat(object):
             else:
                 rows.append(self._line(self._cell(schema['$$description'])))
                 del schema['$$description']
+
+    def _render_any_value(self, value):
+        # render a single value, an array of values or a dict with key/value pairs
+        rows = []
+        if isinstance(value, list):
+            if len(value) == 0:
+                rows.append(self._line(self._cell('')))
+            else:
+                for v in value:
+                    rows.extend(self._render_any_value(v))
+        elif isinstance(value, dict):
+            if len(value) == 0:
+                rows.append(self._line(self._cell('')))
+            else:
+                for k in value:
+                    rows.extend(self._prepend(self._cell(k), self._render_any_value(value[k])))
+        else:
+            rows.append(self._line(self._cell(value)))
+        return rows
 
     def _square(self, rows, nrcols=0):
         # determine max. number of columns

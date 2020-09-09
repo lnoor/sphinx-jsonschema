@@ -33,6 +33,11 @@ Indices and tables
 Changelog
 =========
 
+Version 1.16.1
+--------------
+
+Fixed bugs rendering the ``default`` and ``examples`` keywords.
+
 Version 1.16
 ------------
 

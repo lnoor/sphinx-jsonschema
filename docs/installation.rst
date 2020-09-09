@@ -22,3 +22,11 @@ Source code
 -----------
 
 The source code for this extension can be found on `GitHub <https://github.com/lnoor/sphinx-jsonschema>`_.
+
+Docker image
+------------
+
+A Docker image containing Sphinx and a number of extensions, including sphinx-jsonschema, can be found
+at `Extended Sphinx <https://hub.docker.com/r/lnoor/sphinx-extended>`_.
+This Docker image is generated from the Dockerfile on `Github <https://github.com/lnoor/docker-sphinx-extended>`_.
+

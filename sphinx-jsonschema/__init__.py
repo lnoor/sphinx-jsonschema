@@ -193,4 +193,4 @@ class JsonSchema(Directive):
 
 def setup(app):
     app.add_directive('jsonschema', JsonSchema)
-    return {'version': '1.16.1'}
+    return {'version': '1.16.2'}

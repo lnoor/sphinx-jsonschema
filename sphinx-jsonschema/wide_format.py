@@ -167,7 +167,7 @@ class WideFormat(object):
         if '$$description' in schema:
             if isinstance(schema['$$description'], list):
                 schema['$$description'] = '\n'.join(schema['$$description'])
-            self.state.nested_parse(self._convert_content(schema['description']), self.lineno, node)
+            self.state.nested_parse(self._convert_content(schema['$$description']), self.lineno, node)
             del schema['$$description']
 
     def _cover(self, schema, body):

@@ -28,13 +28,24 @@ from docutils.utils.error_reporting import SafeString
 from .wide_format import WideFormat
 
 
+def flag(argument):
+    if argument is None:
+        return True
+
+    value = argument.lower().strip()
+    if value in ['on', 'true']:
+        return True
+    if value in ['off', 'false']:
+        return False
+    raise ValueError('"%s" unknown, choose from "On", "True", "Off" or "False"' % argument)
+
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
-    option_spec = {'lift_description': directives.flag,
-                   'lift_definitions': directives.flag,
-                   'auto_reference': directives.flag,
-                   'auto_target': directives.flag,
+    option_spec = {'lift_description': flag,
+                   'lift_definitions': flag,
+                   'auto_reference': flag,
+                   'auto_target': flag,
                    'timeout': float}
 
     def run(self):
@@ -193,4 +204,5 @@ class JsonSchema(Directive):
 
 def setup(app):
     app.add_directive('jsonschema', JsonSchema)
-    return {'version': '1.16.2'}
+    app.add_config_value('jsonschema_options', {}, 'env');
+    return {'version': '1.16.3'}

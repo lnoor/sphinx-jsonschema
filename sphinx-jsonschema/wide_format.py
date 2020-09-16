@@ -41,6 +41,13 @@ class WideFormat(object):
 
     CONDITIONAL = ["if", "then", "else"]
 
+    option_defaults = {
+        'lift_description': False,
+        'lift_definitions': False,
+        'auto_target': False,
+        'auto_reference': False
+    }
+
     def __init__(self, state, lineno, source, options, app):
         super(WideFormat, self).__init__()
         self.app = app
@@ -48,10 +55,13 @@ class WideFormat(object):
         self.lineno = lineno
         self.state = state
         self.filename = self._get_filename(source)
-        self.options = options
         self.nesting = 0
         self.ref_titles = {}
         self.target_pointer = '#'
+
+        self.options = self.option_defaults;
+        self.options.update(app.config.jsonschema_options)
+        self.options.update(options)
 
     def run(self, schema, pointer=''):
         # To set the correct auto target for a nested definitions we need to save
@@ -108,7 +118,8 @@ class WideFormat(object):
                 targets.extend(schema['$$target'])
             del schema['$$target']
 
-        if 'auto_target' in self.options:
+        #if 'auto_target' in self.options:
+        if self.options['auto_target']:
             # When schema's multiple schema's are writen with content but without a pointer
             # you get multiple equal named targets, all $ref will link to the last created schema
             # The same applies if you would load files with equal name into your documentation
@@ -151,7 +162,8 @@ class WideFormat(object):
             if self.nesting == 0:
                 self.ref_titles[self.nesting] = schema['title']
 
-            if 'lift_description' in self.options:
+            #if 'lift_description' in self.options:
+            if self.options['lift_description']:
                 self._get_description(schema, section_node)
 
             del schema['title']
@@ -201,7 +213,8 @@ class WideFormat(object):
         rows = []
         self.nesting += 1
 
-        if 'definitions' in schema and 'lift_definitions' in self.options:
+        #if 'definitions' in schema and 'lift_definitions' in self.options:
+        if 'definitions' in schema and self.options['lift_definitions']:
             definitions = self._definitions(schema)
         else:
             definitions = None
@@ -405,7 +418,8 @@ class WideFormat(object):
         return rows
 
     def _reference(self, schema):
-        if 'auto_reference' in self.options:
+        #if 'auto_reference' in self.options:
+        if self.options['auto_reference']:
             # first check if references is to own schema
             # when definitions is separated automated they will be linked to the title
             # otherwise it will only be a string

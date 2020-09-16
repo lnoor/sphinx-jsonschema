@@ -12,8 +12,6 @@
 
 from sys import version_info
 from pathlib import Path
-import string
-import json
 from docutils import statemachine
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
@@ -118,7 +116,6 @@ class WideFormat(object):
                 targets.extend(schema['$$target'])
             del schema['$$target']
 
-        #if 'auto_target' in self.options:
         if self.options['auto_target']:
             # When schema's multiple schema's are writen with content but without a pointer
             # you get multiple equal named targets, all $ref will link to the last created schema
@@ -162,7 +159,6 @@ class WideFormat(object):
             if self.nesting == 0:
                 self.ref_titles[self.nesting] = schema['title']
 
-            #if 'lift_description' in self.options:
             if self.options['lift_description']:
                 self._get_description(schema, section_node)
 
@@ -213,7 +209,6 @@ class WideFormat(object):
         rows = []
         self.nesting += 1
 
-        #if 'definitions' in schema and 'lift_definitions' in self.options:
         if 'definitions' in schema and self.options['lift_definitions']:
             definitions = self._definitions(schema)
         else:
@@ -225,12 +220,10 @@ class WideFormat(object):
                 rows = self._objecttype(schema)
             elif 'array' in schema['type']:
                 rows = self._arraytype(schema)
-        #    else:                                      # to fix: #31
-        #        rows = self._simpletype(schema)
         else:
             rows = self._objecttype(schema)
             self._check_description(schema, rows)
-        rows.extend(self._simpletype(schema))           # to fix: #31
+        rows.extend(self._simpletype(schema))
 
         if '$ref' in schema:
             rows.extend(self._reference(schema))
@@ -371,7 +364,7 @@ class WideFormat(object):
                 for s in schema[k]:
                     content = self._dispatch(s)[0]
                     if content:
-                        items.extend(self._prepend(self._cell('-'), content))
+                        items.extend(content)
                 if items:
                     rows.extend(self._prepend(self._cell(k), items))
                 del schema[k]
@@ -418,7 +411,6 @@ class WideFormat(object):
         return rows
 
     def _reference(self, schema):
-        #if 'auto_reference' in self.options:
         if self.options['auto_reference']:
             # first check if references is to own schema
             # when definitions is separated automated they will be linked to the title

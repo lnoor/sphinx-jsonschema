@@ -319,3 +319,29 @@ which renders:
             }
         }
     }
+
+Setting default values
+++++++++++++++++++++++
+When you want to use the options \:lift_definitions: \:lift_description, \:auto_target
+and \:auto_reference in most schema renderings it is more convenient to set them once
+for your whole project.
+
+The ``conf.py`` option **jsonschema_options** lets you do so.
+It takes a dict as value the boolean valued keys of which have the same name as the options.
+
+So, in ``conf.py`` you can state:
+.. code-block:: py
+
+    jsonschema_options = {
+        'lift_description': True,
+        'aut_reference': True
+    }
+
+By default all four options are False.
+
+Overruling defaults
+^^^^^^^^^^^^^^^^^^^
+The default values for the options can be overruled by setting the directive options.
+They accept an optional argument which can be one of the words ``On``, ``Off``, ``True``
+or ``False``. The default value for the argument is ``True``.
+

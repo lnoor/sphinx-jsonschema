@@ -11,6 +11,7 @@
 """
 
 from sys import version_info
+from copy import deepcopy
 from pathlib import Path
 from docutils import statemachine
 from docutils import nodes
@@ -40,6 +41,7 @@ class WideFormat(object):
     CONDITIONAL = ["if", "then", "else"]
 
     option_defaults = {
+        'lift_title': True,
         'lift_description': False,
         'lift_definitions': False,
         'auto_target': False,
@@ -57,7 +59,7 @@ class WideFormat(object):
         self.ref_titles = {}
         self.target_pointer = '#'
 
-        self.options = self.option_defaults;
+        self.options = deepcopy(self.option_defaults);
         self.options.update(app.config.jsonschema_options)
         self.options.update(options)
 
@@ -142,7 +144,7 @@ class WideFormat(object):
         return None
 
     def _section(self, schema):
-        if 'title' in schema:
+        if 'title' in schema and self.options['lift_title']:
             # Wrap the resulting table in a section giving it a caption and an
             # entry in the table of contents.
             # unable to use self.state.section() to make a section as style is unknown
@@ -274,7 +276,7 @@ class WideFormat(object):
     def _simpletype(self, schema):
         rows = []
 
-        if 'title' in schema and self.nesting > 1:
+        if 'title' in schema and (not self.options['lift_title'] or self.nesting > 1):
             rows.append(self._line(self._cell('*' + schema['title'] + '*')))
             del schema['title']
 

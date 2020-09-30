@@ -42,7 +42,8 @@ def flag(argument):
 class JsonSchema(Directive):
     optional_arguments = 1
     has_content = True
-    option_spec = {'lift_description': flag,
+    option_spec = {'lift_title': flag,
+                   'lift_description': flag,
                    'lift_definitions': flag,
                    'auto_reference': flag,
                    'auto_target': flag,

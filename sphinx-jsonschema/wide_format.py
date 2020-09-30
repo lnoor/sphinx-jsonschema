@@ -253,20 +253,23 @@ class WideFormat(object):
         return rows
 
     def _arraytype(self, schema):
+        def oneline(label, item):
+            if isinstance(item, dict):
+                rows.extend(self._dispatch(item, label)[0])
+            else:
+                rows.append(self._line(label, self._cell(item)))
+
         # create description and type rows
         rows = self._simpletype(schema)
 
         if 'items' in schema:
-            # add items label
-            rows.append(self._line(self._cell('items')))
-            items = schema['items'] if type(schema['items']) == list else [schema['items']]
-            for item in items:
+            if type(schema['items']) == list:
+                rows.append(self._line(self._cell('items')))
                 label = self._cell('-')
-                if isinstance(item, dict):
-                    rows.extend(self._dispatch(item, label)[0])
-                else:
-                    rows.append(self._line(label, self._cell(item)))
-
+                for item in schema['items']:
+                    oneline(label, item)
+            else:
+                oneline(self._cell('items'), schema['items'])
             del schema['items']
 
         rows.extend(self._bool_or_object(schema, 'additionalItems'))

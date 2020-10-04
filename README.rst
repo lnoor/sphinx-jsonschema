@@ -169,6 +169,14 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.16.4
+--------------
+
+Introduces the ``:lift_title:`` directive option suggested by `ankostis <https://github.com/ankostis>`_.
+Ankostis also provided an example on how to extend the formatter to handle custom properties.
+
+Fixed a bug in rendering the ``items`` attribute of the ``array`` type reported by nijel (https://github.com/nijel).
+
 Version 1.16.1-3
 ----------------
 
@@ -180,7 +188,7 @@ introduced in 1.16. The options now can accept a parameter to explicitly turn th
 Version 1.16
 ------------
 
-WouterTuinstra (https://github.com/WouterTuinstra) reimplemented support for ``dependencies`` and properly this time.
+`WouterTuinstra <https://github.com/WouterTuinstra>`_ reimplemented support for ``dependencies`` and properly this time.
 He also improved error handling and reporting and added a couple of options improving the handling of references.
 
 The most important additions are the directive options ``:lift_description:``, ``:lift_definitions:``,
@@ -208,19 +216,19 @@ Solved a divergence of the standard reported by bbasic (https://github.com/bbasi
 Version 1.10
 ------------
 
-Ivan Vysotskyy (https://github.com/ivysotskyi) contributed the idea to use an array with
+`Ivan Vysotskyy <https://github.com/ivysotskyi>`_ contributed the idea to use an array with
 the ``description`` key resulting in the new ``$$description`` key.
 
 
 Version 1.9
 -----------
 
-Tom Walter (https://github.com/EvilPuppetMaster) contributed the ``example`` support.
+`Tom Walter <https://github.com/EvilPuppetMaster>`_ contributed the ``example`` support.
 
 Version 1.4
 -----------
 
-Chris Holdgraf (https://github.com/choldgraf) contributed Python3 and yaml support.
+`Chris Holdgraf <https://github.com/choldgraf>`_ contributed Python3 and yaml support.
 
 Version 1.3
 -----------

@@ -130,10 +130,39 @@ Options
 There a couple of options implemented in **sphinx-jsonschema** that control the way a schema is rendered or processed.
 These options are:
 
-- lift_description
-- lift_definitions
-- auto_target
-- auto_reference
+lift_title (default: True)
+    Uses the title to create a new section in your document and creates an anchor you can refer to using jsonschema's
+    ``$ref`` or ReStructuredText's ``:ref:`` notation.
+    When `False` the title becomes part of the table rendered from the schema, the table cannot be referenced and the
+    option ``:lift_description:`` is ignored.
+
+lift_description (default: False)
+    Places the description between the title and the table rendering the schema.
+    This option is ignored when ``:lift_title:`` is `False`.
+
+lift_definitions (default: False)
+    Removed the items under the ``definitions`` key and renders each of them separately as if they are top-level
+    schemas.
+
+auto_target (default: False)
+    Automatically generate values for the ``$$target`` key.
+    Especially useful in combination with ``:lift_definitions:``.
+
+auto_reference (default: False)
+    Automatically resolves references when possible.
+    Works well with ``:auto_target:`` and ``:lift_definitions:``.
+
+
+Lift Title
+++++++++++
+
+By default the schema's top level title is displayed above the table containing the remainder of the schema.
+This title becomes a section that can be included in the table of contents and the index.
+It is also used to resolve references to the schema from either other schemas of from elsewhere in the documentation.
+
+This option mainly exists to suppress this behaviour.
+One place where this is desirable is when using jsonschema to validate and document function parameters.
+See `issue 48 <https://github.com/lnoor/sphinx-jsonschema/issues/48>`_ for an example.
 
 Lift Description
 ++++++++++++++++

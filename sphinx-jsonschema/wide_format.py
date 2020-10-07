@@ -416,7 +416,7 @@ class WideFormat(object):
         return rows
 
     def _reference(self, schema):
-        if self.options['auto_reference']:
+        if self.options['auto_reference'] and self.options['lift_title']:
             # first check if references is to own schema
             # when definitions is separated automated they will be linked to the title
             # otherwise it will only be a string
@@ -447,6 +447,10 @@ class WideFormat(object):
                 row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref'], True) + '`')))
             else:
                 row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref']) + '`')))
+        elif self.options['auto_reference'] and not self.options['lift_title']:
+            # when using reference without titles we need to reference to our own targets 
+            # if auto_target is False linking won't work
+            row = (self._line(self._cell(':ref:`' + self.filename + schema['$ref'] + '`')))
         else:
             row = (self._line(self._cell(':ref:`' + schema['$ref'] + '`')))
         del schema['$ref']

@@ -169,6 +169,11 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.16.5
+--------------
+
+Bugfix version.
+
 Version 1.16.4
 --------------
 

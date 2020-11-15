@@ -265,8 +265,8 @@ class WideFormat(object):
         if 'items' in schema:
             if type(schema['items']) == list:
                 rows.append(self._line(self._cell('items')))
-                label = self._cell('-')
                 for item in schema['items']:
+                    label = self._cell('-')
                     oneline(label, item)
             else:
                 oneline(self._cell('items'), schema['items'])
@@ -448,7 +448,7 @@ class WideFormat(object):
             else:
                 row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref']) + '`')))
         elif self.options['auto_reference'] and not self.options['lift_title']:
-            # when using reference without titles we need to reference to our own targets 
+            # when using reference without titles we need to reference to our own targets
             # if auto_target is False linking won't work
             row = (self._line(self._cell(':ref:`' + self.filename + schema['$ref'] + '`')))
         else:

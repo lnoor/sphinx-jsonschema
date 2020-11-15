@@ -34,8 +34,8 @@ Indices and tables
 Changelog
 =========
 
-Version 1.16.5
---------------
+Version 1.16.5-6
+----------------
 
 Bugfix version.
 

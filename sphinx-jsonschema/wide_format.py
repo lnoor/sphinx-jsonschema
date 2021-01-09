@@ -6,7 +6,7 @@
     In this layout for each nesting level the table is extended by
     one or more columns.
 
-    :copyright: Copyright 2017-2020, Leo Noordergraaf
+    :copyright: Copyright 2017-2021, Leo Noordergraaf
     :licence: GPL v3, see LICENCE for details.
 """
 
@@ -59,7 +59,7 @@ class WideFormat(object):
         self.ref_titles = {}
         self.target_pointer = '#'
 
-        self.options = deepcopy(self.option_defaults);
+        self.options = deepcopy(self.option_defaults)
         self.options.update(app.config.jsonschema_options)
         self.options.update(options)
 
@@ -546,7 +546,7 @@ class WideFormat(object):
                 for k in value:
                     rows.extend(self._prepend(self._cell(k), self._render_any_value(value[k])))
         else:
-            rows.append(self._line(self._cell(value)))
+            rows.append(self._line(self._cell(value if value is not None else "null")))
         return rows
 
     def _square(self, rows, nrcols=0):

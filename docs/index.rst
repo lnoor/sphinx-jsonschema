@@ -34,6 +34,11 @@ Indices and tables
 Changelog
 =========
 
+Version 1.16.8
+--------------
+
+`Jens Nielsen <https://github.com/jenshnielsen>`_ improved rendering of string values.
+
 Version 1.16.5-6
 ----------------
 

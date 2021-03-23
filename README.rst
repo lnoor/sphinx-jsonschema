@@ -169,6 +169,11 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.16.8
+--------------
+
+`Jens Nielsen <https://github.com/jenshnielsen>`_ improved rendering of string values.
+
 Version 1.16.5-6
 ----------------
 

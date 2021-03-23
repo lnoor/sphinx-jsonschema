@@ -545,6 +545,8 @@ class WideFormat(object):
             else:
                 for k in value:
                     rows.extend(self._prepend(self._cell(k), self._render_any_value(value[k])))
+        elif isinstance(value, str):
+            rows.append(self._line(self._cell(self._escape(value) if value is not None else "null")))
         else:
             rows.append(self._line(self._cell(value if value is not None else "null")))
         return rows

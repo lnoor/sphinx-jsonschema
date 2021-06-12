@@ -206,4 +206,7 @@ class JsonSchema(Directive):
 def setup(app):
     app.add_directive('jsonschema', JsonSchema)
     app.add_config_value('jsonschema_options', {}, 'env')
-    return {'version': '1.16.8'}
+    return {
+        'parallel_read_safe': True,
+        'version': '1.16.8'
+    }

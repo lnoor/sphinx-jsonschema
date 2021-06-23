@@ -47,7 +47,8 @@ class JsonSchema(Directive):
                    'lift_definitions': flag,
                    'auto_reference': flag,
                    'auto_target': flag,
-                   'timeout': float}
+                   'timeout': float,
+                   'encoding': directives.encoding}
 
     def run(self):
         try:
@@ -159,7 +160,7 @@ class JsonSchema(Directive):
             source = filename
 
         try:
-            with open(source) as file:
+            with open(source, encoding=self.options.get('encoding')) as file:
                 data = file.read()
         except IOError as error:
             raise self.error(u'"%s" directive encountered an IOError while loading file: %s\n%s'

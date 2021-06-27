@@ -152,6 +152,8 @@ auto_reference (default: False)
     Automatically resolves references when possible.
     Works well with ``:auto_target:`` and ``:lift_definitions:``.
 
+encoding (default: None)
+    Allows you to define the encoding used by the file containing the json schema.
 
 Lift Title
 ++++++++++
@@ -374,3 +376,11 @@ The default values for the options can be overruled by setting the directive opt
 They accept an optional argument which can be one of the words ``On``, ``Off``, ``True``
 or ``False``. The default value for the argument is ``True``.
 
+Declare file encoding
++++++++++++++++++++++
+The ``:encoding:`` option allows you to define the encoding used by the file containing
+the json schema. When the operating system default encoding does not produce correct
+results then this option allows you to specify the encoding to use.
+When omitted the operating system default is used as it always has been. But it is now
+possible to explicitly declare the expected encoding using ``:encoding: utf8``.
+You can use any encoding defined by Python's codecs for your platform.

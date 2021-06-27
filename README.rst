@@ -169,6 +169,18 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.16.10
+---------------
+
+`iamdbychkov <https://github.com/iamdbychkov>`_ added the ``:encoding:`` directive option.
+This option allows explicit control of the encoding used to read a file
+instead of relying on the operating system default.
+
+Version 1.16.9
+--------------
+
+Bugfix.
+
 Version 1.16.8
 --------------
 

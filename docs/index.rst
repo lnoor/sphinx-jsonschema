@@ -34,6 +34,11 @@ Indices and tables
 Changelog
 =========
 
+Version 1.16.11
+---------------
+
+Removed debugging code left in, pointed out by `Kevin Landreth <https://github.com/CrackerJackMack>`.
+
 Version 1.16.10
 ---------------
 

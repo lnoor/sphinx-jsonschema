@@ -410,7 +410,6 @@ class WideFormat(object):
                             label,
                             self._cell(str_unicode(', '.join(obj)))))
                 else:
-                    import pdb; pdb.set_trace()
                     rows.extend(self._dispatch(obj, label)[0])
             del schema[key]
         return rows

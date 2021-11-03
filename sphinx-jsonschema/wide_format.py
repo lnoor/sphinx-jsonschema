@@ -211,10 +211,12 @@ class WideFormat(object):
         rows = []
         self.nesting += 1
 
-        if 'definitions' in schema and self.options['lift_definitions']:
-            definitions = self._definitions(schema)
-        else:
-            definitions = None
+        definitions = []
+        if self.options['lift_definitions']:
+            if '$defs' in schema:
+                definitions = self._definitions(schema, '$defs')
+            elif 'definitions' in schema:
+                definitions = self._definitions(schema, 'definitions')
 
         if 'type' in schema:
             # select processor for type
@@ -234,6 +236,7 @@ class WideFormat(object):
 
         # definitions aren't really type equiv's but still best place for them
         rows.extend(self._objectproperties(schema, 'definitions'))
+        rows.extend(self._objectproperties(schema, '$defs'))
 
         if label is not None:
             # prepend label column if required
@@ -334,9 +337,9 @@ class WideFormat(object):
             del schema[key]
         return rows
 
-    def _definitions(self, schema):
+    def _definitions(self, schema, defs_key):
         target = {}
-        for name, item in schema['definitions'].items():
+        for name, item in schema[defs_key].items():
             # add title by the name of the object if title not defined
             if 'title' not in item:
                 item['title'] = name
@@ -353,10 +356,13 @@ class WideFormat(object):
 
 
         result = []
-        for name, item in schema['definitions'].items():
-            result.extend(self.run(item, '/definitions/' + name))
+        for name, item in schema[defs_key].items():
+            new_target = '/{defs_key}/{name}'.format(
+                defs_key=defs_key, name=name
+            )
+            result.extend(self.run(item, new_target))
 
-        del schema['definitions']
+        del schema[defs_key]
         return result
 
     def _complexstructures(self, schema):
@@ -414,22 +420,28 @@ class WideFormat(object):
             del schema[key]
         return rows
 
+    def _get_defined_reference(self, schema, key):
+        target = '#/{defs}/'.format(defs=key)
+        if schema['$ref'].startswith(target):
+            reference = [r for r in schema['$ref'][2:].split('/') if r != key]
+            return len(reference), reference[-1]
+
     def _reference(self, schema):
         if self.options['auto_reference'] and self.options['lift_title']:
             # first check if references is to own schema
             # when definitions is separated automated they will be linked to the title
             # otherwise it will only be a string
+            reference = (
+                self._get_defined_reference(schema, 'definitions') or
+                self._get_defined_reference(schema, '$defs')
+            )
             if schema['$ref'] == '#' or schema['$ref'] == '#/':
                 if self.ref_titles.get(0, False):
                     row = (self._line(self._cell('`' + self.ref_titles[0] + '`_')))
                 else:
                     row = (self._line(self._cell(schema['$ref'])))
-            elif schema['$ref'].startswith("#/definitions/"):
-                reference = schema['$ref'][2:].split('/')
-                # removing definitions from list otherwise nesting level will be to deep
-                reference = [v for v in reference if v != "definitions"]
-                target_name = reference[-1]
-                ref_length = len(reference)
+            elif reference:
+                ref_length, target_name = reference
                 # Check if there are definitions available to make a reference
                 if (self.ref_titles.get(ref_length, False) and
                         target_name in self.ref_titles[ref_length]):

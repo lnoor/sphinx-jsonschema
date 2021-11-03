@@ -13,6 +13,7 @@
     :licence: GPL v3, see LICENCE for details.
 """
 
+import csv
 import os.path
 import json
 from jsonpointer import resolve_pointer
@@ -26,6 +27,112 @@ from docutils.parsers.rst import directives
 from docutils.utils import SystemMessagePropagation
 from docutils.utils.error_reporting import SafeString
 from .wide_format import WideFormat
+
+
+def pairwise(seq):
+    """ Iterate over pairs in a sequence """
+    return zip(seq, seq[1:])
+
+
+def maybe_int(val):
+    """ Convert value to an int and return it or just return the value """
+    try:
+        return int(val)
+    except:
+        return val
+
+
+def json_path_validate(path):
+    """ Check that json path doesn't contain consecutive or trailing wildcards """
+    if path[-1] in ('*', '**'):
+        return False
+
+    forbidden = {
+        ('**', '**'),
+        ('**', '*'),
+        ('*', '**'),
+        ('*', '*')
+    }
+
+    return set(pairwise(path)) & forbidden != set()
+
+
+def _json_fan_out(doc, path, transform, deep=False):
+    """ Process */** wildcards in the path by fanning out the processing to multiple keys """
+    if not isinstance(doc, dict) or not path:
+        return
+
+    targets = []
+
+    for (k,v) in doc.items():
+        if k == path[0]:
+            targets.append(k)
+        else:
+            if isinstance(v, dict):
+                if deep:
+                    _json_fan_out(v, path, transform, deep=True)
+                else:
+                    sub_path = path[1:]
+                    if sub_path:
+                        _json_bind(v, sub_path, transform)
+
+    # Since transformers can mutate the original document
+    # we need to process them once we're done iterating
+    for r in targets:
+        transform(doc, r)
+
+
+def _json_bind(doc, path, transform):
+    """ Bind (sub)document to a particular path """
+    obj = doc
+    last = obj
+
+    for idx, p in enumerate(path):
+        if p in ('**', '*'):
+            return _json_fan_out(
+                obj,
+                path[idx+1:],
+                transform,
+                deep=(p == '**')
+            )
+
+        last = obj
+        try:
+            obj = obj[p]
+        except (KeyError, IndexError):
+            return
+
+    if path:
+        transform(last, path[-1])
+
+
+def json_path_transform(document, path, transformer):
+    """ Transform items in `document` conforming to `path` with a `transformer` in-place """
+
+    # Try to cast parts of the path as int if possible so that we can support
+    # paths like `/some/array/0/something` and we don't end up with TypeError
+    # trying to index into a list with a string '0'
+    parts = [maybe_int(p) for p in path.split('/')[1:]]
+
+    if not parts or not json_path_validate(path):
+        raise ValueError('Supplied JSON path is invalid')
+
+    _json_bind(document, parts, transformer)
+
+
+def remove(doc, key):
+    del doc[key]
+
+
+def remove_empty(doc, key):
+    if not doc[key]:
+        del doc[key]
+
+
+def hide_key(item):
+    if item:
+        return list(csv.reader([item])).pop()
+    raise ValueError('Invalid JSON path: "%s"' % item)
 
 
 def flag(argument):
@@ -48,11 +155,21 @@ class JsonSchema(Directive):
                    'auto_reference': flag,
                    'auto_target': flag,
                    'timeout': float,
-                   'encoding': directives.encoding}
+                   'encoding': directives.encoding,
+                   'hide_key': hide_key,
+                   'hide_key_if_empty': hide_key}
 
     def run(self):
         try:
             schema, source, pointer = self.get_json_data()
+
+            if self.options['hide_key']:
+                for hide_path in self.options['hide_key']:
+                    json_path_transform(schema, hide_path, remove)
+            if self.options['hide_key_if_empty']:
+                for hide_path in self.options['hide_key_if_empty']:
+                    json_path_transform(schema, hide_path, remove_empty)
+
             format = WideFormat(self.state, self.lineno, source, self.options, self.state.document.settings.env.app)
             return format.run(schema, pointer)
         except SystemMessagePropagation as detail:

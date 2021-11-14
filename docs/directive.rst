@@ -152,6 +152,12 @@ auto_reference (default: False)
     Automatically resolves references when possible.
     Works well with ``:auto_target:`` and ``:lift_definitions:``.
 
+hide_key: (default: None)
+    Hide parts of the schema matching comma separated list of JSON pointers
+
+hide_key_if_empty: (default: None)
+    Hide parts of the schema matching comma separated list of JSON pointers if the value is empty
+
 encoding (default: None)
     Allows you to define the encoding used by the file containing the json schema.
 
@@ -384,3 +390,34 @@ results then this option allows you to specify the encoding to use.
 When omitted the operating system default is used as it always has been. But it is now
 possible to explicitly declare the expected encoding using ``:encoding: utf8``.
 You can use any encoding defined by Python's codecs for your platform.
+
+Hiding parts of the schema
+++++++++++++++++++++++++++
+Sometimes we want to omit certain keys from rendering to make the table more succicnt.
+This can be achieved using the ``:hide_key:`` and ``:hide_key_if_empty:`` options to hide
+all matching keys or all matching keys with empty associated value, respectively.
+The options accept comma separated list of JSON pointers. Matching multiple keys
+is possible using the wildcard syntax ``*`` for single level matching and ``**`` for
+deep matching.
+
+.. code-block:: rst
+
+    .. jsonschema::
+        :hide_key: /**/examples
+
+This example will hide all ``examples`` fields regardless of where they are located
+in the schema.
+If your JSON pointer contains comma you need to place it inside quotes:
+
+.. code-block:: rst
+
+    .. jsonschema::
+        :hide_key: /**/examples,"/**/with, comma"
+
+It is also possible to hide a key if their value is empty using ``:hide_key_if_empty:``.
+
+.. code-block:: rst
+
+    .. jsonschema::
+        :hide_key_if_empty: /**/defaults
+

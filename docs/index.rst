@@ -34,6 +34,13 @@ Indices and tables
 Changelog
 =========
 
+Version 1.17.0
+--------------
+
+`Pavel Odvody <https://github.com/shaded-enmity>`_ contributed the ``:hide_key:`` directive option.
+This option allows you to hide certain keys, specified by a JSON Path specification, to be excluded
+from rendering.
+
 Version 1.16.11
 ---------------
 

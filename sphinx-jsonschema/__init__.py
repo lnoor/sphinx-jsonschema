@@ -163,10 +163,10 @@ class JsonSchema(Directive):
         try:
             schema, source, pointer = self.get_json_data()
 
-            if self.options['hide_key']:
+            if self.options.get('hide_key'):
                 for hide_path in self.options['hide_key']:
                     json_path_transform(schema, hide_path, remove)
-            if self.options['hide_key_if_empty']:
+            if self.options.get('hide_key_if_empty'):
                 for hide_path in self.options['hide_key_if_empty']:
                     json_path_transform(schema, hide_path, remove_empty)
 
@@ -326,5 +326,5 @@ def setup(app):
     app.add_config_value('jsonschema_options', {}, 'env')
     return {
         'parallel_read_safe': True,
-        'version': '1.17.0'
+        'version': '1.17.1'
     }

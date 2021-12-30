@@ -169,6 +169,11 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.17.2
+--------------
+
+`Ezequiel Orbe <https://github.com/eorbe>`_ found, reported and fixed a bug escaping backspaces.
+
 Version 1.17.0
 --------------
 

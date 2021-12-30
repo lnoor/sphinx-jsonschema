@@ -311,8 +311,8 @@ class JsonSchema(Directive):
             yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
             construct_mapping)
 
-        text = text.replace('\\(', '\\\\(')
-        text = text.replace('\\)', '\\\\)')
+        text = text.replace(r'\\(', r'\\\\(')
+        text = text.replace(r'\\)', r'\\\\)')
         try:
             result = yaml.load(text, OrderedLoader)
         except yaml.scanner.ScannerError:
@@ -326,5 +326,5 @@ def setup(app):
     app.add_config_value('jsonschema_options', {}, 'env')
     return {
         'parallel_read_safe': True,
-        'version': '1.17.1'
+        'version': '1.17.2'
     }

@@ -169,6 +169,13 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.18.0
+--------------
+
+Expanding on the work of `Pavel Odvody <https://github.com/shaded-enmity>`_ with JSON Pointer
+the ``:pass_unmodified:`` option is included.
+This option prevents escaping the string pointed at.
+
 Version 1.17.2
 --------------
 

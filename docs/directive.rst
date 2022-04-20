@@ -421,3 +421,26 @@ It is also possible to hide a key if their value is empty using ``:hide_key_if_e
     .. jsonschema::
         :hide_key_if_empty: /**/defaults
 
+Prevent escaping of strings
++++++++++++++++++++++++++++
+Strings are sometimes subject to multiple evaluation passes when rendering.
+This happens because `sphinx-jsonschema` renders a schema by transforming in into a table
+and then recursively call on Sphinx to render the table.
+To prevent unintended modifications due to this second pass some characters (such as '_'
+and '*' are escaped before the second pass.
+
+Sometimes that doesn't work out well and you don't want to escape those characters.
+The option ``:pass_unmodified:`` accepts one or more JSON pointers and prevents the strings
+pointed at to be escaped.
+
+.. code-block:: rst
+
+    .. jsonschema::
+        :pass_unmodified: /examples/0
+
+        {
+            "examples": [
+                "unescaped under_score",
+                "escaped under_score"
+            ]
+        }

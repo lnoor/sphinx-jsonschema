@@ -22,6 +22,7 @@ if version_info[0] == 2:
 else:
     str_unicode = str
 
+NOESC = ':noesc:'  # prefix marker to indicate string must not be escaped.
 
 class WideFormat(object):
     KV_SIMPLE = [
@@ -631,6 +632,8 @@ class WideFormat(object):
         return Path(path).name
 
     def _escape(self, text):
+        if text.startswith(NOESC):
+            return text[len(NOESC):]
         text = text.replace('\\', '\\\\')
         text = text.replace('_', '\\_')
         text = text.replace('*', '\\*')

@@ -26,7 +26,7 @@ from docutils.parsers.rst import Directive, DirectiveError
 from docutils.parsers.rst import directives
 from docutils.utils import SystemMessagePropagation
 from docutils.utils.error_reporting import SafeString
-from .wide_format import WideFormat
+from .wide_format import WideFormat, NOESC
 
 
 def pairwise(seq):
@@ -44,9 +44,6 @@ def maybe_int(val):
 
 def json_path_validate(path):
     """ Check that json path doesn't contain consecutive or trailing wildcards """
-    if path[-1] in ('*', '**'):
-        return False
-
     forbidden = {
         ('**', '**'),
         ('**', '*'),
@@ -54,27 +51,38 @@ def json_path_validate(path):
         ('*', '*')
     }
 
-    return set(pairwise(path)) & forbidden != set()
+    return set(pairwise(path)) & forbidden == set()
 
 
 def _json_fan_out(doc, path, transform, deep=False):
     """ Process */** wildcards in the path by fanning out the processing to multiple keys """
-    if not isinstance(doc, dict) or not path:
+    if not path:
+        if isinstance(doc, list):
+            for r in range(len(doc)):
+                transform(doc, r)
         return
 
     targets = []
 
-    for (k,v) in doc.items():
-        if k == path[0]:
-            targets.append(k)
+    def deeper(v):
+        if deep:
+            _json_fan_out(v, path, transform, deep)
         else:
-            if isinstance(v, dict):
-                if deep:
-                    _json_fan_out(v, path, transform, deep=True)
-                else:
-                    sub_path = path[1:]
-                    if sub_path:
-                        _json_bind(v, sub_path, transform)
+            sub_path = path[1:]
+            if len(sub_path) :
+                _json_bind(v, sub_path, transform)
+
+    def iterate(iterator):
+        for k, v in iterator:
+            if k == path[0]:
+                targets.append(k)
+            else:
+                deeper(v)
+
+    if isinstance(doc, dict):
+        iterate(doc.items())
+    if isinstance(doc, list):
+        iterate(enumerate(doc))
 
     # Since transformers can mutate the original document
     # we need to process them once we're done iterating
@@ -114,22 +122,33 @@ def json_path_transform(document, path, transformer):
     # trying to index into a list with a string '0'
     parts = [maybe_int(p) for p in path.split('/')[1:]]
 
-    if not parts or not json_path_validate(path):
+    if not parts or not json_path_validate(parts):
         raise ValueError('Supplied JSON path is invalid')
 
     _json_bind(document, parts, transformer)
 
 
 def remove(doc, key):
+    if key in ('*', '**'):
+        raise ValueError('Supplied JSON path is invalid')
     del doc[key]
 
 
 def remove_empty(doc, key):
+    if key in ('*', '**'):
+        raise ValueError('Supplied JSON path is invalid')
     if not doc[key]:
         del doc[key]
 
 
-def hide_key(item):
+def tag_noescape(doc, key):
+    if isinstance(doc[key], str):
+        doc[key] = NOESC + doc[key]
+    else:
+        raise ValueError('"%s" does not refer to a string' % key)
+
+
+def jsonpath_list(item):
     if item:
         return list(csv.reader([item])).pop()
     raise ValueError('Invalid JSON path: "%s"' % item)
@@ -144,7 +163,9 @@ def flag(argument):
         return True
     if value in ['off', 'false']:
         return False
-    raise ValueError('"%s" unknown, choose from "On", "True", "Off" or "False"' % argument)
+    raise ValueError(
+        '"%s" unknown, choose from "On", "True", "Off" or "False"' % argument)
+
 
 class JsonSchema(Directive):
     optional_arguments = 1
@@ -156,8 +177,9 @@ class JsonSchema(Directive):
                    'auto_target': flag,
                    'timeout': float,
                    'encoding': directives.encoding,
-                   'hide_key': hide_key,
-                   'hide_key_if_empty': hide_key}
+                   'hide_key': jsonpath_list,
+                   'hide_key_if_empty': jsonpath_list,
+                   'pass_unmodified': jsonpath_list}
 
     def run(self):
         try:
@@ -169,8 +191,12 @@ class JsonSchema(Directive):
             if self.options.get('hide_key_if_empty'):
                 for hide_path in self.options['hide_key_if_empty']:
                     json_path_transform(schema, hide_path, remove_empty)
+            if self.options.get('pass_unmodified'):
+                for path in self.options['pass_unmodified']:
+                    json_path_transform(schema, path, tag_noescape)
 
-            format = WideFormat(self.state, self.lineno, source, self.options, self.state.document.settings.env.app)
+            format = WideFormat(self.state, self.lineno, source,
+                                self.options, self.state.document.settings.env.app)
             return format.run(schema, pointer)
         except SystemMessagePropagation as detail:
             return [detail.args[0]]
@@ -179,10 +205,11 @@ class JsonSchema(Directive):
         except Exception as error:
             tb = error.__traceback__
             # loop through all traceback points to only return the last traceback
-            while tb.tb_next:
+            while tb and tb.tb_next:
                 tb = tb.tb_next
 
-            raise self.error(''.join(format_exception(type(error), error, tb, chain=False)))
+            raise self.error(''.join(format_exception(
+                type(error), error, tb, chain=False)))
 
     def get_json_data(self):
         """
@@ -209,9 +236,9 @@ class JsonSchema(Directive):
             schema = self.ordered_load(schema)
         except Exception as error:
             error = self.state_machine.reporter.error(
-                    '"%s" directive encountered a the following error while parsing the data.\n %s'
-                     % (self.name, SafeString("".join(format_exception_only(type(error), error)))),
-                    nodes.literal_block(schema, schema), line=self.lineno)
+                '"%s" directive encountered a the following error while parsing the data.\n %s'
+                % (self.name, SafeString("".join(format_exception_only(type(error), error)))),
+                nodes.literal_block(schema, schema), line=self.lineno)
             raise SystemMessagePropagation(error)
 
         if pointer:
@@ -255,14 +282,14 @@ class JsonSchema(Directive):
             response = requests.get(url, timeout=timeout)
         except requests.exceptions.RequestException as e:
             raise self.error(u'"%s" directive recieved an "%s" when loading from url: %s.'
-                                % (self.name, type(e), url))
+                             % (self.name, type(e), url))
 
         if response.status_code != 200:
             # When making a connection to the url a status code will be returned
             # Normally a OK (200) response would we be returned all other responses
             # an error will be raised could be separated futher
             raise self.error(u'"%s" directive received an "%s" when loading from url: %s.'
-                                % (self.name, response.reason, url))
+                             % (self.name, response.reason, url))
 
         # response content always binary converting with decode() no specific format defined
         data = response.content.decode()
@@ -281,7 +308,7 @@ class JsonSchema(Directive):
                 data = file.read()
         except IOError as error:
             raise self.error(u'"%s" directive encountered an IOError while loading file: %s\n%s'
-                                % (self.name, source, error))
+                             % (self.name, source, error))
 
         # Simplifing source path and to the document a new dependency
         source = utils.relative_path(document_source, source)
@@ -326,5 +353,5 @@ def setup(app):
     app.add_config_value('jsonschema_options', {}, 'env')
     return {
         'parallel_read_safe': True,
-        'version': '1.17.2'
+        'version': '1.18.0'
     }

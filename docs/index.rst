@@ -34,6 +34,13 @@ Indices and tables
 Changelog
 =========
 
+Version 1.18.0
+--------------
+
+Expanding on the work of `Pavel Odvody <https://github.com/shaded-enmity>`_ with JSON Pointer
+the ``:pass_unmodified:`` option is included.
+This option prevents escaping the string pointed at.
+
 Version 1.17.2
 --------------
 
@@ -43,7 +50,7 @@ Version 1.17.0
 --------------
 
 `Pavel Odvody <https://github.com/shaded-enmity>`_ contributed the ``:hide_key:`` directive option.
-This option allows you to hide certain keys, specified by a JSON Path specification, to be excluded
+This option allows you to hide certain keys, specified by a JSON Pointer specification, to be excluded
 from rendering.
 
 Version 1.16.11

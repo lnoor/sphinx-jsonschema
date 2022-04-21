@@ -148,7 +148,7 @@ with the following usage of the directive:
 
 which should render as:
 
-.. jsonschema:: sphinx-jsonschema.example.SCHEMA
+.. jsonschema:: sphinx_jsonschema.example.SCHEMA
 
 Options
 -------

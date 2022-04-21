@@ -334,7 +334,7 @@ class JsonSchema(Directive):
         else:
             raise self.error(
                 f"{self.name} directive requires a Python reference to a schema object"
-                " like 'mod.pkg.data'."
+                f" like 'mod.pkg.data'. '{filename}' is not valid."
             )
 
         try:

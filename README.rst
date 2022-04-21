@@ -60,15 +60,20 @@ Display a schema located in a file with an absolute path::
 
     .. jsonschema:: /home/leo/src/jsonschema/sample.json
 
-Or a path relative to the referencing document::
+A path relative to the referencing document::
 
     .. jsonschema:: jsonschema/sample.json
+
+Or a schema defined in a python dict::
+
+    .. jsonschema:: mod.pkg.SCHEMA
 
 With all three of the above you may add JSON Pointer notation to display a subschema::
 
     .. jsonschema:: http://some.domain/with/a/path/spec.json#/path/to/schema
     .. jsonschema:: /home/leo/src/jsonschema/sample.json#/path/to/schema
     .. jsonschema:: jsonschema/sample.json#/path/to/schema
+    .. jsonschema:: mod.pkg.SCHEMA#/path/to/schema
 
 Alternatively you can embed the schema::
 

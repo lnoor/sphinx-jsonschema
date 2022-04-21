@@ -14,11 +14,13 @@
 """
 
 import csv
-import os.path
+import importlib
 import json
+import os
+import yaml
+
 from jsonpointer import resolve_pointer
 from traceback import format_exception, format_exception_only
-import yaml
 from collections import OrderedDict
 
 from docutils import nodes, utils
@@ -214,7 +216,7 @@ class JsonSchema(Directive):
     def get_json_data(self):
         """
         Get JSON data from the directive content, from an external
-        file, or from a URL reference.
+        file, from a URL reference, or from importing a schema defined in Python.
         """
         if self.arguments:
             filename, pointer = self._splitpointer(self.arguments[0])
@@ -225,9 +227,14 @@ class JsonSchema(Directive):
         if self.content:
             schema, source = self.from_content(filename)
         elif filename and filename.startswith('http'):
+            # Appears to be URL so process it as such
             schema, source = self.from_url(filename)
-        elif filename:
+        elif os.path.exists(filename):
+            # File exists so it must be a JSON schema
             schema, source = self.from_file(filename)
+        elif filename:
+            # Must be a Python reference to a schema
+            schema, source = self.from_data(filename)
         else:
             raise self.error('"%s" directive has no content or a reference to an external file.'
                              % self.name)
@@ -316,6 +323,36 @@ class JsonSchema(Directive):
 
         return data, source
 
+    def from_data(self, filename):
+        """Get schema from Python data/object."""
+        document_source = os.path.dirname(self.state.document.current_source)
+
+        parts = filename.split('.')
+        if len(parts) > 1:
+            module_name = '.'.join(parts[:-1])
+            obj_name = parts[-1]
+        else:
+            raise self.error(
+                f"{self.name} directive requires a Python reference to a schema object"
+                " like 'mod.pkg.data'."
+            )
+
+        try:
+            mod = importlib.import_module(module_name)
+            data = getattr(mod, obj_name)
+        except (ImportError, ModuleNotFoundError) as error:
+            raise self.error(
+                f"{self.name} directive encountered an error while importing python"
+                f" module '{module_name}': \n{error}"
+            )
+
+        # Simplifing source path and to the document a new dependency
+        source = mod.__file__
+        source = utils.relative_path(document_source, source)
+        self.state.document.settings.record_dependencies.add(source)
+
+        return data, source
+
     def _splitpointer(self, path):
         val = path.rsplit('#', 1)
         if len(val) == 1:
@@ -353,5 +390,5 @@ def setup(app):
     app.add_config_value('jsonschema_options', {}, 'env')
     return {
         'parallel_read_safe': True,
-        'version': '1.18.0'
+        'version': '1.19.0'
     }

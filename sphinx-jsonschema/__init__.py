@@ -339,7 +339,7 @@ class JsonSchema(Directive):
 
         try:
             mod = importlib.import_module(module_name)
-            data = getattr(mod, obj_name)
+            data = str(getattr(mod, obj_name))
         except (ImportError, ModuleNotFoundError) as error:
             raise self.error(
                 f"{self.name} directive encountered an error while importing python"

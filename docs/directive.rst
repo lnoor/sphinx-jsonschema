@@ -142,13 +142,14 @@ object:
         }
 
 with the following usage of the directive:
+
 .. code-block:: rst
 
     .. jsonschema:: sphinx-jsonschema.example.SCHEMA
 
 which should render as:
 
-.. jsonschema:: sphinx_jsonschema.example.SCHEMA
+.. jsonschema:: sphinx-jsonschema.example.SCHEMA
 
 Options
 -------
@@ -393,7 +394,9 @@ The ``conf.py`` option **jsonschema_options** lets you do so.
 It takes a dict as value the boolean valued keys of which have the same name as the options.
 
 So, in ``conf.py`` you can state:
-.. code-block:: py
+
+.. code-block:: python
+    :caption: ``conf.py``
 
     jsonschema_options = {
         'lift_description': True,

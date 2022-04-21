@@ -64,7 +64,7 @@ A path relative to the referencing document::
 
     .. jsonschema:: jsonschema/sample.json
 
-Or a schema defined in a python dict::
+Or a schema defined in a Python object::
 
     .. jsonschema:: mod.pkg.SCHEMA
 

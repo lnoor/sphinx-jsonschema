@@ -151,6 +151,11 @@ which should render as:
 
 .. jsonschema:: sphinx-jsonschema.example.SCHEMA
 
+.. important::
+    For rendering Python objects with the ``jsonschema`` directive, the object does not
+    *need* to be a dict or a string. However, the object must have a ``__str__`` method
+    defined that will return a valid schema.
+
 Options
 -------
 

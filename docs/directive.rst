@@ -161,6 +161,9 @@ hide_key_if_empty: (default: None)
 encoding (default: None)
     Allows you to define the encoding used by the file containing the json schema.
 
+pass_unmodified (default: None)
+    Allows you to prevent escaping of _, / and * characters in strings.
+
 Lift Title
 ++++++++++
 

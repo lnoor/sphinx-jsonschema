@@ -174,12 +174,19 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.19.0
+--------------
+
+Glenn Nicholls <https://github.com/GlenNicholls> contributed code to load a schema from a
+Python dict or object (or actually any Python entity with a ``__str__`` method.).
+
 Version 1.18.0
 --------------
 
 Expanding on the work of `Pavel Odvody <https://github.com/shaded-enmity>`_ with JSON Pointer
 the ``:pass_unmodified:`` option is included.
 This option prevents escaping the string pointed at.
+This extension arose from discussions with `Ryan Lane <https://github.com/ryan-lane>`
 
 Version 1.17.2
 --------------

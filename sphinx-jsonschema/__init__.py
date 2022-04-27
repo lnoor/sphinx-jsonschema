@@ -70,14 +70,13 @@ def _json_fan_out(doc, path, transform, deep=False):
         if deep:
             _json_fan_out(v, path, transform, deep)
         else:
-            sub_path = path[1:]
-            if len(sub_path) :
-                _json_bind(v, sub_path, transform)
+            if len(path) > 1 :
+                _json_bind(v, path[1:], transform)
 
     def iterate(iterator):
         for k, v in iterator:
             if k == path[0]:
-                targets.append(k)
+                targets.append(path)
             else:
                 deeper(v)
 
@@ -89,7 +88,7 @@ def _json_fan_out(doc, path, transform, deep=False):
     # Since transformers can mutate the original document
     # we need to process them once we're done iterating
     for r in targets:
-        transform(doc, r)
+        _json_bind(doc, r, transform)
 
 
 def _json_bind(doc, path, transform):

@@ -228,9 +228,9 @@ class JsonSchema(Directive):
         elif filename and filename.startswith('http'):
             # Appears to be URL so process it as such
             schema, source = self.from_url(filename)
-        elif os.path.exists(source := self._convert_filename(filename)):
+        elif os.path.exists(self._convert_filename(filename)):
             # File exists so it must be a JSON schema
-            schema, source = self.from_file(source)
+            schema, source = self.from_file(filename)
         elif filename:
             # Must be a Python reference to a schema
             schema, source = self.from_data(filename)
@@ -311,7 +311,8 @@ class JsonSchema(Directive):
         document_source = os.path.dirname(self.state.document.current_source)
         return os.path.join(document_source, filename)
 
-    def from_file(self, source):
+    def from_file(self, filename):
+        source = self._convert_filename(filename)
         try:
             with open(source, encoding=self.options.get('encoding')) as file:
                 data = file.read()

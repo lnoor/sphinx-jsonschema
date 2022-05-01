@@ -228,7 +228,7 @@ class JsonSchema(Directive):
         elif filename and filename.startswith('http'):
             # Appears to be URL so process it as such
             schema, source = self.from_url(filename)
-        elif os.path.exists(filename):
+        elif os.path.exists(self._convert_filename(filename)):
             # File exists so it must be a JSON schema
             schema, source = self.from_file(filename)
         elif filename:
@@ -301,14 +301,18 @@ class JsonSchema(Directive):
         data = response.content.decode()
         return data, url
 
-    def from_file(self, filename):
+    def _convert_filename(self, filename):
+        """
+        Join the filename with the docs' source if it is not absolute.
+        """
+        if os.path.isabs(filename):
+            return filename
+        # file relative to the path of the current rst file
         document_source = os.path.dirname(self.state.document.current_source)
-        if not os.path.isabs(filename):
-            # file relative to the path of the current rst file
-            source = os.path.join(document_source, filename)
-        else:
-            source = filename
+        return os.path.join(document_source, filename)
 
+    def from_file(self, filename):
+        source = self._convert_filename(filename)
         try:
             with open(source, encoding=self.options.get('encoding')) as file:
                 data = file.read()
@@ -317,6 +321,7 @@ class JsonSchema(Directive):
                              % (self.name, source, error))
 
         # Simplifing source path and to the document a new dependency
+        document_source = os.path.dirname(self.state.document.current_source)
         source = utils.relative_path(document_source, source)
         self.state.document.settings.record_dependencies.add(source)
 

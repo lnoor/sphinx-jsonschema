@@ -408,7 +408,7 @@ So, in ``conf.py`` you can state:
 
     jsonschema_options = {
         'lift_description': True,
-        'aut_reference': True
+        'auto_reference': True
     }
 
 By default all four options are False.

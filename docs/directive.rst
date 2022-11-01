@@ -430,7 +430,7 @@ You can use any encoding defined by Python's codecs for your platform.
 
 Hiding parts of the schema
 ++++++++++++++++++++++++++
-Sometimes we want to omit certain keys from rendering to make the table more succicnt.
+Sometimes we want to omit certain keys from rendering to make the table more succinct.
 This can be achieved using the ``:hide_key:`` and ``:hide_key_if_empty:`` options to hide
 all matching keys or all matching keys with empty associated value, respectively.
 The options accept comma separated list of JSON pointers. Matching multiple keys

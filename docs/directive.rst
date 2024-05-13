@@ -341,27 +341,27 @@ Mainly the **\:auto_reference:** flag influences behavior of the existing ``$$ta
         :auto_reference:
         :auto_target:
 
-    {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title":  "Example of Target & Reference",
-        "type": "object",
-        "properties": {
-            "person": { "$ref": "#/definitions/person" }
-        },
-        "definitions": {
-            "person": {
-                "type": "object",
-                "properties": {
-                    "name": { "type": "string" },
-                    "children": {
-                        "type": "array",
-                        "items": { "$ref": "#/definitions/person" },
-                        "default": []
+        {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title":  "Example of Target & Reference",
+            "type": "object",
+            "properties": {
+                "person": { "$ref": "#/definitions/person" }
+            },
+            "definitions": {
+                "person": {
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "string" },
+                        "children": {
+                            "type": "array",
+                            "items": { "$ref": "#/definitions/person" },
+                            "default": []
+                        }
                     }
                 }
             }
         }
-    }
 
 which renders:
 

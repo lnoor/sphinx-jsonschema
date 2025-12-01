@@ -27,7 +27,6 @@ from docutils import nodes, utils
 from docutils.parsers.rst import Directive, DirectiveError
 from docutils.parsers.rst import directives
 from docutils.utils import SystemMessagePropagation
-from docutils.utils.error_reporting import SafeString
 from .wide_format import WideFormat, NOESC
 
 
@@ -243,7 +242,7 @@ class JsonSchema(Directive):
         except Exception as error:
             error = self.state_machine.reporter.error(
                 '"%s" directive encountered a the following error while parsing the data.\n %s'
-                % (self.name, SafeString("".join(format_exception_only(type(error), error)))),
+                % (self.name, str("".join(format_exception_only(type(error), error)))),
                 nodes.literal_block(schema, schema), line=self.lineno)
             raise SystemMessagePropagation(error)
 
@@ -253,7 +252,7 @@ class JsonSchema(Directive):
             except KeyError:
                 error = self.state_machine.reporter.error(
                     '"%s" directive encountered a KeyError when trying to resolve the pointer'
-                    ' in schema: %s' % (self.name, SafeString(pointer)),
+                    ' in schema: %s' % (self.name, str(pointer)),
                     nodes.literal_block(schema, schema), line=self.lineno)
                 raise SystemMessagePropagation(error)
 

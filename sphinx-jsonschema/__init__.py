@@ -9,7 +9,7 @@
     Using this directory you can render JSON Schema directly
     in Sphinx.
 
-    :copyright: Copyright 2017-2020, Leo Noordergraaf
+    :copyright: Copyright 2017-2025, Leo Noordergraaf
     :licence: GPL v3, see LICENCE for details.
 """
 
@@ -393,5 +393,5 @@ def setup(app):
     app.add_config_value('jsonschema_options', {}, 'env')
     return {
         'parallel_read_safe': True,
-        'version': '1.19.0'
+        'version': '1.19.2'
     }

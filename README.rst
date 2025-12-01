@@ -174,10 +174,20 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.19.2
+
+`Karolina Surma <https://github.com/befeleme>` provided a fix allowing the software to build with Sphinx 9.0.
+
+
+Version 1.19.1
+
+`Eddie Darling <https://github.com/spagh-eddie>` with `Michal Čihař <https://github.com/nijel>`
+and `Kim Berninger <https://github.com/kimberninger>` fixed a bug addressing relative files.
+
 Version 1.19.0
 --------------
 
-Glenn Nicholls <https://github.com/GlenNicholls> contributed code to load a schema from a
+`Glenn Nicholls <https://github.com/GlenNicholls>` contributed code to load a schema from a
 Python dict or object (or actually any Python entity with a ``__str__`` method.).
 
 Version 1.18.0

@@ -5,11 +5,11 @@ running Sphinx (the application, the docutils parser state) are replaced by
 mocks that provide just what the code under test touches. Behaviour that depends
 on the real Sphinx is covered by the integration tests instead.
 """
-import pytest
 from unittest.mock import Mock
 
+import pytest
 from docutils import nodes
-from docutils.parsers.rst.states import RSTStateMachine, Body
+from docutils.parsers.rst.states import Body, RSTStateMachine
 
 # The package directory contains a hyphen, so it cannot be imported with a normal import statement.
 ext = __import__('sphinx-jsonschema')

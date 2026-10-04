@@ -10,17 +10,11 @@
     :licence: GPL v3, see LICENCE for details.
 """
 
-from sys import version_info
 from copy import deepcopy
 from pathlib import Path
-from docutils import statemachine
-from docutils import nodes
-from docutils.nodes import fully_normalize_name as normalize_name
 
-if version_info[0] == 2:
-    str_unicode = unicode
-else:
-    str_unicode = str
+from docutils import nodes, statemachine
+from docutils.nodes import fully_normalize_name as normalize_name
 
 NOESC = ':noesc:'  # prefix marker to indicate string must not be escaped.
 
@@ -267,7 +261,7 @@ class WideFormat(object):
         rows = self._simpletype(schema)
 
         if 'items' in schema:
-            if type(schema['items']) == list:
+            if isinstance(schema['items'], list):
                 rows.append(self._line(self._cell('items')))
                 for item in schema['items']:
                     label = self._cell('-')
@@ -300,7 +294,7 @@ class WideFormat(object):
                 self._line(
                     self._cell('enum'),
                     self._cell(', '.join(
-                        [str_unicode(e) for e in schema['enum']]))))
+                        [str(e) for e in schema['enum']]))))
             del schema['enum']
 
         if 'examples' in schema:
@@ -411,11 +405,11 @@ class WideFormat(object):
             for prop in schema[key].keys():
                 label = self._cell('- ' + prop)
                 obj = schema[key][prop]
-                if type(obj) == list:
+                if isinstance(obj, list):
                     rows.append(
                         self._line(
                             label,
-                            self._cell(str_unicode(', '.join(obj)))))
+                            self._cell(', '.join(obj))))
                 else:
                     rows.extend(self._dispatch(obj, label)[0])
             del schema[key]
@@ -473,7 +467,7 @@ class WideFormat(object):
         rows = []
 
         if key in schema:
-            if type(schema[key]) == bool:
+            if isinstance(schema[key], bool):
                 rows.append(self._line(self._cell(key), self._cell(schema[key])))
                 del schema[key]
             else:
@@ -516,7 +510,7 @@ class WideFormat(object):
 
     def _decodetype(self, typ):
         # render (array of) simple type(s)
-        if type(typ) == list:
+        if isinstance(typ, list):
             # construct list of basic types
             return self._cell(' / '.join(['*' + s + '*' for s in typ]))
         else:
@@ -616,7 +610,7 @@ class WideFormat(object):
         ]
 
     def _convert_content(self, text):
-        list_lines = statemachine.string2lines(str_unicode(text))
+        list_lines = statemachine.string2lines(str(text))
         # Adding a source and line number to each line text warnings may appear when writing if there are issues with a line
         # if left None the warnings would be counted but don't appear in the output then you don't know the source of it
         items = [(self.state.document.current_source, self.lineno)] * len(list_lines)

@@ -75,7 +75,10 @@ def test_unknown_pointer_is_reported(render):
     assert not out.rows
 
 
-@pytest.mark.xfail(strict=True, reason="jsonpointer raises JsonPointerException, but only KeyError is caught")
+@pytest.mark.xfail(
+    strict=True,
+    reason="jsonpointer raises JsonPointerException, but only KeyError is caught (symptom seen in lnoor/sphinx-jsonschema#36)",
+)
 def test_unknown_pointer_gives_friendly_message(render):
     """Known defect, kept as strict xfail: the intended message is unreachable.
 
@@ -83,6 +86,10 @@ def test_unknown_pointer_gives_friendly_message(render):
     the pointer"), but ``jsonpointer`` raises ``JsonPointerException``. When that is
     fixed this test starts to pass, strict mode fails the run, and the xfail marker
     should then be removed.
+
+    The traceback in lnoor/sphinx-jsonschema#36 ends in exactly this exception
+    ("member 'definitions' not found in {}"), although that issue was closed for a
+    different root cause (quotes in a title combined with ``$$target``).
     """
     out = render(page('defs.json#/nope'), files={'defs.json': json.dumps(SCHEMA)})
     assert 'KeyError when trying to resolve the pointer' in out.warnings
@@ -101,13 +108,20 @@ def test_missing_content_and_argument_is_rejected(render):
     assert not out.rows
 
 
-@pytest.mark.xfail(strict=True, reason="_convert_filename(None) raises TypeError before the intended error")
+@pytest.mark.xfail(
+    strict=True,
+    reason="_convert_filename(None) raises TypeError before the intended error (no matching upstream issue; cf. #76)",
+)
 def test_missing_content_and_argument_gives_friendly_message(render):
     """Known defect, kept as strict xfail: the intended message is unreachable.
 
     ``get_json_data`` calls ``_convert_filename(None)``, which fails with a
     ``TypeError`` before the "has no content or a reference to an external file"
     error can be raised.
+
+    No upstream issue describes this. The closest is lnoor/sphinx-jsonschema#76, a
+    different ``TypeError`` caused by the 1.19 change in how ``filename`` is handled
+    (the very code path involved here).
     """
     out = render("Doc\n===\n\n.. jsonschema::\n")
     assert 'has no content or a reference to an external file' in out.warnings

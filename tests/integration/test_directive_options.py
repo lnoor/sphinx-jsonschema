@@ -67,7 +67,8 @@ def test_pass_unmodified_keeps_markup_in_default_value(render):
     (The type "string" is itself rendered as emphasis, hence the check for "b" specifically.)
     """
     schema = {'type': 'string', 'default': 'a *b*'}
-    emphasised = lambda out: [e.text for e in out.root.iter('emphasis')]
+    def emphasised(out):
+        return [e.text for e in out.root.iter('emphasis')]
 
     assert 'b' not in emphasised(render(doc(schema)))
     assert 'b' in emphasised(render(doc(schema, pass_unmodified='/default')))

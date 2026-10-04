@@ -1,0 +1,6 @@
+target-version = "py311"
+line-length = 132
+
+[lint]
+# E/W: pycodestyle, F: pyflakes, I: import sorting
+select = ["E", "W", "F", "I"]

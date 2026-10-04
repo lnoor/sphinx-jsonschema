@@ -17,17 +17,16 @@ import csv
 import importlib
 import json
 import os
-import yaml
-
-from jsonpointer import resolve_pointer
-from traceback import format_exception, format_exception_only
 from collections import OrderedDict
+from traceback import format_exception, format_exception_only
 
+import yaml
 from docutils import nodes, utils
-from docutils.parsers.rst import Directive, DirectiveError
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import Directive, DirectiveError, directives
 from docutils.utils import SystemMessagePropagation
-from .wide_format import WideFormat, NOESC
+from jsonpointer import resolve_pointer
+
+from .wide_format import NOESC, WideFormat
 
 
 def pairwise(seq):
@@ -39,7 +38,7 @@ def maybe_int(val):
     """ Convert value to an int and return it or just return the value """
     try:
         return int(val)
-    except:
+    except (TypeError, ValueError):
         return val
 
 

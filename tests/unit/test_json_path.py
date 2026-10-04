@@ -79,7 +79,10 @@ def test_json_path_transform_visits_matching_keys(path, expected):
     assert hits(path) == expected
 
 
-@pytest.mark.xfail(strict=True, reason="'*' followed by more path segments does not descend one level")
+@pytest.mark.xfail(
+    strict=True,
+    reason="'*' followed by more path segments does not descend one level (intended semantics: lnoor/sphinx-jsonschema#54)",
+)
 @pytest.mark.parametrize('path, expected', [
     ('/*/val', ['val', 'val']),
     ('/items/*/val', ['val', 'val']),
@@ -90,6 +93,10 @@ def test_single_level_wildcard_descends_into_children(path, expected):
     The documentation says "*" matches a single level. In practice ``/*/val``
     matches only the "val" at the top level and ``/items/*/val`` matches nothing,
     instead of the "val" in each child. "**" and a trailing "*" work.
+
+    The intended semantics are stated by the author of the wildcard syntax in
+    lnoor/sphinx-jsonschema#54 ("``*`` passes through one level of keys and ``**``
+    through multiple levels"). No issue describes this defect yet.
     """
     assert hits(path) == expected
 

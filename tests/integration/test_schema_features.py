@@ -75,6 +75,10 @@ class TestCrossReferences:
 
         No such label exists, so Sphinx warns. That is exactly the noise
         ``:auto_reference:`` is meant to remove.
+
+        This is also the minimal example from lnoor/sphinx-jsonschema#88 (an open issue
+        reporting ``WARNING: undefined label: '#/$defs/...'``): the reporter does not use
+        ``:auto_reference:``, so the warning is the documented default behaviour.
         """
         out = render(doc({'properties': {'u': {'$ref': '#/definitions/User'}}}))
         assert 'undefined label' in out.warnings

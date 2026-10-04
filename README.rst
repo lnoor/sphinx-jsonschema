@@ -174,12 +174,21 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+Version 1.x.x (wip)
+-------------------
+
+- Maintenance handed over to `Volker Wegert <https://github.com/vwegert>`.
+- Fixed and extended automated tests, split into unit and integration tests, the latter using the actual Sphinx environment
+  (`issue #56 <https://github.com/lnoor/sphinx-jsonschema/issues/56>``).
+
 Version 1.19.2
+--------------
 
 `Karolina Surma <https://github.com/befeleme>` provided a fix allowing the software to build with Sphinx 9.0.
 
 
 Version 1.19.1
+--------------
 
 `Eddie Darling <https://github.com/spagh-eddie>` with `Michal Čihař <https://github.com/nijel>`
 and `Kim Berninger <https://github.com/kimberninger>` fixed a bug addressing relative files.

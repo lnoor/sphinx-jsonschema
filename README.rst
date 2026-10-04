@@ -178,6 +178,8 @@ Version 1.x.x (wip)
 -------------------
 
 - Maintenance handed over to `Volker Wegert <https://github.com/vwegert>`.
+- Fixed and extended automated tests, split into unit and integration tests, the latter using the actual Sphinx environment
+  (`issue #56 <https://github.com/lnoor/sphinx-jsonschema/issues/56>``).
 
 Version 1.19.2
 --------------

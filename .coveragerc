@@ -1,0 +1,24 @@
+[run]
+branch = True
+source = .
+omit =
+    */site-packages/*
+    */distutils/*
+    .tox/*
+    tests/*
+
+[report]
+precision = 2
+skip_covered = False
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abstractproperty
+
+[html]
+directory = htmlcov

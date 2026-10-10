@@ -1,0 +1,11 @@
+$schema: http://json-schema.org/draft-04/schema#
+title: YAML source demo
+description: The same structure as the minimal example, loaded from a YAML file.
+type: object
+properties:
+  name:
+    type: string
+  age:
+    type: integer
+required:
+  - name

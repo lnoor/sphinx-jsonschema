@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Hide keys demo",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "This description can be hidden with hide_key.",
+      "default": "anonymous"
+    },
+    "color": {
+      "type": "string",
+      "description": "",
+      "enum": []
+    },
+    "size": {
+      "type": "integer",
+      "description": "This description is not empty and survives hide_key_if_empty.",
+      "enum": []
+    }
+  }
+}

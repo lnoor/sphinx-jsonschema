@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Configuration demo (copy d)",
+  "description": "Same structure as config-base.json, kept as a separate file because auto_target derives labels from the file name.",
+  "type": "object",
+  "properties": {
+    "address": {
+      "$ref": "#/definitions/address"
+    },
+    "contact": {
+      "$ref": "#/definitions/contact"
+    },
+    "parent": {
+      "$ref": "#"
+    }
+  },
+  "definitions": {
+    "address": {
+      "title": "Address (copy d)",
+      "description": "A postal address.",
+      "type": "object",
+      "properties": {
+        "street": {"type": "string"},
+        "city": {"type": "string"}
+      },
+      "required": ["city"]
+    },
+    "contact": {
+      "title": "Contact (copy d)",
+      "description": "A contact definition.",
+      "type": "object",
+      "properties": {
+        "email": {"type": "string", "format": "email"}
+      }
+    }
+  }
+}

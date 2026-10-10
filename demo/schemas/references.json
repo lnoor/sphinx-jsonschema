@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "References",
+  "description": "References are shown as links or names, the target is not copied into the table.",
+  "type": "object",
+  "properties": {
+    "self": {"$ref": "#"},
+    "definition": {"$ref": "#/definitions/item"},
+    "modern_definition": {"$ref": "#/$defs/item"},
+    "file": {"$ref": "other.json"},
+    "file_pointer": {"$ref": "other.json#/definitions/part"},
+    "url": {"$ref": "http://example.com/schemas/remote.json"}
+  },
+  "definitions": {
+    "item": {
+      "title": "Item (definitions)",
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "item": {
+      "title": "Item ($defs)",
+      "type": "integer"
+    }
+  }
+}

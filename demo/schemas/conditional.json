@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Conditionals",
+  "description": "Postal codes depend on the country: five digits in the US, letters and digits elsewhere.",
+  "type": "object",
+  "properties": {
+    "country": {"type": "string"},
+    "postal_code": {"type": "string"}
+  },
+  "if": {
+    "properties": {"country": {"const": "US"}}
+  },
+  "then": {
+    "properties": {"postal_code": {"pattern": "^[0-9]{5}$"}}
+  },
+  "else": {
+    "properties": {"postal_code": {"pattern": "^[A-Z0-9 ]+$"}}
+  }
+}

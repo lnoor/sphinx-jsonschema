@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Special characters demo",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "Description text is interpreted as reST, so *emphasis* and ``literal`` are rendered.",
+      "default": "C:\\temp\\file_name*.txt",
+      "pattern": "^[a-z_]+\\.(txt|md)$"
+    },
+    "markup": {
+      "type": "string",
+      "default": "Looks like *emphasis* and ``a_literal``, but is it markup?",
+      "enum": ["plain_value", "*starred*"]
+    }
+  }
+}

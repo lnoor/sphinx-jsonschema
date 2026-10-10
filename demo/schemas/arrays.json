@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Arrays",
+  "type": "object",
+  "properties": {
+    "list": {
+      "type": "array",
+      "description": "A list of non-empty strings.",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "tuple": {
+      "type": "array",
+      "description": "A pair of a string followed by an integer.",
+      "items": [
+        {"type": "string", "description": "first"},
+        {"type": "integer", "description": "second"}
+      ]
+    },
+    "tuple_closed": {
+      "type": "array",
+      "description": "A string and an integer, and nothing more.",
+      "items": [{"type": "string"}, {"type": "integer"}],
+      "additionalItems": false
+    },
+    "tuple_typed": {
+      "type": "array",
+      "description": "A string followed by any number of numbers.",
+      "items": [{"type": "string"}],
+      "additionalItems": {"type": "number"}
+    },
+    "matrix": {
+      "type": "array",
+      "description": "A table of numbers, given as rows of columns.",
+      "items": {
+        "type": "array",
+        "items": {"type": "number"}
+      }
+    }
+  }
+}

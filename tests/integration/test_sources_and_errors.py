@@ -102,23 +102,11 @@ def test_missing_content_and_argument_is_rejected(render):
     assert not out.rows
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="_convert_filename(None) raises TypeError before the intended error (no matching upstream issue; cf. #76)",
-)
 def test_missing_content_and_argument_gives_friendly_message(render):
-    """Known defect, kept as strict xfail: the intended message is unreachable.
-
-    ``get_json_data`` calls ``_convert_filename(None)``, which fails with a
-    ``TypeError`` before the "has no content or a reference to an external file"
-    error can be raised.
-
-    No upstream issue describes this. The closest is lnoor/sphinx-jsonschema#76, a
-    different ``TypeError`` caused by the 1.19 change in how ``filename`` is handled
-    (the very code path involved here).
-    """
+    """Without argument and content the directive says what is missing, instead of failing with a ``TypeError`` (#102)."""
     out = render("Doc\n===\n\n.. jsonschema::\n")
     assert 'has no content or a reference to an external file' in out.warnings
+    assert 'TypeError' not in out.warnings
 
 
 def test_invalid_hide_key_path_is_reported(render):

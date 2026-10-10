@@ -200,6 +200,8 @@ encoding (default: None)
 
 pass_unmodified (default: None)
     Allows you to prevent escaping of _, / and * characters in strings.
+    It only has an effect on values that are escaped, such as ``default``, ``enum``, ``const`` and ``pattern``.
+    Titles and descriptions are never escaped, so the option does nothing there.
 
 Lift Title
 ++++++++++

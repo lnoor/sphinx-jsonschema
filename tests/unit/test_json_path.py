@@ -140,11 +140,12 @@ def test_remove_empty_removes_falsy_values(value, removed):
     assert ('key' not in doc) is removed
 
 
-def test_tag_noescape_prefixes_strings_only():
-    """``:pass_unmodified:`` marks a string with the NOESC prefix; other types are an error."""
+def test_tag_noescape_marks_strings_only():
+    """``:pass_unmodified:`` marks a string as NoEscape (its text stays unchanged); other types are an error."""
     doc = {'text': 'a *b*', 'num': 1}
     ext.tag_noescape(doc, 'text')
-    assert doc['text'] == ext.NOESC + 'a *b*'
+    assert isinstance(doc['text'], ext.NoEscape)
+    assert doc['text'] == 'a *b*'
     with pytest.raises(ValueError, match='does not refer to a string'):
         ext.tag_noescape(doc, 'num')
 

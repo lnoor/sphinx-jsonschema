@@ -17,9 +17,13 @@ from pathlib import Path
 from docutils import nodes, statemachine
 from docutils.nodes import fully_normalize_name as normalize_name
 
-NOESC = ':noesc:'  # prefix marker to indicate string must not be escaped.
 QUIET_REF_ROLE = 'jsonschema-ref'  # like :ref:, but silent when the label does not exist
 INLINE_LITERAL = re.compile(r'(``[^`]+``)')  # reST inline literal, kept as is by _escape_text
+
+
+class NoEscape(str):
+    """A string that must not be escaped (see ``:pass_unmodified:``). Elsewhere it behaves like any string."""
+
 
 class WideFormat(object):
     KV_SIMPLE = [
@@ -643,8 +647,8 @@ class WideFormat(object):
         return Path(path).name
 
     def _escape(self, text):
-        if text.startswith(NOESC):
-            return text[len(NOESC):]
+        if isinstance(text, NoEscape):
+            return str(text)
         text = text.replace('\\', '\\\\')
         text = text.replace('_', '\\_')
         text = text.replace('*', '\\*')
@@ -652,8 +656,8 @@ class WideFormat(object):
 
     def _escape_text(self, text):
         # like _escape, but leaves reST inline literals alone: backslashes inside them stay visible
-        if text.startswith(NOESC):
-            return text[len(NOESC):]
+        if isinstance(text, NoEscape):
+            return str(text)
         parts = INLINE_LITERAL.split(text)
         # re.split with a capturing group puts the literals at the odd indexes
         return ''.join(part if i % 2 else self._escape(part) for i, part in enumerate(parts))

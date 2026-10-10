@@ -27,7 +27,7 @@ from docutils.utils import SystemMessagePropagation
 from jsonpointer import resolve_pointer
 from sphinx.roles import XRefRole
 
-from .wide_format import NOESC, QUIET_REF_ROLE, WideFormat
+from .wide_format import QUIET_REF_ROLE, NoEscape, WideFormat
 
 
 def pairwise(seq):
@@ -143,7 +143,7 @@ def remove_empty(doc, key):
 
 def tag_noescape(doc, key):
     if isinstance(doc[key], str):
-        doc[key] = NOESC + doc[key]
+        doc[key] = NoEscape(doc[key])
     else:
         raise ValueError('"%s" does not refer to a string' % key)
 

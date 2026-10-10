@@ -444,9 +444,12 @@ class WideFormat(object):
         return ':' + role + ':`' + target + '`'
 
     @staticmethod
-    def _is_label_free_reference(ref):
+    def _is_root_reference(ref):
+        return ref in ('#', '#/')
+
+    def _is_label_free_reference(self, ref):
         # a $ref that can't resolve to a Sphinx label: an absolute URL or the schema root
-        return ref in ('#', '#/') or ref.startswith(('http://', 'https://'))
+        return self._is_root_reference(ref) or ref.startswith(('http://', 'https://'))
 
     def _reference(self, schema):
         if self.options['auto_reference'] and self.options['lift_title']:
@@ -480,8 +483,11 @@ class WideFormat(object):
                 row = (self._line(self._cell(self._ref_role(self._get_filename(schema['$ref'], True)))))
             else:
                 row = (self._line(self._cell(self._ref_role(self._get_filename(schema['$ref'])))))
+        elif self.options['auto_reference'] and not self.options['lift_title'] and self._is_root_reference(schema['$ref']):
+            # the root of the schema is the target auto_target creates for the file itself
+            row = (self._line(self._cell(self._ref_role(self.filename))))
         elif self._is_label_free_reference(schema['$ref']):
-            # URLs and the root of the schema can never be a label, so there is nothing to link to
+            # URLs and the root of the schema (without a target to link to) can never be a label
             row = (self._line(self._cell(schema['$ref'])))
         elif self.options['auto_reference'] and not self.options['lift_title']:
             # when using reference without titles we need to reference to our own targets

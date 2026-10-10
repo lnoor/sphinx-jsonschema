@@ -111,6 +111,17 @@ def test_pass_unmodified_applies_to_enum_values(render):
     assert 'one' not in emphasised
 
 
+def test_hide_key_single_level_wildcard_hides_in_every_property(render):
+    """``/properties/*/description`` removes the description of each property (#100)."""
+    schema = {'type': 'object', 'properties': {
+        'a': {'type': 'string', 'description': 'DESC-A'},
+        'b': {'type': 'string', 'description': 'DESC-B'},
+    }}
+    out = render(doc(schema, hide_key='/properties/*/description'))
+    assert 'DESC-A' not in out.flat and 'DESC-B' not in out.flat
+    assert {'a', 'b'} <= set(out.flat)
+
+
 def test_lift_definitions_renders_each_definition_as_section(render):
     """``:lift_definitions:`` renders every entry of ``definitions`` as its own titled section."""
     schema = {

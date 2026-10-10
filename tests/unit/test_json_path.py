@@ -79,26 +79,25 @@ def test_json_path_transform_visits_matching_keys(path, expected):
     assert hits(path) == expected
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="'*' followed by more path segments does not descend one level (intended semantics: lnoor/sphinx-jsonschema#54)",
-)
 @pytest.mark.parametrize('path, expected', [
+    # "*" passes through exactly one level: the "val" of each child, not the one of the object itself
     ('/*/val', ['val', 'val']),
     ('/items/*/val', ['val', 'val']),
+    ('/*/x/val', ['val']),
+    ('/a/*/val', ['val']),
+    # children that are no containers (here the number 0 and the list "items") are skipped
+    ('/*/missing', []),
 ])
 def test_single_level_wildcard_descends_into_children(path, expected):
-    """Known defect, kept as strict xfail.
-
-    The documentation says "*" matches a single level. In practice ``/*/val``
-    matches only the "val" at the top level and ``/items/*/val`` matches nothing,
-    instead of the "val" in each child. "**" and a trailing "*" work.
-
-    The intended semantics are stated by the author of the wildcard syntax in
-    lnoor/sphinx-jsonschema#54 ("``*`` passes through one level of keys and ``**``
-    through multiple levels"). No issue describes this defect yet.
-    """
+    """``*`` followed by more path segments matches that path one level down (#100)."""
     assert hits(path) == expected
+
+
+def test_single_level_wildcard_removes_matches_in_place():
+    """The wildcard also works with a transformer that deletes keys while the paths are expanded."""
+    doc = copy.deepcopy(DOC)
+    ext.json_path_transform(doc, '/*/val', ext.remove)
+    assert doc == {'val': 0, 'a': {'x': {'val': 2}}, 'b': {}, 'items': [{'val': 4}, {'val': 5}]}
 
 
 @pytest.mark.parametrize('path', ['', '/*/*', '/**/**', '/a/*/**'])

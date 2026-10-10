@@ -63,21 +63,23 @@ def _json_fan_out(doc, path, transform, deep=False):
                 transform(doc, r)
         return
 
-    targets = []
+    if not deep:
+        # "*" passes through exactly one level: the rest of the path is relative to each child.
+        # Snapshot the children, transformers may change them while we go through.
+        children = doc.values() if isinstance(doc, dict) else doc if isinstance(doc, list) else []
+        for child in list(children):
+            if isinstance(child, (dict, list)):
+                _json_bind(child, path, transform)
+        return
 
-    def deeper(v):
-        if deep:
-            _json_fan_out(v, path, transform, deep)
-        else:
-            if len(path) > 1 :
-                _json_bind(v, path[1:], transform)
+    targets = []
 
     def iterate(iterator):
         for k, v in iterator:
             if k == path[0]:
                 targets.append(path)
             else:
-                deeper(v)
+                _json_fan_out(v, path, transform, deep)
 
     if isinstance(doc, dict):
         iterate(doc.items())
@@ -107,7 +109,8 @@ def _json_bind(doc, path, transform):
         last = obj
         try:
             obj = obj[p]
-        except (KeyError, IndexError):
+        except (KeyError, IndexError, TypeError):
+            # the path does not exist in this document (TypeError: a list indexed by a name)
             return
 
     if path:

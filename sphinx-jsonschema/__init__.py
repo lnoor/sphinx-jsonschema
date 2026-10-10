@@ -228,7 +228,7 @@ class JsonSchema(Directive):
         elif filename and filename.startswith('http'):
             # Appears to be URL so process it as such
             schema, source = self.from_url(filename)
-        elif os.path.exists(self._convert_filename(filename)):
+        elif filename and os.path.exists(self._convert_filename(filename)):
             # File exists so it must be a JSON schema
             schema, source = self.from_file(filename)
         elif filename:

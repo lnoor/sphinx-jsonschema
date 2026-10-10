@@ -187,6 +187,8 @@ Version 1.x.x (wip)
 - Targets created by ``auto_target`` or ``$$target`` get an id that is unique in the document. Before, a schema with a title
   could define the same id twice (LaTeX: "Label multiply defined"), or take the id of a section with the same title,
   which made ``:ref:`` link to the wrong place.
+- ``enum`` values are escaped like ``default`` and ``pattern``, so ``*`` and ``_`` in them stay literal instead of being
+  interpreted as reStructuredText (`issue #98 <https://github.com/lnoor/sphinx-jsonschema/issues/98>`__).
 - Booleans and ``null`` are rendered as ``true``, ``false`` and ``null`` instead of Python's ``True``, ``False`` and ``None``
   (for example in ``enum``, ``exclusiveMinimum``, ``uniqueItems`` and ``additionalItems``;
   `issue #95 <https://github.com/lnoor/sphinx-jsonschema/issues/95>`__).

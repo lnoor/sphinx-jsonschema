@@ -311,7 +311,7 @@ class WideFormat(object):
                 self._line(
                     self._cell('enum'),
                     self._cell(', '.join(
-                        [json_text(e) for e in schema['enum']]))))
+                        [self._escape_value(e) for e in schema['enum']]))))
             del schema['enum']
 
         if 'examples' in schema:
@@ -662,6 +662,10 @@ class WideFormat(object):
         text = text.replace('_', '\\_')
         text = text.replace('*', '\\*')
         return text
+
+    def _escape_value(self, value):
+        # a schema value of any type as escaped text; strings may be marked NoEscape
+        return self._escape_text(value if isinstance(value, str) else json_text(value))
 
     def _escape_text(self, text):
         # like _escape, but leaves reST inline literals alone: backslashes inside them stay visible

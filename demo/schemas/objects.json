@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Objects",
+  "type": "object",
+  "properties": {
+    "nested": {
+      "type": "object",
+      "description": "An object that contains another object.",
+      "properties": {
+        "inner": {
+          "type": "object",
+          "properties": {
+            "leaf": {"type": "string"}
+          },
+          "required": ["leaf"]
+        }
+      }
+    },
+    "dictionary": {
+      "type": "object",
+      "description": "Keys starting with x- hold strings, keys like n42 hold numbers, all other keys hold booleans.",
+      "patternProperties": {
+        "^x-": {"type": "string"},
+        "^n[0-9]+$": {"type": "number"}
+      },
+      "additionalProperties": {"type": "boolean"}
+    },
+    "closed": {
+      "type": "object",
+      "description": "An object that accepts only the one key it knows.",
+      "properties": {"known": {"type": "string"}},
+      "additionalProperties": false
+    },
+    "dependent": {
+      "type": "object",
+      "description": "A credit card requires a billing address, and a name requires a title.",
+      "properties": {
+        "credit_card": {"type": "string"},
+        "billing_address": {"type": "string"},
+        "name": {"type": "string"}
+      },
+      "dependencies": {
+        "credit_card": ["billing_address"],
+        "name": {
+          "properties": {"title": {"type": "string"}},
+          "required": ["title"]
+        }
+      }
+    }
+  },
+  "required": ["nested"]
+}

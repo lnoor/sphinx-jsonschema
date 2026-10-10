@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Constraints",
+  "description": "Limits for numbers, strings, lists and objects.",
+  "type": "object",
+  "minProperties": 1,
+  "maxProperties": 10,
+  "properties": {
+    "draft4_range": {
+      "type": "number",
+      "multipleOf": 0.5,
+      "minimum": 0,
+      "exclusiveMinimum": true,
+      "maximum": 100,
+      "exclusiveMaximum": false,
+      "description": "More than 0 and up to 100, in steps of one half (limits flagged as booleans, Draft 4 style)."
+    },
+    "draft7_range": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 100,
+      "description": "Strictly between 0 and 100 (limits given as numbers, Draft 6/7 style)."
+    },
+    "code": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 8,
+      "pattern": "^[A-Z]{3}[0-9]*$"
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "maxItems": 5,
+      "uniqueItems": true
+    }
+  }
+}

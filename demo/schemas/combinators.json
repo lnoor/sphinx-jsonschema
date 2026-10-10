@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Combinators",
+  "type": "object",
+  "properties": {
+    "all": {
+      "description": "A string of up to 5 characters.",
+      "allOf": [
+        {"type": "string"},
+        {"maxLength": 5}
+      ]
+    },
+    "any": {
+      "description": "Either a short string or a non-negative number.",
+      "anyOf": [
+        {"type": "string", "maxLength": 5},
+        {"type": "number", "minimum": 0}
+      ]
+    },
+    "one": {
+      "description": "A number divisible by 5 or by 3, but not by both.",
+      "oneOf": [
+        {"type": "number", "multipleOf": 5},
+        {"type": "number", "multipleOf": 3}
+      ]
+    },
+    "none": {
+      "description": "Anything except a string.",
+      "not": {"type": "string"}
+    },
+    "nested": {
+      "description": "An object with a required string a, or any value that is not null.",
+      "anyOf": [
+        {
+          "allOf": [
+            {"type": "object", "properties": {"a": {"type": "string"}}},
+            {"required": ["a"]}
+          ]
+        },
+        {"not": {"type": "null"}}
+      ]
+    }
+  }
+}

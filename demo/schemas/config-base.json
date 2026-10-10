@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Configuration demo",
+  "description": "A medium-sized schema with definitions and references.",
+  "$$description": ["This text comes from ``$$description``.", "It is rendered as a second paragraph."],
+  "type": "object",
+  "properties": {
+    "address": {
+      "$ref": "#/definitions/address"
+    },
+    "contact": {
+      "$ref": "#/definitions/contact"
+    },
+    "parent": {
+      "$ref": "#"
+    },
+    "note": {
+      "type": "string",
+      "description": "Plain text with **bold** and ``literal`` reST markup."
+    }
+  },
+  "definitions": {
+    "address": {
+      "title": "Address",
+      "description": "A postal address.",
+      "type": "object",
+      "properties": {
+        "street": {"type": "string"},
+        "city": {"type": "string"}
+      },
+      "required": ["city"]
+    },
+    "contact": {
+      "description": "A contact definition without a title of its own.",
+      "type": "object",
+      "properties": {
+        "email": {"type": "string", "format": "email"}
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Enum, const and examples",
+  "type": "object",
+  "properties": {
+    "level": {
+      "type": "string",
+      "enum": ["debug", "info", "warning", "error"],
+      "description": "How verbose the log output is."
+    },
+    "mixed": {
+      "enum": ["auto", 1, 2.5, true, null],
+      "description": "A choice between a keyword, numbers, a flag and nothing."
+    },
+    "version": {
+      "const": "1.0",
+      "description": "The format version, which never changes."
+    },
+    "greeting": {
+      "type": "string",
+      "examples": ["hello", "hi there"],
+      "description": "A friendly way to say hello."
+    }
+  }
+}

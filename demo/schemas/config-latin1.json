@@ -1,0 +1,1 @@
+{"title": "Latin-1 encoded schema", "description": "Umlauts: äöüß ÄÖÜ", "type": "object", "properties": {"größe": {"type": "integer", "description": "Größe in Zentimetern"}}}

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Types and formats",
+  "description": "One property per primitive type.",
+  "type": "object",
+  "properties": {
+    "text": {"type": "string", "description": "A string.", "default": "hello"},
+    "float": {"type": "number", "description": "A number.", "default": 1.5},
+    "count": {"type": "integer", "description": "An integer.", "default": 3},
+    "flag": {"type": "boolean", "description": "A boolean.", "default": false},
+    "nothing": {"type": "null", "description": "Always empty."},
+    "either": {"type": ["string", "null"], "description": "Either a text or nothing at all."},
+    "email": {"type": "string", "format": "email"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "complex_default": {"type": "object", "default": {"a": 1, "b": [1, 2, 3]}}
+  }
+}

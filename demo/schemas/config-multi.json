@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Multiple schemas in one file",
+  "description": "Only the schema selected with a JSON pointer is rendered.",
+  "definitions": {
+    "a": {
+      "title": "Schema A",
+      "description": "Selected with #/definitions/a.",
+      "type": "object",
+      "properties": {
+        "first": {"type": "string"}
+      }
+    },
+    "b": {
+      "title": "Schema B",
+      "description": "Selected with #/definitions/b.",
+      "type": "object",
+      "properties": {
+        "second": {"type": "integer"}
+      }
+    }
+  }
+}

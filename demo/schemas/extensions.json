@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Plugin extensions",
+  "description": "Keywords that are not part of JSON Schema but understood by the plugin.",
+  "$$target": ["demo-extensions", "demo-extensions-alias"],
+  "type": "object",
+  "properties": {
+    "single": {
+      "type": "string",
+      "$$description": "A single-line ``$$description`` with *reST* markup."
+    },
+    "multi": {
+      "type": "string",
+      "$$description": ["The first line of a list.", "", "- a bullet", "- another bullet"]
+    }
+  }
+}

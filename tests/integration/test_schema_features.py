@@ -11,6 +11,12 @@ def doc(schema, **options):
     return f"Doc\n===\n\n.. jsonschema::\n{opts}\n    {json.dumps(schema)}\n"
 
 
+def doc_file(filename, **options):
+    """Page with one jsonschema directive that loads `filename`; keyword arguments become options."""
+    opts = ''.join(f'    :{k}: {v}\n' for k, v in options.items())
+    return f"Doc\n===\n\n.. jsonschema:: {filename}\n{opts}"
+
+
 def first_cells(out):
     """First cell of every non-empty row, i.e. the row labels."""
     return [row[0] for row in out.rows if row]
@@ -147,13 +153,33 @@ class TestCrossReferences:
     @pytest.mark.parametrize('target', [
         'http://example.com/schema.json',
         'https://example.com/schema.json#/definitions/User',
-        '#',
-    ], ids=['url', 'url-with-pointer', 'root'])
-    def test_ref_that_cannot_be_a_label_is_plain_text(self, render, options, target):
-        """URLs and the root ``#`` can never be Sphinx labels, so they must not be ``:ref:`` (#99)."""
+    ], ids=['url', 'url-with-pointer'])
+    def test_url_ref_is_plain_text(self, render, options, target):
+        """A URL can never be a Sphinx label, so it must not be rendered as ``:ref:`` (#99)."""
         out = render(doc({'properties': {'p': {'$ref': target}}}, **options))
         assert out.warnings == ''
         assert target in out.flat
+
+    @pytest.mark.parametrize('options', [{}, {'auto_reference': 'true'}], ids=['default', 'auto_reference'])
+    def test_root_ref_without_target_is_plain_text(self, render, options):
+        """The root ``#`` has no label to link to unless the title or ``:lift_title: off`` + ``:auto_target:`` provide one (#99)."""
+        out = render(doc({'properties': {'p': {'$ref': '#'}}}, **options))
+        assert out.warnings == ''
+        assert '#' in out.flat
+
+    @pytest.mark.parametrize('extra', [{}, {'warn_unresolved_refs': 'true'}], ids=['quiet', 'warning'])
+    def test_root_ref_without_lifted_title_links_to_auto_target(self, render, extra):
+        """``$ref: "#"`` with ``:lift_title: off`` links to the target ``:auto_target:`` creates for the file (#94).
+
+        The label is the file name (``demo.json``), not ``demo.json#``. The test also runs with
+        ``:warn_unresolved_refs:``, which proves that the label really exists.
+        """
+        schema = {'title': 'Demo', 'type': 'object', 'properties': {'parent': {'$ref': '#'}}}
+        source = doc_file('demo.json', lift_title='false', auto_target='true', auto_reference='true', **extra)
+        out = render(source, files={'demo.json': json.dumps(schema)})
+        assert out.warnings == ''
+        (link,) = out.root.iter('reference')
+        assert link.get('refid') in self.all_ids(out)   # docutils moves the id of the target to the table
 
     def test_auto_reference_links_definition_title(self, render):
         """With ``:auto_reference:`` and ``:lift_definitions:`` a local ``$ref`` links to the section."""

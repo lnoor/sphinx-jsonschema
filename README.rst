@@ -187,6 +187,8 @@ Version 1.x.x (wip)
 - Targets created by ``auto_target`` or ``$$target`` get an id that is unique in the document. Before, a schema with a title
   could define the same id twice (LaTeX: "Label multiply defined"), or take the id of a section with the same title,
   which made ``:ref:`` link to the wrong place.
+- With ``lift_title: off`` and ``auto_reference`` a ``$ref: "#"`` links to the target ``auto_target`` creates for the schema
+  instead of an undefined label ``<file>#`` (`issue #94 <https://github.com/lnoor/sphinx-jsonschema/issues/94>`__).
 - ``*`` in a ``hide_key`` / ``hide_key_if_empty`` path followed by more segments now passes through exactly one level,
   as documented: ``/properties/*/description`` hides the description of every property
   (`issue #100 <https://github.com/lnoor/sphinx-jsonschema/issues/100>`__).

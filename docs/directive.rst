@@ -336,6 +336,13 @@ to be included into your documentation with **\:auto_target:**.
 
 Mainly the **\:auto_reference:** flag influences behavior of the existing ``$$target`` method and could potentially break links.
 
+Without a lifted title (``:lift_title: off``) a reference points to the targets created by **\:auto_target:**.
+A ``$ref`` to the root of the schema (``#``) links to the target of the file itself.
+A reference to a definition such as ``#/definitions/address`` can only be linked if the definition has a target of its own,
+which is the case when it is rendered as a separate schema with **\:lift_definitions:**.
+Otherwise there is nothing to link to and the reference is shown as plain text
+(see `Unresolved references`_).
+
 | See below the schema whereby both options are included.
   For each section it will create a target in this example filename of the document as the schema is added as context and it's pointer if there would be one.
 | :ref:`directive.rst` this link as raw text using reStructuredText format would be: **\:ref:`directive.rst`**.

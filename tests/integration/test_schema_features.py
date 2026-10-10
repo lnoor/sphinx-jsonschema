@@ -2,6 +2,8 @@
 import json
 import textwrap
 
+import pytest
+
 
 def doc(schema, **options):
     """Page with one jsonschema directive; keyword arguments become ``:option: value`` lines."""
@@ -70,18 +72,53 @@ class TestCrossReferences:
         out = render(doc({'type': 'string'}) + "\nSee :ref:`nowhere`.\n")
         assert 'undefined label' in out.warnings
 
-    def test_ref_is_a_raw_label_reference_by_default(self, render):
-        """Without ``:auto_reference:`` a ``$ref`` is emitted as ``:ref:`` to the raw pointer.
+    def test_unresolved_ref_is_plain_text_by_default(self, render):
+        """A ``$ref`` without a matching label is shown as text and does not warn.
 
-        No such label exists, so Sphinx warns. That is exactly the noise
-        ``:auto_reference:`` is meant to remove.
-
-        This is also the minimal example from lnoor/sphinx-jsonschema#88 (an open issue
-        reporting ``WARNING: undefined label: '#/$defs/...'``): the reporter does not use
-        ``:auto_reference:``, so the warning is the documented default behaviour.
+        This is the minimal example from lnoor/sphinx-jsonschema#88 (pydantic style
+        ``#/$defs/...`` pointer, no ``:auto_reference:``) and the "other file" part of #99.
         """
-        out = render(doc({'properties': {'u': {'$ref': '#/definitions/User'}}}))
+        schema = {'properties': {'item': {'$ref': '#/$defs/Item'}, 'file': {'$ref': 'other.json'}},
+                  '$defs': {'Item': {'type': 'string'}}}
+        out = render(doc(schema))
+        assert out.warnings == ''
+        assert '#/$defs/Item' in out.flat
+        assert 'other.json' in out.flat
+
+    def test_unresolved_ref_warns_with_warn_unresolved_refs(self, render):
+        """``:warn_unresolved_refs:`` restores Sphinx's "undefined label" warning for a dangling ``$ref``."""
+        out = render(doc({'properties': {'u': {'$ref': '#/definitions/User'}}}, warn_unresolved_refs='true'))
+        assert "undefined label: '#/definitions/user'" in out.warnings
+
+    def test_warn_unresolved_refs_can_be_set_in_conf(self, render):
+        """The option is also available through ``jsonschema_options`` in ``conf.py``."""
+        out = render(doc({'properties': {'u': {'$ref': '#/definitions/User'}}}),
+                     conf="jsonschema_options = {'warn_unresolved_refs': True}\n")
         assert 'undefined label' in out.warnings
+
+    @pytest.mark.parametrize('options', [{}, {'warn_unresolved_refs': 'true'}], ids=['quiet', 'warning'])
+    def test_ref_to_existing_label_is_linked(self, render, options):
+        """A ``$ref`` that matches a ``$$target`` label becomes a link, whatever the warning setting."""
+        schema = {'$$target': 'my-label', 'properties': {'p': {'$ref': 'my-label'}}}
+        out = render(doc(schema, **options))
+        assert out.warnings == ''
+        assert 'my-label' in [r.get('refid') for r in out.root.iter('reference')]
+
+    @pytest.mark.parametrize('options', [
+        {},
+        {'auto_reference': 'true'},
+        {'auto_reference': 'true', 'lift_title': 'false'},
+    ], ids=['default', 'auto_reference', 'auto_reference-no-lift_title'])
+    @pytest.mark.parametrize('target', [
+        'http://example.com/schema.json',
+        'https://example.com/schema.json#/definitions/User',
+        '#',
+    ], ids=['url', 'url-with-pointer', 'root'])
+    def test_ref_that_cannot_be_a_label_is_plain_text(self, render, options, target):
+        """URLs and the root ``#`` can never be Sphinx labels, so they must not be ``:ref:`` (#99)."""
+        out = render(doc({'properties': {'p': {'$ref': target}}}, **options))
+        assert out.warnings == ''
+        assert target in out.flat
 
     def test_auto_reference_links_definition_title(self, render):
         """With ``:auto_reference:`` and ``:lift_definitions:`` a local ``$ref`` links to the section."""

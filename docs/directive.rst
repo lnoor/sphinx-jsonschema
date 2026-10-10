@@ -184,6 +184,11 @@ auto_reference (default: False)
     Automatically resolves references when possible.
     Works well with ``:auto_target:`` and ``:lift_definitions:``.
 
+warn_unresolved_refs (default: False)
+    A ``$ref`` that is rendered as a reference to a label (see `Auto Target and Reference`_) is linked when the label
+    exists and shown as plain text when it doesn't.
+    With ``True`` Sphinx reports every such reference without a label as ``undefined label`` warning.
+
 hide_key: (default: None)
     Hide parts of the schema matching comma separated list of JSON pointers
 
@@ -392,10 +397,32 @@ which renders:
         }
     }
 
+Unresolved references
++++++++++++++++++++++
+
+A ``$ref`` that is not turned into a link by ``:auto_reference:`` is rendered as a reStructuredText reference to a label of the
+same name, for example ``#/definitions/person`` or ``other.json``. Such a label only exists when you create it, either with
+``$$target`` or with ``:auto_target:`` on the referenced schema.
+
+By default a reference without a matching label is shown as plain text and Sphinx does not complain. This keeps documentation
+builds with ``-W`` (warnings as errors) usable for ordinary schemas, which typically contain ``$ref`` values that can't be
+resolved to a label. The reference becomes a link as soon as the label exists.
+
+The ``:warn_unresolved_refs:`` flag restores the standard Sphinx behaviour: every reference without a label is reported as
+``undefined label`` warning. Use it if you maintain your own labels with ``$$target`` and want to be told about typos.
+
+.. note::
+
+    A ``$ref`` to a URL (``http://`` or ``https://``) or to the root of the schema (``#``) can never be a label.
+    These are always rendered as plain text, regardless of this flag.
+
+    The global Sphinx setting ``nitpicky = True`` also reports references without a label, independently of this flag.
+    The warning for a single reference can be silenced with ``nitpick_ignore``.
+
 Setting default values
 ++++++++++++++++++++++
-When you want to use the options \:lift_definitions: \:lift_description, \:auto_target
-and \:auto_reference in most schema renderings it is more convenient to set them once
+When you want to use the options \:lift_definitions: \:lift_description, \:auto_target,
+\:auto_reference and \:warn_unresolved_refs in most schema renderings it is more convenient to set them once
 for your whole project.
 
 The ``conf.py`` option **jsonschema_options** lets you do so.
@@ -411,7 +438,7 @@ So, in ``conf.py`` you can state:
         'auto_reference': True
     }
 
-By default all four options are False.
+By default all options except ``lift_title`` are False.
 
 Overruling defaults
 ^^^^^^^^^^^^^^^^^^^

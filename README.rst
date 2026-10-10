@@ -184,6 +184,13 @@ Version 1.x.x (wip)
   build it with ``tox -e demo-html``, ``tox -e demo-latex`` or ``tox -e demo-pdf``.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values
   (`issue #96 <https://github.com/lnoor/sphinx-jsonschema/issues/96>`__).
+- A ``$ref`` to a URL or to the schema root (``#``) is no longer rendered as a ``:ref:`` role, which always produced an
+  "undefined label" warning (`issue #99 <https://github.com/lnoor/sphinx-jsonschema/issues/99>`__).
+- **Changed behaviour:** a ``$ref`` that is rendered as a reference to a label (internal pointers such as ``#/$defs/Item``
+  or other files) no longer produces an "undefined label" warning when the label doesn't exist; it is shown as plain text
+  (`issue #88 <https://github.com/lnoor/sphinx-jsonschema/issues/88>`__, `issue #99 <https://github.com/lnoor/sphinx-jsonschema/issues/99>`__).
+  The new option ``warn_unresolved_refs`` (directive option and ``jsonschema_options``) restores the warnings,
+  for example to find typos in labels defined with ``$$target``.
 
 Version 1.19.2
 --------------

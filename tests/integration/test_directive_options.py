@@ -92,6 +92,25 @@ def test_pass_unmodified_on_key_that_is_not_escaped_shows_no_marker(render, path
     assert 'noesc' not in ' '.join(out.flat + out.section_titles)
 
 
+def test_enum_values_are_escaped_like_default(render):
+    """Markup characters in ``enum`` values stay literal, as in ``default`` and ``pattern`` (#98)."""
+    schema = {'type': 'string', 'enum': ['plain_value', '*starred*', '``a_literal``']}
+    out = render(doc(schema))
+    assert out.warnings == ''
+    assert ['enum', 'plain_value, *starred*, a_literal'] in out.rows
+    assert 'starred' not in [e.text for e in out.root.iter('emphasis')]
+    assert [e.text for e in out.root.iter('literal')] == ['a_literal']
+
+
+def test_pass_unmodified_applies_to_enum_values(render):
+    """``:pass_unmodified:`` can still switch the escaping off for one ``enum`` value."""
+    schema = {'type': 'string', 'enum': ['*one*', '*two*']}
+    out = render(doc(schema, pass_unmodified='/enum/1'))
+    emphasised = [e.text for e in out.root.iter('emphasis')]
+    assert 'two' in emphasised
+    assert 'one' not in emphasised
+
+
 def test_lift_definitions_renders_each_definition_as_section(render):
     """``:lift_definitions:`` renders every entry of ``definitions`` as its own titled section."""
     schema = {

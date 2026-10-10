@@ -96,6 +96,41 @@ class TestCrossReferences:
                      conf="jsonschema_options = {'warn_unresolved_refs': True}\n")
         assert 'undefined label' in out.warnings
 
+    @staticmethod
+    def all_ids(out):
+        """Every id in the doctree, one entry per use (so a duplicate shows up twice)."""
+        return [i for e in out.root.iter() for i in e.get('ids', '').split()]
+
+    @pytest.mark.parametrize('options', [{'auto_target': 'true'}, {}], ids=['auto_target', 'dollar_target'])
+    def test_target_and_lifted_title_do_not_share_an_id(self, render, options):
+        """A schema with a title and a target must not give the same id to both nodes."""
+        schema = {'title': 'Thing', 'type': 'string', '$$target': 'thing-target'}
+        out = render(doc(schema, **options))
+        ids = self.all_ids(out)
+        assert len(ids) == len(set(ids))
+
+    def test_target_does_not_take_the_id_of_an_existing_section(self, render):
+        """Another section with the title of the schema must keep its id; the label leads to the schema."""
+        source = textwrap.dedent('''            Doc
+            ===
+
+            Same title
+            ----------
+
+            See :ref:`my-alias`.
+
+            .. jsonschema::
+
+                {"title": "Same title", "$$target": "my-alias", "type": "string"}
+            ''')
+        out = render(source)
+        assert out.warnings == ''
+        ids = self.all_ids(out)
+        assert len(ids) == len(set(ids))
+        heading = next(s for s in out.root.iter('section') if s.find('title').text == 'Same title')
+        (link,) = out.root.iter('reference')
+        assert link.get('refid') != heading.get('ids').split()[0]
+
     @pytest.mark.parametrize('options', [{}, {'warn_unresolved_refs': 'true'}], ids=['quiet', 'warning'])
     def test_ref_to_existing_label_is_linked(self, render, options):
         """A ``$ref`` that matches a ``$$target`` label becomes a link, whatever the warning setting."""

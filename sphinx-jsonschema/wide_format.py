@@ -141,8 +141,9 @@ class WideFormat(object):
         if targets:
             targetnode = nodes.target()
             anchorid = nodes.make_id((schema['title'] if 'title' in schema else targets[0]))
-            targetnode['ids'].append(anchorid)
             targetnode['names'].append(anchorid)
+            # let docutils pick the id: it is unique in the document, even if a section has the same title
+            self.state.document.set_id(targetnode)
             targetnode.line = self.lineno
 
             for target in targets:

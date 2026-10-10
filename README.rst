@@ -184,6 +184,9 @@ Version 1.x.x (wip)
   build it with ``tox -e demo-html``, ``tox -e demo-latex`` or ``tox -e demo-pdf``.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values
   (`issue #96 <https://github.com/lnoor/sphinx-jsonschema/issues/96>`__).
+- Targets created by ``auto_target`` or ``$$target`` get an id that is unique in the document. Before, a schema with a title
+  could define the same id twice (LaTeX: "Label multiply defined"), or take the id of a section with the same title,
+  which made ``:ref:`` link to the wrong place.
 - Booleans and ``null`` are rendered as ``true``, ``false`` and ``null`` instead of Python's ``True``, ``False`` and ``None``
   (for example in ``enum``, ``exclusiveMinimum``, ``uniqueItems`` and ``additionalItems``;
   `issue #95 <https://github.com/lnoor/sphinx-jsonschema/issues/95>`__).

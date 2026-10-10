@@ -75,24 +75,18 @@ def test_unknown_pointer_is_reported(render):
     assert not out.rows
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="jsonpointer raises JsonPointerException, but only KeyError is caught (symptom seen in lnoor/sphinx-jsonschema#36)",
-)
-def test_unknown_pointer_gives_friendly_message(render):
-    """Known defect, kept as strict xfail: the intended message is unreachable.
-
-    The code handles ``KeyError`` ("... encountered a KeyError when trying to resolve
-    the pointer"), but ``jsonpointer`` raises ``JsonPointerException``. When that is
-    fixed this test starts to pass, strict mode fails the run, and the xfail marker
-    should then be removed.
-
-    The traceback in lnoor/sphinx-jsonschema#36 ends in exactly this exception
-    ("member 'definitions' not found in {}"), although that issue was closed for a
-    different root cause (quotes in a title combined with ``$$target``).
-    """
-    out = render(page('defs.json#/nope'), files={'defs.json': json.dumps(SCHEMA)})
+@pytest.mark.parametrize('pointer', [
+    'defs.json#/nope',                    # no such member
+    'defs.json#/properties/name/deeper',  # path continues below a value that has no members
+    'defs.json#/properties/5',            # member of an object, not an index
+], ids=['member', 'below-a-leaf', 'index'])
+def test_unresolvable_pointer_gives_friendly_message(render, pointer):
+    """Any pointer that can't be resolved yields the directive's own message, not a raw traceback (#101)."""
+    out = render(page(pointer), files={'defs.json': json.dumps(SCHEMA)})
     assert 'KeyError when trying to resolve the pointer' in out.warnings
+    assert pointer.split('#')[1] in out.warnings
+    assert 'Traceback' not in out.warnings
+    assert not out.rows
 
 
 def test_file_and_content_together_are_rejected(render):

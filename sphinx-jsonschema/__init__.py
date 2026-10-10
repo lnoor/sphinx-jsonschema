@@ -24,7 +24,7 @@ import yaml
 from docutils import nodes, utils
 from docutils.parsers.rst import Directive, DirectiveError, directives
 from docutils.utils import SystemMessagePropagation
-from jsonpointer import resolve_pointer
+from jsonpointer import JsonPointerException, resolve_pointer
 from sphinx.roles import XRefRole
 
 from .wide_format import QUIET_REF_ROLE, NoEscape, WideFormat
@@ -238,6 +238,7 @@ class JsonSchema(Directive):
             raise self.error('"%s" directive has no content or a reference to an external file.'
                              % self.name)
 
+        schema_text = schema
         try:
             schema = self.ordered_load(schema)
         except Exception as error:
@@ -250,11 +251,11 @@ class JsonSchema(Directive):
         if pointer:
             try:
                 schema = resolve_pointer(schema, pointer)
-            except KeyError:
+            except (KeyError, JsonPointerException):
                 error = self.state_machine.reporter.error(
                     '"%s" directive encountered a KeyError when trying to resolve the pointer'
                     ' in schema: %s' % (self.name, str(pointer)),
-                    nodes.literal_block(schema, schema), line=self.lineno)
+                    nodes.literal_block(schema_text, schema_text), line=self.lineno)
                 raise SystemMessagePropagation(error)
 
         return schema, source, pointer

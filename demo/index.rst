@@ -29,7 +29,7 @@ The smallest possible use of the directive: one schema file, no options.
 Part 2: Configuration variations
 --------------------------------
 
-The directive options ``lift_title``, ``lift_description``, ``lift_definitions``, ``auto_target`` and ``auto_reference`` are also available as the global configuration value ``jsonschema_options`` in ``conf.py``.
+The directive options ``lift_title``, ``lift_description``, ``lift_definitions``, ``auto_target``, ``auto_reference`` and ``warn_unresolved_refs`` are also available as the global configuration value ``jsonschema_options`` in ``conf.py``.
 A directive option always overrides the global value, so every variation below is shown with a directive option.
 The demo ``conf.py`` deliberately sets no global options.
 
@@ -171,6 +171,19 @@ With ``lift_title: off`` the references point to the automatically created targe
    :lift_title: off
    :auto_target:
    :auto_reference:
+
+Unresolved references
+~~~~~~~~~~~~~~~~~~~~~
+
+Without ``auto_reference`` a ``$ref`` such as ``#/definitions/address`` is shown as plain text unless a label of that name exists;
+the *Default* example above shows this.
+Sphinx reports no ``undefined label`` warning for it, so this document builds with ``-W``.
+The option ``warn_unresolved_refs`` brings the warnings back; it is not demonstrated here for exactly that reason.
+
+.. code-block:: rst
+
+   .. jsonschema:: schemas/config-base.json
+      :warn_unresolved_refs:
 
 JSON pointer
 ~~~~~~~~~~~~

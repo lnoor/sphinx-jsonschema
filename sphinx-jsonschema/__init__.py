@@ -25,8 +25,9 @@ from docutils import nodes, utils
 from docutils.parsers.rst import Directive, DirectiveError, directives
 from docutils.utils import SystemMessagePropagation
 from jsonpointer import resolve_pointer
+from sphinx.roles import XRefRole
 
-from .wide_format import NOESC, WideFormat
+from .wide_format import NOESC, QUIET_REF_ROLE, WideFormat
 
 
 def pairwise(seq):
@@ -174,6 +175,7 @@ class JsonSchema(Directive):
                    'lift_definitions': flag,
                    'auto_reference': flag,
                    'auto_target': flag,
+                   'warn_unresolved_refs': flag,
                    'timeout': float,
                    'encoding': directives.encoding,
                    'hide_key': jsonpath_list,
@@ -387,8 +389,17 @@ class JsonSchema(Directive):
         return result
 
 
+class QuietRefRole(XRefRole):
+    """Like the standard ``:ref:`` role, but a label that does not exist is shown as plain text without a warning."""
+
+    def run(self):
+        self.name = 'std:ref'
+        return super().run()
+
+
 def setup(app):
     app.add_directive('jsonschema', JsonSchema)
+    app.add_role(QUIET_REF_ROLE, QuietRefRole(lowercase=True, innernodeclass=nodes.inline, warn_dangling=False))
     app.add_config_value('jsonschema_options', {}, 'env')
     return {
         'parallel_read_safe': True,

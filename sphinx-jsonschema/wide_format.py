@@ -18,6 +18,7 @@ from docutils import nodes, statemachine
 from docutils.nodes import fully_normalize_name as normalize_name
 
 NOESC = ':noesc:'  # prefix marker to indicate string must not be escaped.
+QUIET_REF_ROLE = 'jsonschema-ref'  # like :ref:, but silent when the label does not exist
 INLINE_LITERAL = re.compile(r'(``[^`]+``)')  # reST inline literal, kept as is by _escape_text
 
 class WideFormat(object):
@@ -42,7 +43,8 @@ class WideFormat(object):
         'lift_description': False,
         'lift_definitions': False,
         'auto_target': False,
-        'auto_reference': False
+        'auto_reference': False,
+        'warn_unresolved_refs': False
     }
 
     def __init__(self, state, lineno, source, options, app):
@@ -423,6 +425,16 @@ class WideFormat(object):
             reference = [r for r in schema['$ref'][2:].split('/') if r != key]
             return len(reference), reference[-1]
 
+    def _ref_role(self, target):
+        # a reference to a label; unless warnings are wanted, a missing label is not reported
+        role = 'ref' if self.options['warn_unresolved_refs'] else QUIET_REF_ROLE
+        return ':' + role + ':`' + target + '`'
+
+    @staticmethod
+    def _is_label_free_reference(ref):
+        # a $ref that can't resolve to a Sphinx label: an absolute URL or the schema root
+        return ref in ('#', '#/') or ref.startswith(('http://', 'https://'))
+
     def _reference(self, schema):
         if self.options['auto_reference'] and self.options['lift_title']:
             # first check if references is to own schema
@@ -452,15 +464,18 @@ class WideFormat(object):
             elif schema['$ref'].startswith("http"):
                 row = (self._line(self._cell(schema['$ref'])))
             elif "#/" in schema['$ref']:
-                row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref'], True) + '`')))
+                row = (self._line(self._cell(self._ref_role(self._get_filename(schema['$ref'], True)))))
             else:
-                row = (self._line(self._cell(':ref:`' + self._get_filename(schema['$ref']) + '`')))
+                row = (self._line(self._cell(self._ref_role(self._get_filename(schema['$ref'])))))
+        elif self._is_label_free_reference(schema['$ref']):
+            # URLs and the root of the schema can never be a label, so there is nothing to link to
+            row = (self._line(self._cell(schema['$ref'])))
         elif self.options['auto_reference'] and not self.options['lift_title']:
             # when using reference without titles we need to reference to our own targets
             # if auto_target is False linking won't work
-            row = (self._line(self._cell(':ref:`' + self.filename + schema['$ref'] + '`')))
+            row = (self._line(self._cell(self._ref_role(self.filename + schema['$ref']))))
         else:
-            row = (self._line(self._cell(':ref:`' + schema['$ref'] + '`')))
+            row = (self._line(self._cell(self._ref_role(schema['$ref']))))
         del schema['$ref']
         return [row]
 

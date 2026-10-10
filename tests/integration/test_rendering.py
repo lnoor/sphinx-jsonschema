@@ -79,7 +79,22 @@ def test_combinators(render, keyword):
 def test_additional_properties_false(render):
     """A boolean additionalProperties is shown as a simple key/value row."""
     out = render(directive({'type': 'object', 'additionalProperties': False}))
-    assert ['additionalProperties', 'False'] in out.rows
+    assert ['additionalProperties', 'false'] in out.rows
+
+
+@pytest.mark.parametrize('schema, expected_row', [
+    ({'type': 'boolean', 'default': False}, ['default', 'false']),
+    ({'type': 'boolean', 'default': None}, ['default', 'null']),
+    ({'enum': ['auto', 1, 2.5, True, None]}, ['enum', 'auto, 1, 2.5, true, null']),
+    ({'type': 'number', 'exclusiveMinimum': True}, ['exclusiveMinimum', 'true']),
+    ({'type': 'array', 'uniqueItems': True}, ['uniqueItems', 'true']),
+    ({'type': 'array', 'items': [{'type': 'string'}], 'additionalItems': False}, ['additionalItems', 'false']),
+    ({'enum': [[True, None], 1]}, ['enum', '[true, null], 1']),
+], ids=['default-false', 'default-null', 'enum', 'exclusiveMinimum', 'uniqueItems', 'additionalItems', 'enum-containers'])
+def test_booleans_and_null_use_json_spelling(render, schema, expected_row):
+    """JSON values are shown as JSON (``true``/``false``/``null``), not as Python's ``True``/``False``/``None`` (#95)."""
+    out = render(directive(schema))
+    assert expected_row in out.rows
 
 
 def test_default_and_examples(render):

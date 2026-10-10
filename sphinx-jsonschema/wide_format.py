@@ -10,6 +10,7 @@
     :licence: GPL v3, see LICENCE for details.
 """
 
+import json
 import re
 from copy import deepcopy
 from pathlib import Path
@@ -19,6 +20,13 @@ from docutils.nodes import fully_normalize_name as normalize_name
 
 QUIET_REF_ROLE = 'jsonschema-ref'  # like :ref:, but silent when the label does not exist
 INLINE_LITERAL = re.compile(r'(``[^`]+``)')  # reST inline literal, kept as is by _escape_text
+
+
+def json_text(value):
+    """Text of a schema value as it is written in JSON: true, false and null rather than Python's spelling."""
+    if isinstance(value, (dict, list, bool)) or value is None:
+        return json.dumps(value, ensure_ascii=False)
+    return str(value)
 
 
 class NoEscape(str):
@@ -302,7 +310,7 @@ class WideFormat(object):
                 self._line(
                     self._cell('enum'),
                     self._cell(', '.join(
-                        [str(e) for e in schema['enum']]))))
+                        [json_text(e) for e in schema['enum']]))))
             del schema['enum']
 
         if 'examples' in schema:
@@ -631,7 +639,7 @@ class WideFormat(object):
         ]
 
     def _convert_content(self, text):
-        list_lines = statemachine.string2lines(str(text))
+        list_lines = statemachine.string2lines(json_text(text))
         # Adding a source and line number to each line text warnings may appear when writing if there are issues with a line
         # if left None the warnings would be counted but don't appear in the output then you don't know the source of it
         items = [(self.state.document.current_source, self.lineno)] * len(list_lines)

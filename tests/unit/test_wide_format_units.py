@@ -8,7 +8,7 @@ integration tests; here the individual building blocks are checked.
 import pytest
 
 wide_format = __import__('sphinx-jsonschema.wide_format')
-NOESC = wide_format.NOESC
+NoEscape = wide_format.NoEscape
 
 
 def text(cell):
@@ -49,7 +49,7 @@ def test_transform_of_empty_schema_builds_no_table(wideformat):
     ('a_b', r'a\_b'),                 # underscore could start a reference/emphasis
     ('*x*', r'\*x\*'),                # asterisks could start emphasis
     ('c:\\dir', 'c:\\\\dir'),         # a backslash is itself the escape character
-    (NOESC + '_a_*b*', '_a_*b*'),     # the NOESC marker disables escaping and is removed
+    (NoEscape('_a_*b*'), '_a_*b*'),   # a NoEscape string is passed on unchanged
 ])
 def test_escape(wideformat, raw, escaped):
     assert wideformat._escape(raw) == escaped
@@ -67,7 +67,7 @@ def test_escape_is_strict_even_for_literal_markup(wideformat):
     (r'``a\b``', r'``a\b``'),   # no doubled backslash inside a literal
     (r'a\b ``c``', r'a\\b ``c``'),  # but outside of one the backslash is escaped
     ('``a_b', r'``a\_b'),                                # unterminated literal: escaped as plain text
-    (NOESC + '_a_*b*', '_a_*b*'),
+    (NoEscape('_a_*b*'), '_a_*b*'),
 ])
 def test_escape_text_spares_inline_literals(wideformat, raw, escaped):
     assert wideformat._escape_text(raw) == escaped

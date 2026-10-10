@@ -184,6 +184,8 @@ Version 1.x.x (wip)
   build it with ``tox -e demo-html``, ``tox -e demo-latex`` or ``tox -e demo-pdf``.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values
   (`issue #96 <https://github.com/lnoor/sphinx-jsonschema/issues/96>`__).
+- ``:pass_unmodified:`` no longer shows its internal ``:noesc:`` marker when it points at a ``description``, ``title`` or
+  other value that is not escaped (`issue #97 <https://github.com/lnoor/sphinx-jsonschema/issues/97>`__).
 - A ``$ref`` to a URL or to the schema root (``#``) is no longer rendered as a ``:ref:`` role, which always produced an
   "undefined label" warning (`issue #99 <https://github.com/lnoor/sphinx-jsonschema/issues/99>`__).
 - **Changed behaviour:** a ``$ref`` that is rendered as a reference to a label (internal pointers such as ``#/$defs/Item``

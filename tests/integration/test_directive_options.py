@@ -1,6 +1,8 @@
 """Directive options (``:lift_title:``, ``:hide_key:`` and friends) and their effect on the output."""
 import json
 
+import pytest
+
 
 def doc(schema, **options):
     """Page with one jsonschema directive; keyword arguments become ``:option: value`` lines."""
@@ -79,6 +81,15 @@ def test_inline_literal_in_default_shows_no_backslash(render):
     out = render(doc({'type': 'string', 'default': 'a_b ``a_literal`` c_d'}))
     assert [e.text for e in out.root.iter('literal')] == ['a_literal']
     assert out.rows == [['type', 'string'], ['default', 'a_b a_literal c_d']]
+
+
+@pytest.mark.parametrize('path', ['/title', '/description', '/$id', '/const'])
+def test_pass_unmodified_on_key_that_is_not_escaped_shows_no_marker(render, path):
+    """The option has no effect on keys that are never escaped, but must not leak its internal marker (#97)."""
+    schema = {'title': 'A title', 'description': 'A description', '$id': 'an-id', 'const': 'a_const'}
+    out = render(doc(schema, pass_unmodified=path))
+    assert out.warnings == ''
+    assert 'noesc' not in ' '.join(out.flat + out.section_titles)
 
 
 def test_lift_definitions_renders_each_definition_as_section(render):

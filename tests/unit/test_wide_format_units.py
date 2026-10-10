@@ -55,6 +55,24 @@ def test_escape(wideformat, raw, escaped):
     assert wideformat._escape(raw) == escaped
 
 
+def test_escape_is_strict_even_for_literal_markup(wideformat):
+    """``_escape`` is for raw data such as patterns: nothing is exempt, not even ````literals````."""
+    assert wideformat._escape('``a_b``') == r'``a\_b``'
+
+
+@pytest.mark.parametrize('raw, escaped', [
+    ('plain_text', r'plain\_text'),
+    ('``a_b*``', '``a_b*``'),                           # inline literals stay untouched
+    ('x_y ``a_b`` z_w', r'x\_y ``a_b`` z\_w'),          # ... while the text around them is escaped
+    (r'``a\b``', r'``a\b``'),   # no doubled backslash inside a literal
+    (r'a\b ``c``', r'a\\b ``c``'),  # but outside of one the backslash is escaped
+    ('``a_b', r'``a\_b'),                                # unterminated literal: escaped as plain text
+    (NOESC + '_a_*b*', '_a_*b*'),
+])
+def test_escape_text_spares_inline_literals(wideformat, raw, escaped):
+    assert wideformat._escape_text(raw) == escaped
+
+
 @pytest.mark.parametrize('typ, expected', [
     ('string', '*string*'),
     (['string', 'null'], '*string* / *null*'),   # types are emphasised, alternatives joined by " / "

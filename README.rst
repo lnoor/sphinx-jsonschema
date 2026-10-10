@@ -182,6 +182,8 @@ Version 1.x.x (wip)
   (`issue #56 <https://github.com/lnoor/sphinx-jsonschema/issues/56>``).
 - Added a demo document in the ``demo`` directory that shows the directive options and supported schema elements;
   build it with ``tox -e demo-html``, ``tox -e demo-latex`` or ``tox -e demo-pdf``.
+- Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values
+  (`issue #96 <https://github.com/lnoor/sphinx-jsonschema/issues/96>`__).
 
 Version 1.19.2
 --------------

@@ -74,6 +74,13 @@ def test_pass_unmodified_keeps_markup_in_default_value(render):
     assert 'b' in emphasised(render(doc(schema, pass_unmodified='/default')))
 
 
+def test_inline_literal_in_default_shows_no_backslash(render):
+    """Escaping must not leak into inline literals of values (#96); the text around them is still escaped."""
+    out = render(doc({'type': 'string', 'default': 'a_b ``a_literal`` c_d'}))
+    assert [e.text for e in out.root.iter('literal')] == ['a_literal']
+    assert out.rows == [['type', 'string'], ['default', 'a_b a_literal c_d']]
+
+
 def test_lift_definitions_renders_each_definition_as_section(render):
     """``:lift_definitions:`` renders every entry of ``definitions`` as its own titled section."""
     schema = {

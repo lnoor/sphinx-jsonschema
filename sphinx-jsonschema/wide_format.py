@@ -10,6 +10,7 @@
     :licence: GPL v3, see LICENCE for details.
 """
 
+import re
 from copy import deepcopy
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from docutils import nodes, statemachine
 from docutils.nodes import fully_normalize_name as normalize_name
 
 NOESC = ':noesc:'  # prefix marker to indicate string must not be escaped.
+INLINE_LITERAL = re.compile(r'(``[^`]+``)')  # reST inline literal, kept as is by _escape_text
 
 class WideFormat(object):
     KV_SIMPLE = [
@@ -552,7 +554,7 @@ class WideFormat(object):
                 for k in value:
                     rows.extend(self._prepend(self._cell(k), self._render_any_value(value[k])))
         elif isinstance(value, str):
-            rows.append(self._line(self._cell(self._escape(value) if value is not None else "null")))
+            rows.append(self._line(self._cell(self._escape_text(value))))
         else:
             rows.append(self._line(self._cell(value if value is not None else "null")))
         return rows
@@ -632,3 +634,11 @@ class WideFormat(object):
         text = text.replace('_', '\\_')
         text = text.replace('*', '\\*')
         return text
+
+    def _escape_text(self, text):
+        # like _escape, but leaves reST inline literals alone: backslashes inside them stay visible
+        if text.startswith(NOESC):
+            return text[len(NOESC):]
+        parts = INLINE_LITERAL.split(text)
+        # re.split with a capturing group puts the literals at the odd indexes
+        return ''.join(part if i % 2 else self._escape(part) for i, part in enumerate(parts))

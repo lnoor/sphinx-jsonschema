@@ -187,6 +187,9 @@ Version 1.x.x (wip)
 - Targets created by ``auto_target`` or ``$$target`` get an id that is unique in the document. Before, a schema with a title
   could define the same id twice (LaTeX: "Label multiply defined"), or take the id of a section with the same title,
   which made ``:ref:`` link to the wrong place.
+- ``*`` in a ``hide_key`` / ``hide_key_if_empty`` path followed by more segments now passes through exactly one level,
+  as documented: ``/properties/*/description`` hides the description of every property
+  (`issue #100 <https://github.com/lnoor/sphinx-jsonschema/issues/100>`__).
 - ``.. jsonschema::`` without argument and content now reports that there is nothing to render instead of failing with
   a ``TypeError`` (`issue #102 <https://github.com/lnoor/sphinx-jsonschema/issues/102>`__).
 - A JSON pointer that can't be resolved (``schema.json#/nope``) now gives the intended error message instead of a raw

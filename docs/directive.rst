@@ -473,6 +473,14 @@ deep matching.
 
 This example will hide all ``examples`` fields regardless of where they are located
 in the schema.
+A single ``*`` passes through exactly one level, so the following example hides the ``description``
+of every property but not the one of the schema itself:
+
+.. code-block:: rst
+
+    .. jsonschema::
+        :hide_key: /properties/*/description
+
 If your JSON pointer contains comma you need to place it inside quotes:
 
 .. code-block:: rst

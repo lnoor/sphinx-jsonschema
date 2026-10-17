@@ -37,7 +37,8 @@ class WideFormat(object):
     KV_SIMPLE = [
         'multipleOf', 'maximum', 'exclusiveMaximum', 'minimum',
         'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'default',
-        'format', 'const'
+        'format', 'const', 'deprecated', 'readOnly', 'writeOnly',
+        'contentMediaType', 'contentEncoding'
     ]
 
     KV_ARRAY = ['maxItems', 'minItems', 'uniqueItems']
@@ -329,6 +330,7 @@ class WideFormat(object):
             del schema['examples']
 
         rows.extend(self._kvpairs(schema, self.KV_SIMPLE))
+        rows.extend(self._bool_or_object(schema, 'contentSchema'))
         return rows
 
     def _objectproperties(self, schema, key):

@@ -186,6 +186,8 @@ Version 1.x.x (wip)
   (`issue #89 <https://github.com/lnoor/sphinx-jsonschema/issues/89>`__).
 - Boolean schemas (``true`` / ``false``) are now rendered wherever a schema is expected, including ``allOf``, ``not``,
   ``if`` / ``then`` / ``else``, ``dependencies`` and definitions; before, most of these places failed with an error.
+- The annotation keywords ``deprecated``, ``readOnly``, ``writeOnly``, ``contentMediaType``, ``contentEncoding`` and
+  ``contentSchema`` (Drafts 7 and 2019-09) are rendered; before, they were ignored.
 - A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
   before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values

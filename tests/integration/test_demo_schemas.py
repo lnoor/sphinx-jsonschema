@@ -26,6 +26,10 @@ BASELINE += [
     'feature-exclusive-minmax-bool', 'feature-exclusive-minmax-number', 'feature-ref-siblings',
     'feature-tuple-items', 'feature-type-list-mixed',
 ]
+# Feature demos for keywords the plugin gained support for later; each support PR adds its demos here.
+BASELINE += [
+    'feature-content', 'feature-content-schema', 'feature-deprecated', 'feature-read-write-only',
+]
 
 
 def render_schema(render, name):

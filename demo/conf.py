@@ -16,7 +16,7 @@ exclude_patterns = ['_build', 'README.md']
 # The default table style includes 'colorrows', which aborts with "TeX capacity
 # exceeded" on every table with Sphinx 9.1 and TeX Live 2026 (independent of this plugin).
 latex_table_style = ['booktabs']
-latex_elements = { 
+latex_elements = {
     "papersize": "a4paper",
     "extraclassoptions": "oneside,openany",
     'fncychap': ""

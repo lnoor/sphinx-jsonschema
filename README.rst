@@ -184,6 +184,10 @@ Version 1.x.x (wip)
   build it with ``tox -e demo-html``, ``tox -e demo-latex`` or ``tox -e demo-pdf``.
 - The demo document was extended wuith a part "Keywords by schema version" with one example per keyword of Drafts 4 to 2020-12.
   (`issue #89 <https://github.com/lnoor/sphinx-jsonschema/issues/89>`__).
+- Boolean schemas (``true`` / ``false``) are now rendered wherever a schema is expected, including ``allOf``, ``not``,
+  ``if`` / ``then`` / ``else``, ``dependencies`` and definitions; before, most of these places failed with an error.
+- A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
+  before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values
   (`issue #96 <https://github.com/lnoor/sphinx-jsonschema/issues/96>`__).
 - Targets created by ``auto_target`` or ``$$target`` get an id that is unique in the document. Before, a schema with a title

@@ -81,8 +81,10 @@ class WideFormat(object):
         self.target_pointer += pointer
 
         result = []
-        target = self._target(schema, self.target_pointer)
-        section = self._section(schema)
+        # a boolean schema has no keywords that could define a target or a section
+        meta = schema if isinstance(schema, dict) else {}
+        target = self._target(meta, self.target_pointer)
+        section = self._section(meta)
 
         table, definitions = self.transform(schema)
 
@@ -107,7 +109,7 @@ class WideFormat(object):
     def transform(self, schema):
         body, definitions = self._dispatch(schema)
         if len(body) > 0:
-            cols, head, body = self._cover(schema, body)
+            cols, head, body = self._cover(schema if isinstance(schema, dict) else {}, body)
             table = self.state.build_table((cols, head, body), self.lineno)
         else:
             table = None
@@ -220,6 +222,13 @@ class WideFormat(object):
 
     def _dispatch(self, schema, label=None):
         # Main driver of the recursive schema traversal.
+        if isinstance(schema, bool):
+            # a boolean schema: true accepts everything, false accepts nothing
+            rows = [self._line(self._cell(schema))]
+            if label is not None:
+                rows = self._prepend(label, rows)
+            return rows, []
+
         rows = []
         self.nesting += 1
 
@@ -231,11 +240,12 @@ class WideFormat(object):
                 definitions = self._definitions(schema, 'definitions')
 
         if 'type' in schema:
-            # select processor for type
-            if 'object' in schema['type']:
+            # select processor for type; a list of types may need more than one
+            types = schema['type'] if isinstance(schema['type'], list) else [schema['type']]
+            if 'object' in types:
                 rows = self._objecttype(schema)
-            elif 'array' in schema['type']:
-                rows = self._arraytype(schema)
+            if 'array' in types:
+                rows.extend(self._arraytype(schema))
         else:
             rows = self._objecttype(schema)
             self._check_description(schema, rows)
@@ -350,8 +360,12 @@ class WideFormat(object):
         return rows
 
     def _definitions(self, schema, defs_key):
+        # Only schemas with keywords become sections of their own. A boolean definition
+        # stays in the definitions list, which is rendered along with the other keywords.
+        lifted = {name: item for name, item in schema[defs_key].items() if isinstance(item, dict)}
+
         target = {}
-        for name, item in schema[defs_key].items():
+        for name, item in lifted.items():
             # add title by the name of the object if title not defined
             if 'title' not in item:
                 item['title'] = name
@@ -368,13 +382,15 @@ class WideFormat(object):
 
 
         result = []
-        for name, item in schema[defs_key].items():
+        for name, item in lifted.items():
             new_target = '/{defs_key}/{name}'.format(
                 defs_key=defs_key, name=name
             )
             result.extend(self.run(item, new_target))
+            del schema[defs_key][name]
 
-        del schema[defs_key]
+        if not schema[defs_key]:
+            del schema[defs_key]
         return result
 
     def _complexstructures(self, schema):

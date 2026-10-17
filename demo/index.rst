@@ -447,8 +447,6 @@ Multiple types
 A schema can allow several types, so that the keywords of each of them apply.
 This feature of JSON Schema is supported since Draft 4.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. Both types are listed, but the keyword ``items`` is missing from the output.
-
 .. literalinclude:: schemas/feature-type-list-mixed.json
    :language: json
    :caption: Source: schemas/feature-type-list-mixed.json

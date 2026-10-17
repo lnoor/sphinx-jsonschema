@@ -24,7 +24,7 @@ BASELINE = [
 BASELINE += [
     'feature-boolean-schemas', 'feature-const', 'feature-defs', 'feature-dependencies',
     'feature-exclusive-minmax-bool', 'feature-exclusive-minmax-number', 'feature-ref-siblings',
-    'feature-tuple-items',
+    'feature-tuple-items', 'feature-type-list-mixed',
 ]
 
 

@@ -182,6 +182,8 @@ Version 1.x.x (wip)
   (`issue #56 <https://github.com/lnoor/sphinx-jsonschema/issues/56>``).
 - Added a demo document in the ``demo`` directory that shows the directive options and supported schema elements;
   build it with ``tox -e demo-html``, ``tox -e demo-latex`` or ``tox -e demo-pdf``.
+- The demo document was extended wuith a part "Keywords by schema version" with one example per keyword of Drafts 4 to 2020-12.
+  (`issue #89 <https://github.com/lnoor/sphinx-jsonschema/issues/89>`__).
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values
   (`issue #96 <https://github.com/lnoor/sphinx-jsonschema/issues/96>`__).
 - Targets created by ``auto_target`` or ``$$target`` get an id that is unique in the document. Before, a schema with a title

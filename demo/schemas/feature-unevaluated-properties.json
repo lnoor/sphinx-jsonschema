@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "title": "Unevaluated properties",
+  "type": "object",
+  "allOf": [
+    {
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false
+}

@@ -1,0 +1,31 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "width",
+   "#/$defs/positive"
+  ],
+  [
+   "$defs"
+  ],
+  [
+   "positive",
+   "A number greater than zero."
+  ],
+  [
+   "type",
+   "number"
+  ],
+  [
+   "exclusiveMinimum",
+   "0"
+  ]
+ ],
+ "warnings": ""
+}

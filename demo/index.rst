@@ -309,6 +309,7 @@ Part 3: Schema elements
 
 Every schema below is rendered with the default configuration (no options).
 The schemas use JSON Schema Draft 4, plus the parts of Draft 6 and 7 that the plugin already supports.
+Keywords introduced by later drafts are shown in Part 4.
 
 Types and formats
 ~~~~~~~~~~~~~~~~~
@@ -392,3 +393,374 @@ The target defined with ``$$target`` can be referenced like this: :ref:`demo-ext
    :caption: Source: schemas/extensions.json
 
 .. jsonschema:: schemas/extensions.json
+
+Part 4: Keywords by schema version
+----------------------------------
+
+This part shows one small schema per keyword, ordered by the draft that introduced the keyword.
+Each example states since which draft the keyword is part of JSON Schema.
+Keywords that are not rendered yet are marked accordingly.
+Their examples show the current output, which will change as support is added.
+
+Draft 4
+~~~~~~~
+
+Exclusive limits as booleans
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``exclusiveMinimum`` and ``exclusiveMaximum`` are booleans that modify ``minimum`` and ``maximum``.
+This feature of JSON Schema is supported since Draft 4 and was replaced in Draft 6 by numeric limits.
+
+.. literalinclude:: schemas/feature-exclusive-minmax-bool.json
+   :language: json
+   :caption: Source: schemas/feature-exclusive-minmax-bool.json
+
+.. jsonschema:: schemas/feature-exclusive-minmax-bool.json
+
+Tuple validation with ``items`` as a list
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+An ``items`` list describes the array positions one by one, ``additionalItems`` the remaining ones.
+This feature of JSON Schema is supported since Draft 4 and was replaced in Draft 2020-12 by ``prefixItems``.
+
+.. literalinclude:: schemas/feature-tuple-items.json
+   :language: json
+   :caption: Source: schemas/feature-tuple-items.json
+
+.. jsonschema:: schemas/feature-tuple-items.json
+
+Dependencies
+^^^^^^^^^^^^
+
+``dependencies`` makes a property require other properties or a further schema.
+This feature of JSON Schema is supported since Draft 4 and was split in Draft 2019-09 into ``dependentRequired`` and ``dependentSchemas``.
+
+.. literalinclude:: schemas/feature-dependencies.json
+   :language: json
+   :caption: Source: schemas/feature-dependencies.json
+
+.. jsonschema:: schemas/feature-dependencies.json
+
+Multiple types
+^^^^^^^^^^^^^^
+
+A schema can allow several types, so that the keywords of each of them apply.
+This feature of JSON Schema is supported since Draft 4.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. Both types are listed, but the keyword ``items`` is missing from the output.
+
+.. literalinclude:: schemas/feature-type-list-mixed.json
+   :language: json
+   :caption: Source: schemas/feature-type-list-mixed.json
+
+.. jsonschema:: schemas/feature-type-list-mixed.json
+
+The ``$schema`` keyword
+^^^^^^^^^^^^^^^^^^^^^^^
+
+``$schema`` names the dialect a schema is written for.
+This feature of JSON Schema is supported since Draft 4.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-schema-keyword.json
+   :language: json
+   :caption: Source: schemas/feature-schema-keyword.json
+
+.. jsonschema:: schemas/feature-schema-keyword.json
+
+Draft 6
+~~~~~~~
+
+Const
+^^^^^
+
+``const`` restricts a value to exactly one value.
+This feature of JSON Schema is supported since Draft 6.
+
+.. literalinclude:: schemas/feature-const.json
+   :language: json
+   :caption: Source: schemas/feature-const.json
+
+.. jsonschema:: schemas/feature-const.json
+
+Exclusive limits as numbers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``exclusiveMinimum`` and ``exclusiveMaximum`` are the limits themselves.
+This feature of JSON Schema is supported since Draft 6.
+
+.. literalinclude:: schemas/feature-exclusive-minmax-number.json
+   :language: json
+   :caption: Source: schemas/feature-exclusive-minmax-number.json
+
+.. jsonschema:: schemas/feature-exclusive-minmax-number.json
+
+Boolean schemas
+^^^^^^^^^^^^^^^
+
+``true`` accepts everything and ``false`` accepts nothing wherever a schema is expected.
+This feature of JSON Schema is supported since Draft 6.
+
+.. literalinclude:: schemas/feature-boolean-schemas.json
+   :language: json
+   :caption: Source: schemas/feature-boolean-schemas.json
+
+.. jsonschema:: schemas/feature-boolean-schemas.json
+
+Contains
+^^^^^^^^
+
+``contains`` requires at least one array item to match a schema.
+This feature of JSON Schema is supported since Draft 6.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-contains.json
+   :language: json
+   :caption: Source: schemas/feature-contains.json
+
+.. jsonschema:: schemas/feature-contains.json
+
+Property names
+^^^^^^^^^^^^^^
+
+``propertyNames`` constrains the names of all properties of an object.
+This feature of JSON Schema is supported since Draft 6.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-property-names.json
+   :language: json
+   :caption: Source: schemas/feature-property-names.json
+
+.. jsonschema:: schemas/feature-property-names.json
+
+Draft 7
+~~~~~~~
+
+Comment
+^^^^^^^
+
+``$comment`` holds notes for the maintainers of a schema.
+This feature of JSON Schema is supported since Draft 7.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-comment.json
+   :language: json
+   :caption: Source: schemas/feature-comment.json
+
+.. jsonschema:: schemas/feature-comment.json
+
+Read-only and write-only
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+``readOnly`` and ``writeOnly`` mark values that must not be sent or are never returned.
+This feature of JSON Schema is supported since Draft 7.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keywords are ignored.
+
+.. literalinclude:: schemas/feature-read-write-only.json
+   :language: json
+   :caption: Source: schemas/feature-read-write-only.json
+
+.. jsonschema:: schemas/feature-read-write-only.json
+
+Content encoding and media type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``contentMediaType`` and ``contentEncoding`` describe the content of a string.
+This feature of JSON Schema is supported since Draft 7.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keywords are ignored.
+
+.. literalinclude:: schemas/feature-content.json
+   :language: json
+   :caption: Source: schemas/feature-content.json
+
+.. jsonschema:: schemas/feature-content.json
+
+Draft 2019-09
+~~~~~~~~~~~~~
+
+Definitions with ``$defs``
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``$defs`` replaces ``definitions`` as the place for reusable schemas.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. literalinclude:: schemas/feature-defs.json
+   :language: json
+   :caption: Source: schemas/feature-defs.json
+
+.. jsonschema:: schemas/feature-defs.json
+
+Keywords next to ``$ref``
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A schema with ``$ref`` may carry further keywords.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. literalinclude:: schemas/feature-ref-siblings.json
+   :language: json
+   :caption: Source: schemas/feature-ref-siblings.json
+
+.. jsonschema:: schemas/feature-ref-siblings.json
+
+Anchors
+^^^^^^^
+
+``$anchor`` names a location inside a schema so that it can be referenced as ``#name``.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The anchor itself is not shown.
+
+.. literalinclude:: schemas/feature-anchor.json
+   :language: json
+   :caption: Source: schemas/feature-anchor.json
+
+.. jsonschema:: schemas/feature-anchor.json
+
+Recursive references
+^^^^^^^^^^^^^^^^^^^^
+
+``$recursiveRef`` and ``$recursiveAnchor`` allow extensible recursive schemas.
+This feature of JSON Schema is supported since Draft 2019-09 and was replaced in Draft 2020-12 by ``$dynamicRef``.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The reference is not shown.
+
+.. literalinclude:: schemas/feature-recursive-ref.json
+   :language: json
+   :caption: Source: schemas/feature-recursive-ref.json
+
+.. jsonschema:: schemas/feature-recursive-ref.json
+
+Dependent required
+^^^^^^^^^^^^^^^^^^
+
+``dependentRequired`` makes a property require other properties.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-dependent-required.json
+   :language: json
+   :caption: Source: schemas/feature-dependent-required.json
+
+.. jsonschema:: schemas/feature-dependent-required.json
+
+Dependent schemas
+^^^^^^^^^^^^^^^^^
+
+``dependentSchemas`` applies a further schema if a property is present.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-dependent-schemas.json
+   :language: json
+   :caption: Source: schemas/feature-dependent-schemas.json
+
+.. jsonschema:: schemas/feature-dependent-schemas.json
+
+Contains with limits
+^^^^^^^^^^^^^^^^^^^^
+
+``minContains`` and ``maxContains`` limit how many items must match ``contains``.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keywords are ignored.
+
+.. literalinclude:: schemas/feature-contains-min-max.json
+   :language: json
+   :caption: Source: schemas/feature-contains-min-max.json
+
+.. jsonschema:: schemas/feature-contains-min-max.json
+
+Unevaluated properties
+^^^^^^^^^^^^^^^^^^^^^^
+
+``unevaluatedProperties`` applies to properties that no other keyword has evaluated, even across ``allOf``.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-unevaluated-properties.json
+   :language: json
+   :caption: Source: schemas/feature-unevaluated-properties.json
+
+.. jsonschema:: schemas/feature-unevaluated-properties.json
+
+Unevaluated items
+^^^^^^^^^^^^^^^^^
+
+``unevaluatedItems`` applies to array items that no other keyword has evaluated.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-unevaluated-items.json
+   :language: json
+   :caption: Source: schemas/feature-unevaluated-items.json
+
+.. jsonschema:: schemas/feature-unevaluated-items.json
+
+Deprecated
+^^^^^^^^^^
+
+``deprecated`` marks a value that should no longer be used.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+
+.. literalinclude:: schemas/feature-deprecated.json
+   :language: json
+   :caption: Source: schemas/feature-deprecated.json
+
+.. jsonschema:: schemas/feature-deprecated.json
+
+Content schema
+^^^^^^^^^^^^^^
+
+``contentSchema`` describes the structure of the decoded content of a string.
+This feature of JSON Schema is supported since Draft 2019-09.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keywords are ignored.
+
+.. literalinclude:: schemas/feature-content-schema.json
+   :language: json
+   :caption: Source: schemas/feature-content-schema.json
+
+.. jsonschema:: schemas/feature-content-schema.json
+
+Draft 2020-12
+~~~~~~~~~~~~~
+
+Prefix items
+^^^^^^^^^^^^
+
+``prefixItems`` describes the array positions one by one; ``items`` now applies to all remaining items.
+This feature of JSON Schema is supported since Draft 2020-12.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword ``prefixItems`` is ignored.
+
+.. literalinclude:: schemas/feature-prefix-items.json
+   :language: json
+   :caption: Source: schemas/feature-prefix-items.json
+
+.. jsonschema:: schemas/feature-prefix-items.json
+
+Dynamic references
+^^^^^^^^^^^^^^^^^^
+
+``$dynamicRef`` and ``$dynamicAnchor`` allow extensible recursive schemas.
+This feature of JSON Schema is supported since Draft 2020-12.
+
+.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The reference is not shown.
+
+.. literalinclude:: schemas/feature-dynamic-ref.json
+   :language: json
+   :caption: Source: schemas/feature-dynamic-ref.json
+
+.. jsonschema:: schemas/feature-dynamic-ref.json

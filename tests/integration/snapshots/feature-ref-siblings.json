@@ -1,0 +1,31 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "shipping",
+   "Where to ship to."
+  ],
+  [
+   "#/$defs/address"
+  ],
+  [
+   "$defs"
+  ],
+  [
+   "address",
+   "type",
+   "string"
+  ],
+  [
+   "minLength",
+   "5"
+  ]
+ ],
+ "warnings": ""
+}

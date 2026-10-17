@@ -1,0 +1,40 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "point",
+   "type",
+   "array"
+  ],
+  [
+   "items"
+  ],
+  [
+   "",
+   "x"
+  ],
+  [
+   "type",
+   "number"
+  ],
+  [
+   "",
+   "y"
+  ],
+  [
+   "type",
+   "number"
+  ],
+  [
+   "additionalItems",
+   "false"
+  ]
+ ],
+ "warnings": ""
+}

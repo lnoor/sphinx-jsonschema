@@ -1,0 +1,29 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "anything",
+   "true"
+  ],
+  [
+   "nothing",
+   "false"
+  ],
+  [
+   "closed_list",
+   "type",
+   "array"
+  ],
+  [
+   "items",
+   "false"
+  ]
+ ],
+ "warnings": ""
+}

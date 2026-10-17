@@ -1,0 +1,117 @@
+{
+ "rows": [
+  [
+   "One property per primitive type."
+  ],
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "text",
+   "A string."
+  ],
+  [
+   "type",
+   "string"
+  ],
+  [
+   "default",
+   "hello"
+  ],
+  [
+   "float",
+   "A number."
+  ],
+  [
+   "type",
+   "number"
+  ],
+  [
+   "default",
+   "1.5"
+  ],
+  [
+   "count",
+   "An integer."
+  ],
+  [
+   "type",
+   "integer"
+  ],
+  [
+   "default",
+   "3"
+  ],
+  [
+   "flag",
+   "A boolean."
+  ],
+  [
+   "type",
+   "boolean"
+  ],
+  [
+   "default",
+   "false"
+  ],
+  [
+   "nothing",
+   "Always empty."
+  ],
+  [
+   "type",
+   "null"
+  ],
+  [
+   "either",
+   "Either a text or nothing at all."
+  ],
+  [
+   "type",
+   "string / null"
+  ],
+  [
+   "email",
+   "type",
+   "string"
+  ],
+  [
+   "format",
+   "email"
+  ],
+  [
+   "timestamp",
+   "type",
+   "string"
+  ],
+  [
+   "format",
+   "date-time"
+  ],
+  [
+   "complex_default",
+   "type",
+   "object"
+  ],
+  [
+   "default",
+   "a",
+   "1"
+  ],
+  [
+   "b",
+   "1"
+  ],
+  [
+   "2"
+  ],
+  [
+   "3"
+  ]
+ ],
+ "warnings": ""
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Tuple validation (items as list)",
+  "type": "object",
+  "properties": {
+    "point": {
+      "type": "array",
+      "items": [
+        {
+          "type": "number",
+          "description": "x"
+        },
+        {
+          "type": "number",
+          "description": "y"
+        }
+      ],
+      "additionalItems": false
+    }
+  }
+}

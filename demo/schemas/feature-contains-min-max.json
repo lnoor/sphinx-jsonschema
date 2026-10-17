@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "title": "Contains with limits",
+  "type": "object",
+  "properties": {
+    "roles": {
+      "type": "array",
+      "contains": {
+        "const": "admin"
+      },
+      "minContains": 2,
+      "maxContains": 3
+    }
+  }
+}

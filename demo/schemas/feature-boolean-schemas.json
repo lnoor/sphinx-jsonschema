@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Boolean schemas",
+  "type": "object",
+  "properties": {
+    "anything": true,
+    "nothing": false,
+    "closed_list": {
+      "type": "array",
+      "items": false
+    }
+  }
+}

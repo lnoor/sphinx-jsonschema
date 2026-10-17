@@ -1,0 +1,28 @@
+{
+ "rows": [
+  [
+   "Target of the external references in references.json."
+  ],
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "value",
+   "type",
+   "string"
+  ],
+  [
+   "definitions"
+  ],
+  [
+   "part",
+   "type",
+   "integer"
+  ]
+ ],
+ "warnings": ""
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "title": "Anchor",
+  "type": "object",
+  "properties": {
+    "first": {
+      "$ref": "#name"
+    }
+  },
+  "$defs": {
+    "name": {
+      "$anchor": "name",
+      "type": "string",
+      "description": "Referenced by its anchor."
+    }
+  }
+}

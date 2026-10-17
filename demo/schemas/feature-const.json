@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Const",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "const": "circle",
+      "description": "Must be exactly this value."
+    },
+    "version": {
+      "type": "integer",
+      "const": 2
+    }
+  }
+}

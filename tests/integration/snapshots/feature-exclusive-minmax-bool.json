@@ -1,0 +1,33 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "count",
+   "type",
+   "integer"
+  ],
+  [
+   "maximum",
+   "10"
+  ],
+  [
+   "exclusiveMaximum",
+   "true"
+  ],
+  [
+   "minimum",
+   "0"
+  ],
+  [
+   "exclusiveMinimum",
+   "true"
+  ]
+ ],
+ "warnings": ""
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Dependencies",
+  "type": "object",
+  "properties": {
+    "credit_card": {
+      "type": "string"
+    },
+    "billing_address": {
+      "type": "string"
+    }
+  },
+  "dependencies": {
+    "credit_card": [
+      "billing_address"
+    ],
+    "billing_address": {
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

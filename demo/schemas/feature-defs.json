@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "title": "Definitions",
+  "type": "object",
+  "properties": {
+    "width": {
+      "$ref": "#/$defs/positive"
+    }
+  },
+  "$defs": {
+    "positive": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "A number greater than zero."
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Exclusive limits (Draft 6)",
+  "type": "object",
+  "properties": {
+    "count": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 10
+    }
+  }
+}

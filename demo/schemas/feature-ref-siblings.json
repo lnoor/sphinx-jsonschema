@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "title": "Keywords next to $ref",
+  "type": "object",
+  "properties": {
+    "shipping": {
+      "$ref": "#/$defs/address",
+      "description": "Where to ship to."
+    }
+  },
+  "$defs": {
+    "address": {
+      "type": "string",
+      "minLength": 5
+    }
+  }
+}

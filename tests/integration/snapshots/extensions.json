@@ -1,0 +1,31 @@
+{
+ "rows": [
+  [
+   "Keywords that are not part of JSON Schema but understood by the plugin."
+  ],
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "single",
+   "A single-line $$description with reST markup."
+  ],
+  [
+   "type",
+   "string"
+  ],
+  [
+   "multi",
+   "The first line of a list. a bullet another bullet"
+  ],
+  [
+   "type",
+   "string"
+  ]
+ ],
+ "warnings": ""
+}

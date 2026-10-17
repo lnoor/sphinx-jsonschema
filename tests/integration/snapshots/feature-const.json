@@ -1,0 +1,29 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "kind",
+   "Must be exactly this value."
+  ],
+  [
+   "const",
+   "circle"
+  ],
+  [
+   "version",
+   "type",
+   "integer"
+  ],
+  [
+   "const",
+   "2"
+  ]
+ ],
+ "warnings": ""
+}

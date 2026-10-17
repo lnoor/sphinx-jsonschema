@@ -1,0 +1,61 @@
+{
+ "rows": [
+  [
+   "References are shown as links or names, the target is not copied into the table."
+  ],
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "self",
+   "#"
+  ],
+  [
+   "definition",
+   "#/definitions/item"
+  ],
+  [
+   "modern_definition",
+   "#/$defs/item"
+  ],
+  [
+   "file",
+   "other.json"
+  ],
+  [
+   "file_pointer",
+   "other.json#/definitions/part"
+  ],
+  [
+   "url",
+   "http://example.com/schemas/remote.json"
+  ],
+  [
+   "definitions"
+  ],
+  [
+   "item",
+   "Item (definitions)"
+  ],
+  [
+   "type",
+   "string"
+  ],
+  [
+   "$defs"
+  ],
+  [
+   "item",
+   "Item ($defs)"
+  ],
+  [
+   "type",
+   "integer"
+  ]
+ ],
+ "warnings": ""
+}

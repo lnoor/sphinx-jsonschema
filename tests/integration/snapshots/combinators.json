@@ -1,0 +1,99 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "all",
+   "A string of up to 5 characters."
+  ],
+  [
+   "allOf",
+   "type",
+   "string"
+  ],
+  [
+   "maxLength",
+   "5"
+  ],
+  [
+   "any",
+   "Either a short string or a non-negative number."
+  ],
+  [
+   "anyOf",
+   "type",
+   "string"
+  ],
+  [
+   "maxLength",
+   "5"
+  ],
+  [
+   "type",
+   "number"
+  ],
+  [
+   "minimum",
+   "0"
+  ],
+  [
+   "one",
+   "A number divisible by 5 or by 3, but not by both."
+  ],
+  [
+   "oneOf",
+   "type",
+   "number"
+  ],
+  [
+   "multipleOf",
+   "5"
+  ],
+  [
+   "type",
+   "number"
+  ],
+  [
+   "multipleOf",
+   "3"
+  ],
+  [
+   "none",
+   "Anything except a string."
+  ],
+  [
+   "not",
+   "type",
+   "string"
+  ],
+  [
+   "nested",
+   "An object with a required string a, or any value that is not null."
+  ],
+  [
+   "anyOf",
+   "allOf",
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "a",
+   "type",
+   "string"
+  ],
+  [
+   "not",
+   "type",
+   "null"
+  ]
+ ],
+ "warnings": ""
+}

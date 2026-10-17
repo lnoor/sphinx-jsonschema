@@ -1,0 +1,55 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "level",
+   "How verbose the log output is."
+  ],
+  [
+   "type",
+   "string"
+  ],
+  [
+   "enum",
+   "debug, info, warning, error"
+  ],
+  [
+   "mixed",
+   "A choice between a keyword, numbers, a flag and nothing."
+  ],
+  [
+   "enum",
+   "auto, 1, 2.5, true, null"
+  ],
+  [
+   "version",
+   "The format version, which never changes."
+  ],
+  [
+   "const",
+   "1.0"
+  ],
+  [
+   "greeting",
+   "A friendly way to say hello."
+  ],
+  [
+   "type",
+   "string"
+  ],
+  [
+   "examples",
+   "hello"
+  ],
+  [
+   "hi there"
+  ]
+ ],
+ "warnings": ""
+}

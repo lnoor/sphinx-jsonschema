@@ -767,8 +767,6 @@ Prefix items
 ``prefixItems`` describes the array positions one by one; ``items`` now applies to all remaining items.
 This feature of JSON Schema is supported since Draft 2020-12.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword ``prefixItems`` is ignored.
-
 .. literalinclude:: schemas/feature-prefix-items.json
    :language: json
    :caption: Source: schemas/feature-prefix-items.json

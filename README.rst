@@ -194,6 +194,8 @@ Version 1.x.x (wip)
   first row of the table. It is only displayed; the draft a schema names does not change how it is rendered.
 - The array keywords ``contains`` (Draft 6), ``minContains`` and ``maxContains`` (Draft 2019-09) are rendered;
   before, they were ignored.
+- ``prefixItems`` (Draft 2020-12) is rendered like the list form of ``items`` of the older drafts, which is unchanged;
+  an ``items`` schema next to ``prefixItems`` describes the remaining items.
 - A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
   before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values

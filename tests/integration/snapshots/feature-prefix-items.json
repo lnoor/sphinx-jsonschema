@@ -1,0 +1,41 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "entry",
+   "type",
+   "array"
+  ],
+  [
+   "prefixItems"
+  ],
+  [
+   "",
+   "name"
+  ],
+  [
+   "type",
+   "string"
+  ],
+  [
+   "",
+   "age"
+  ],
+  [
+   "type",
+   "integer"
+  ],
+  [
+   "items",
+   "type",
+   "number"
+  ]
+ ],
+ "warnings": ""
+}

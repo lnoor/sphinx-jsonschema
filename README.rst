@@ -21,13 +21,13 @@ Let me know in comments and perhaps pull requests.
 Features
 ========
 
-* Near complete support for all features of JSON Schema Draft 4.
+* Near complete support for all features of JSON Schema Draft 4, and support for the keywords of the later drafts up to Draft 2020-12 (see ``docs/schemaversions.rst`` for the list of keywords and the draft that introduced them).
 * Supports inline schemas as well as external schemas loaded from a file or URL.
 * Supports JSON Pointer notation on external resources to select a subschema.
 * Supports cross references between schemas.
 * Allows reStructuredText markup in ``title`` and ``description`` fields.
 * Allows JSON Schema definitions in both JSON and YAML format.
-* Supports the ``examples`` keyword from Draft 7.
+* Supports the ``examples`` keyword from Draft 6.
 
 Installation
 ============
@@ -102,7 +102,8 @@ $$target
 
 JSON Schema uses the ``$ref`` key in combination with the ``$id`` key to cross-reference between schemas.
 
-Sphinx-jsonschema ignores ``$id`` but uses the value of ``$ref`` to create a reStructuredText ``:ref:`` role.
+Sphinx-jsonschema shows the ``$id`` of the outermost schema as the first row of the table but does not use it to resolve references.
+It uses the value of ``$ref`` to create a reStructuredText ``:ref:`` role.
 
 For this to work you need to mark the target schema with the ``$$target`` key, the value of which must be
 identical to the value of the corresponding ``$ref`` key.
@@ -182,29 +183,31 @@ Version 1.x.x (wip)
   (`issue #56 <https://github.com/lnoor/sphinx-jsonschema/issues/56>``).
 - Added a demo document in the ``demo`` directory that shows the directive options and supported schema elements;
   build it with ``tox -e demo-html``, ``tox -e demo-latex`` or ``tox -e demo-pdf``.
-- The demo document was extended wuith a part "Keywords by schema version" with one example per keyword of Drafts 4 to 2020-12.
+- The documentation lists the supported keywords with the draft that introduced them (``docs/schemaversions.rst``), and the README no longer limits the support to Draft 4.
+- The demo document was extended with a part "Keywords by schema version" with one example per keyword of Drafts 4 to 2020-12.
   (`issue #89 <https://github.com/lnoor/sphinx-jsonschema/issues/89>`__).
-- Boolean schemas (``true`` / ``false``) are now rendered wherever a schema is expected, including ``allOf``, ``not``,
-  ``if`` / ``then`` / ``else``, ``dependencies`` and definitions; before, most of these places failed with an error.
-- The annotation keywords ``deprecated``, ``readOnly``, ``writeOnly``, ``contentMediaType``, ``contentEncoding`` and
-  ``contentSchema`` (Drafts 7 and 2019-09) are rendered; before, they were ignored.
-- The new option ``show_comments`` (directive option and ``jsonschema_options``) renders the keyword ``$comment``
-  (Draft 7); without it comments stay hidden, as the specification asks.
-- The new option ``show_schema`` (directive option and ``jsonschema_options``) renders the ``$schema`` keyword as the
-  first row of the table. It is only displayed; the draft a schema names does not change how it is rendered.
-- The array keywords ``contains`` (Draft 6), ``minContains`` and ``maxContains`` (Draft 2019-09) are rendered;
-  before, they were ignored.
-- ``prefixItems`` (Draft 2020-12) is rendered like the list form of ``items`` of the older drafts, which is unchanged;
-  an ``items`` schema next to ``prefixItems`` describes the remaining items.
-- ``unevaluatedProperties`` and ``unevaluatedItems`` (Draft 2019-09) are rendered like ``additionalProperties`` and
-  ``additionalItems``; before, they were ignored.
-- ``propertyNames`` (Draft 6) is rendered; before, it was ignored.
-- ``dependentRequired`` and ``dependentSchemas`` (Draft 2019-09), the two halves of the older ``dependencies``, are rendered
-  like it; before, they were ignored.
-- ``$anchor``, ``$dynamicAnchor`` and ``$recursiveAnchor`` are shown as a row of the schema they belong to, and
+- Boolean schemas (``true`` / ``false``) are now rendered wherever a schema is expected, including ``allOf``, ``not``, ``if`` / ``then`` / ``else``, ``dependencies`` and definitions.
+  Before, most of these places failed with an error.
+- The annotation keywords ``deprecated``, ``readOnly``, ``writeOnly``, ``contentMediaType``, ``contentEncoding`` and ``contentSchema`` (Drafts 7 and 2019-09) are rendered.
+  Before, they were ignored.
+- The new option ``show_comments`` (directive option and ``jsonschema_options``) renders the keyword ``$comment`` (Draft 7).
+  Without it comments stay hidden, as the specification asks.
+- The new option ``show_schema`` (directive option and ``jsonschema_options``) renders the ``$schema`` keyword as the first row of the table.
+  It is only displayed, the draft a schema names does not change how it is rendered.
+- The array keywords ``contains`` (Draft 6), ``minContains`` and ``maxContains`` (Draft 2019-09) are rendered.
+  Before, they were ignored.
+- ``prefixItems`` (Draft 2020-12) is rendered like the list form of ``items`` of the older drafts, which is unchanged.
+  An ``items`` schema next to ``prefixItems`` describes the remaining items.
+- ``unevaluatedProperties`` and ``unevaluatedItems`` (Draft 2019-09) are rendered like ``additionalProperties`` and ``additionalItems``.
+  Before, they were ignored.
+- ``propertyNames`` (Draft 6) is rendered.
+  Before, it was ignored.
+- ``dependentRequired`` and ``dependentSchemas`` (Draft 2019-09), the two halves of the older ``dependencies``, are rendered like it.
+  Before, they were ignored.
+- ``$anchor``, ``$dynamicAnchor`` and ``$recursiveAnchor`` are shown as a row of the schema they belong to.
   ``$dynamicRef`` and ``$recursiveRef`` (Drafts 2020-12 and 2019-09) are rendered like ``$ref``, with the keyword as label.
-- A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
-  before, only the keywords of the object type were shown.
+- A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``.
+  Before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values
   (`issue #96 <https://github.com/lnoor/sphinx-jsonschema/issues/96>`__).
 - Targets created by ``auto_target`` or ``$$target`` get an id that is unique in the document. Before, a schema with a title

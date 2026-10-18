@@ -561,8 +561,6 @@ Property names
 ``propertyNames`` constrains the names of all properties of an object.
 This feature of JSON Schema is supported since Draft 6.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
-
 .. literalinclude:: schemas/feature-property-names.json
    :language: json
    :caption: Source: schemas/feature-property-names.json

@@ -29,8 +29,9 @@ BASELINE += [
 # Feature demos for keywords the plugin gained support for later; each support PR adds its demos here.
 BASELINE += [
     'feature-comment', 'feature-contains', 'feature-contains-min-max', 'feature-content',
-    'feature-content-schema', 'feature-deprecated', 'feature-prefix-items', 'feature-read-write-only',
-    'feature-schema-keyword', 'feature-unevaluated-items', 'feature-unevaluated-properties',
+    'feature-content-schema', 'feature-deprecated', 'feature-prefix-items', 'feature-property-names',
+    'feature-read-write-only', 'feature-schema-keyword', 'feature-unevaluated-items',
+    'feature-unevaluated-properties',
 ]
 
 

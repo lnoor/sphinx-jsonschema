@@ -1,0 +1,14 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "propertyNames",
+   "pattern",
+   "^[a-z]+$"
+  ]
+ ],
+ "warnings": ""
+}

@@ -284,6 +284,7 @@ class WideFormat(object):
         rows.extend(self._objectproperties(schema, 'properties'))
         rows.extend(self._objectproperties(schema, 'patternProperties'))
         rows.extend(self._bool_or_object(schema, 'additionalProperties'))
+        rows.extend(self._bool_or_object(schema, 'propertyNames'))
         rows.extend(self._bool_or_object(schema, 'unevaluatedProperties'))
         rows.extend(self._dependencies(schema, 'dependencies'))
         rows.extend(self._kvpairs(schema, self.KV_OBJECT))

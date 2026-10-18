@@ -549,8 +549,6 @@ Contains
 ``contains`` requires at least one array item to match a schema.
 This feature of JSON Schema is supported since Draft 6.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
-
 .. literalinclude:: schemas/feature-contains.json
    :language: json
    :caption: Source: schemas/feature-contains.json
@@ -701,8 +699,6 @@ Contains with limits
 
 ``minContains`` and ``maxContains`` limit how many items must match ``contains``.
 This feature of JSON Schema is supported since Draft 2019-09.
-
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keywords are ignored.
 
 .. literalinclude:: schemas/feature-contains-min-max.json
    :language: json

@@ -1,0 +1,27 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "roles",
+   "type",
+   "array"
+  ],
+  [
+   "items",
+   "type",
+   "string"
+  ],
+  [
+   "contains",
+   "const",
+   "admin"
+  ]
+ ],
+ "warnings": ""
+}

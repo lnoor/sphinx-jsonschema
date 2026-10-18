@@ -180,6 +180,7 @@ class JsonSchema(Directive):
                    'auto_target': flag,
                    'warn_unresolved_refs': flag,
                    'show_comments': flag,
+                   'show_schema': flag,
                    'timeout': float,
                    'encoding': directives.encoding,
                    'hide_key': jsonpath_list,

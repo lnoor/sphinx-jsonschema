@@ -193,6 +193,11 @@ show_comments (default: False)
     Renders the value of the keyword ``$comment`` (Draft 7 and later) as a row ``$comment`` of the schema it belongs to.
     The specification asks implementations not to show comments to end users, so they are hidden by default.
 
+show_schema (default: False)
+    Renders the value of the keyword ``$schema``, which names the draft the schema is written for, as the first row of
+    the table. Only the keyword at the root of the schema is shown.
+    It never changes how the rest of the schema is rendered.
+
 hide_key: (default: None)
     Hide parts of the schema matching comma separated list of JSON pointers
 

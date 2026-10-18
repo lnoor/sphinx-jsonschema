@@ -29,7 +29,7 @@ BASELINE += [
 # Feature demos for keywords the plugin gained support for later; each support PR adds its demos here.
 BASELINE += [
     'feature-comment', 'feature-content', 'feature-content-schema', 'feature-deprecated',
-    'feature-read-write-only',
+    'feature-read-write-only', 'feature-schema-keyword',
 ]
 
 

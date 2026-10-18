@@ -29,7 +29,7 @@ The smallest possible use of the directive: one schema file, no options.
 Part 2: Configuration variations
 --------------------------------
 
-The directive options ``lift_title``, ``lift_description``, ``lift_definitions``, ``auto_target``, ``auto_reference``, ``warn_unresolved_refs`` and ``show_comments`` are also available as the global configuration value ``jsonschema_options`` in ``conf.py``.
+The directive options ``lift_title``, ``lift_description``, ``lift_definitions``, ``auto_target``, ``auto_reference``, ``warn_unresolved_refs``, ``show_comments`` and ``show_schema`` are also available as the global configuration value ``jsonschema_options`` in ``conf.py``.
 A directive option always overrides the global value, so every variation below is shown with a directive option.
 The demo ``conf.py`` deliberately sets no global options.
 
@@ -322,6 +322,24 @@ The option ``show_comments`` adds a row for every comment.
 .. jsonschema:: schemas/feature-comment.json
    :show_comments:
 
+Schema dialect
+~~~~~~~~~~~~~~
+
+The keyword ``$schema`` names the draft a schema is written for and is hidden by default.
+The option ``show_schema`` adds a first row with its value.
+
+.. literalinclude:: schemas/feature-schema-keyword.json
+   :language: json
+   :caption: Source: schemas/feature-schema-keyword.json
+
+.. code-block:: rst
+
+   .. jsonschema:: schemas/feature-schema-keyword.json
+      :show_schema:
+
+.. jsonschema:: schemas/feature-schema-keyword.json
+   :show_schema:
+
 Part 3: Schema elements
 -----------------------
 
@@ -477,7 +495,8 @@ The ``$schema`` keyword
 ``$schema`` names the dialect a schema is written for.
 This feature of JSON Schema is supported since Draft 4.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+The keyword is hidden by default.
+The option ``show_schema`` displays it, as shown in the section "Schema dialect" of part 2.
 
 .. literalinclude:: schemas/feature-schema-keyword.json
    :language: json

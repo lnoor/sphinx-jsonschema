@@ -670,8 +670,6 @@ Dependent required
 ``dependentRequired`` makes a property require other properties.
 This feature of JSON Schema is supported since Draft 2019-09.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
-
 .. literalinclude:: schemas/feature-dependent-required.json
    :language: json
    :caption: Source: schemas/feature-dependent-required.json
@@ -683,8 +681,6 @@ Dependent schemas
 
 ``dependentSchemas`` applies a further schema if a property is present.
 This feature of JSON Schema is supported since Draft 2019-09.
-
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
 
 .. literalinclude:: schemas/feature-dependent-schemas.json
    :language: json

@@ -192,6 +192,8 @@ Version 1.x.x (wip)
   (Draft 7); without it comments stay hidden, as the specification asks.
 - The new option ``show_schema`` (directive option and ``jsonschema_options``) renders the ``$schema`` keyword as the
   first row of the table. It is only displayed; the draft a schema names does not change how it is rendered.
+- The array keywords ``contains`` (Draft 6), ``minContains`` and ``maxContains`` (Draft 2019-09) are rendered;
+  before, they were ignored.
 - A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
   before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values

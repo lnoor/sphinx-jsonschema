@@ -1,0 +1,30 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "roles",
+   "type",
+   "array"
+  ],
+  [
+   "contains",
+   "const",
+   "admin"
+  ],
+  [
+   "minContains",
+   "2"
+  ],
+  [
+   "maxContains",
+   "3"
+  ]
+ ],
+ "warnings": ""
+}

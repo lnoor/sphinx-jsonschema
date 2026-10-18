@@ -43,6 +43,9 @@ class WideFormat(object):
 
     KV_ARRAY = ['maxItems', 'minItems', 'uniqueItems']
 
+    # limits for the number of items that have to match `contains`
+    KV_CONTAINS = ['minContains', 'maxContains']
+
     KV_OBJECT = ['maxProperties', 'minProperties']
 
     COMBINATORS = ['allOf', 'anyOf', 'oneOf']
@@ -306,6 +309,8 @@ class WideFormat(object):
             del schema['items']
 
         rows.extend(self._bool_or_object(schema, 'additionalItems'))
+        rows.extend(self._bool_or_object(schema, 'contains'))
+        rows.extend(self._kvpairs(schema, self.KV_CONTAINS))
         rows.extend(self._kvpairs(schema, self.KV_ARRAY))
         return rows
 

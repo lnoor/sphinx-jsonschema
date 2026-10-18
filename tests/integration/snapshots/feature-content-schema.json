@@ -1,0 +1,34 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "payload",
+   "type",
+   "string"
+  ],
+  [
+   "contentMediaType",
+   "application/json"
+  ],
+  [
+   "contentSchema",
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "id",
+   "type",
+   "integer"
+  ]
+ ],
+ "warnings": ""
+}

@@ -1,0 +1,25 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "avatar",
+   "type",
+   "string"
+  ],
+  [
+   "contentMediaType",
+   "image/png"
+  ],
+  [
+   "contentEncoding",
+   "base64"
+  ]
+ ],
+ "warnings": ""
+}

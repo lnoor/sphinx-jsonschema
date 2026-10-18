@@ -557,8 +557,6 @@ Read-only and write-only
 ``readOnly`` and ``writeOnly`` mark values that must not be sent or are never returned.
 This feature of JSON Schema is supported since Draft 7.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keywords are ignored.
-
 .. literalinclude:: schemas/feature-read-write-only.json
    :language: json
    :caption: Source: schemas/feature-read-write-only.json
@@ -570,8 +568,6 @@ Content encoding and media type
 
 ``contentMediaType`` and ``contentEncoding`` describe the content of a string.
 This feature of JSON Schema is supported since Draft 7.
-
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keywords are ignored.
 
 .. literalinclude:: schemas/feature-content.json
    :language: json
@@ -710,8 +706,6 @@ Deprecated
 ``deprecated`` marks a value that should no longer be used.
 This feature of JSON Schema is supported since Draft 2019-09.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
-
 .. literalinclude:: schemas/feature-deprecated.json
    :language: json
    :caption: Source: schemas/feature-deprecated.json
@@ -723,8 +717,6 @@ Content schema
 
 ``contentSchema`` describes the structure of the decoded content of a string.
 This feature of JSON Schema is supported since Draft 2019-09.
-
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keywords are ignored.
 
 .. literalinclude:: schemas/feature-content-schema.json
    :language: json

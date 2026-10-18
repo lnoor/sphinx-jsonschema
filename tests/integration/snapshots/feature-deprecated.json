@@ -1,0 +1,29 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "name",
+   "type",
+   "string"
+  ],
+  [
+   "nick",
+   "Use name instead."
+  ],
+  [
+   "type",
+   "string"
+  ],
+  [
+   "deprecated",
+   "true"
+  ]
+ ],
+ "warnings": ""
+}

@@ -1,5 +1,4 @@
 
-from codecs import open
 from os import path
 
 from setuptools import find_packages, setup
@@ -11,10 +10,11 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='sphinx-jsonschema',
-    version='1.19.2',     # don't forget: must match __init__.py::setup() return value
+    version='1.20.0',     # don't forget: must match __init__.py::setup() return value
 
     description='Sphinx extension to display JSON Schema',
     long_description=long_description,
+    long_description_content_type='text/x-rst',
     url='https://github.com/lnoor/sphinx-jsonschema',
 
     author='Leo Noordergraaf',

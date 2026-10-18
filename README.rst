@@ -175,7 +175,7 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
-Version 1.x.x (wip)
+Version 1.20.0
 -------------------
 
 - Maintenance handed over to `Volker Wegert <https://github.com/vwegert>`.

@@ -29,7 +29,7 @@ The smallest possible use of the directive: one schema file, no options.
 Part 2: Configuration variations
 --------------------------------
 
-The directive options ``lift_title``, ``lift_description``, ``lift_definitions``, ``auto_target``, ``auto_reference`` and ``warn_unresolved_refs`` are also available as the global configuration value ``jsonschema_options`` in ``conf.py``.
+The directive options ``lift_title``, ``lift_description``, ``lift_definitions``, ``auto_target``, ``auto_reference``, ``warn_unresolved_refs`` and ``show_comments`` are also available as the global configuration value ``jsonschema_options`` in ``conf.py``.
 A directive option always overrides the global value, so every variation below is shown with a directive option.
 The demo ``conf.py`` deliberately sets no global options.
 
@@ -304,6 +304,24 @@ This file is stored as ISO-8859-1.
 .. jsonschema:: schemas/config-latin1.json
    :encoding: latin-1
 
+Comments
+~~~~~~~~
+
+The keyword ``$comment`` holds notes for the maintainers of a schema and is hidden by default.
+The option ``show_comments`` adds a row for every comment.
+
+.. literalinclude:: schemas/feature-comment.json
+   :language: json
+   :caption: Source: schemas/feature-comment.json
+
+.. code-block:: rst
+
+   .. jsonschema:: schemas/feature-comment.json
+      :show_comments:
+
+.. jsonschema:: schemas/feature-comment.json
+   :show_comments:
+
 Part 3: Schema elements
 -----------------------
 
@@ -543,7 +561,8 @@ Comment
 ``$comment`` holds notes for the maintainers of a schema.
 This feature of JSON Schema is supported since Draft 7.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
+The specification asks implementations not to show comments to end users, so the keyword is hidden by default.
+The option ``show_comments`` displays it, as shown in the section "Comments" of part 2.
 
 .. literalinclude:: schemas/feature-comment.json
    :language: json

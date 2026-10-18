@@ -188,6 +188,8 @@ Version 1.x.x (wip)
   ``if`` / ``then`` / ``else``, ``dependencies`` and definitions; before, most of these places failed with an error.
 - The annotation keywords ``deprecated``, ``readOnly``, ``writeOnly``, ``contentMediaType``, ``contentEncoding`` and
   ``contentSchema`` (Drafts 7 and 2019-09) are rendered; before, they were ignored.
+- The new option ``show_comments`` (directive option and ``jsonschema_options``) renders the keyword ``$comment``
+  (Draft 7); without it comments stay hidden, as the specification asks.
 - A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
   before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values

@@ -57,7 +57,8 @@ class WideFormat(object):
         'lift_definitions': False,
         'auto_target': False,
         'auto_reference': False,
-        'warn_unresolved_refs': False
+        'warn_unresolved_refs': False,
+        'show_comments': False
     }
 
     def __init__(self, state, lineno, source, options, app):
@@ -310,6 +311,12 @@ class WideFormat(object):
             del schema['title']
 
         self._check_description(schema, rows)
+
+        if '$comment' in schema:
+            # meant for the maintainers of the schema, so it is only shown on request
+            if self.options['show_comments']:
+                rows.append(self._line(self._cell('$comment'), self._cell(self._escape_text(schema['$comment']))))
+            del schema['$comment']
 
         if 'type' in schema:
             rows.append(

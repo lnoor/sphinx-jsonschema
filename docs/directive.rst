@@ -189,6 +189,10 @@ warn_unresolved_refs (default: False)
     exists and shown as plain text when it doesn't.
     With ``True`` Sphinx reports every such reference without a label as ``undefined label`` warning.
 
+show_comments (default: False)
+    Renders the value of the keyword ``$comment`` (Draft 7 and later) as a row ``$comment`` of the schema it belongs to.
+    The specification asks implementations not to show comments to end users, so they are hidden by default.
+
 hide_key: (default: None)
     Hide parts of the schema matching comma separated list of JSON pointers
 

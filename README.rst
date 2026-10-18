@@ -201,6 +201,8 @@ Version 1.x.x (wip)
 - ``propertyNames`` (Draft 6) is rendered; before, it was ignored.
 - ``dependentRequired`` and ``dependentSchemas`` (Draft 2019-09), the two halves of the older ``dependencies``, are rendered
   like it; before, they were ignored.
+- ``$anchor``, ``$dynamicAnchor`` and ``$recursiveAnchor`` are shown as a row of the schema they belong to, and
+  ``$dynamicRef`` and ``$recursiveRef`` (Drafts 2020-12 and 2019-09) are rendered like ``$ref``, with the keyword as label.
 - A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
   before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values

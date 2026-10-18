@@ -1,0 +1,31 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "first",
+   "#name"
+  ],
+  [
+   "$defs"
+  ],
+  [
+   "name",
+   "Referenced by its anchor."
+  ],
+  [
+   "$anchor",
+   "name"
+  ],
+  [
+   "type",
+   "string"
+  ]
+ ],
+ "warnings": ""
+}

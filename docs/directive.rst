@@ -194,8 +194,8 @@ show_comments (default: False)
     The specification asks implementations not to show comments to end users, so they are hidden by default.
 
 show_schema (default: False)
-    Renders the value of the keyword ``$schema``, which names the draft the schema is written for, as the first row of
-    the table. Only the keyword at the root of the schema is shown.
+    Renders the value of the keyword ``$schema``, which names the draft the schema is written for, as the first row of the table.
+    Only the keyword at the root of the schema is shown.
     It never changes how the rest of the schema is rendered.
 
 hide_key: (default: None)

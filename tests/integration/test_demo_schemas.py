@@ -30,7 +30,7 @@ BASELINE += [
 BASELINE += [
     'feature-comment', 'feature-contains', 'feature-contains-min-max', 'feature-content',
     'feature-content-schema', 'feature-deprecated', 'feature-prefix-items', 'feature-read-write-only',
-    'feature-schema-keyword',
+    'feature-schema-keyword', 'feature-unevaluated-items', 'feature-unevaluated-properties',
 ]
 
 

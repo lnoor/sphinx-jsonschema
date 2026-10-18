@@ -712,8 +712,6 @@ Unevaluated properties
 ``unevaluatedProperties`` applies to properties that no other keyword has evaluated, even across ``allOf``.
 This feature of JSON Schema is supported since Draft 2019-09.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
-
 .. literalinclude:: schemas/feature-unevaluated-properties.json
    :language: json
    :caption: Source: schemas/feature-unevaluated-properties.json
@@ -725,8 +723,6 @@ Unevaluated items
 
 ``unevaluatedItems`` applies to array items that no other keyword has evaluated.
 This feature of JSON Schema is supported since Draft 2019-09.
-
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The keyword is ignored.
 
 .. literalinclude:: schemas/feature-unevaluated-items.json
    :language: json

@@ -196,6 +196,8 @@ Version 1.x.x (wip)
   before, they were ignored.
 - ``prefixItems`` (Draft 2020-12) is rendered like the list form of ``items`` of the older drafts, which is unchanged;
   an ``items`` schema next to ``prefixItems`` describes the remaining items.
+- ``unevaluatedProperties`` and ``unevaluatedItems`` (Draft 2019-09) are rendered like ``additionalProperties`` and
+  ``additionalItems``; before, they were ignored.
 - A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
   before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values

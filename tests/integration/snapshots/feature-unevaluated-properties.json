@@ -1,0 +1,22 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "unevaluatedProperties",
+   "false"
+  ],
+  [
+   "allOf",
+   "properties"
+  ],
+  [
+   "name",
+   "type",
+   "string"
+  ]
+ ],
+ "warnings": ""
+}

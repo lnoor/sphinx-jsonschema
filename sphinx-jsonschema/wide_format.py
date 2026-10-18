@@ -287,6 +287,8 @@ class WideFormat(object):
         rows.extend(self._bool_or_object(schema, 'propertyNames'))
         rows.extend(self._bool_or_object(schema, 'unevaluatedProperties'))
         rows.extend(self._dependencies(schema, 'dependencies'))
+        rows.extend(self._dependencies(schema, 'dependentRequired'))
+        rows.extend(self._dependencies(schema, 'dependentSchemas'))
         rows.extend(self._kvpairs(schema, self.KV_OBJECT))
         return rows
 

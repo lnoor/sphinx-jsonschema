@@ -1,0 +1,29 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "credit_card",
+   "type",
+   "string"
+  ],
+  [
+   "billing_address",
+   "type",
+   "string"
+  ],
+  [
+   "dependentRequired"
+  ],
+  [
+   "credit_card",
+   "billing_address"
+  ]
+ ],
+ "warnings": ""
+}

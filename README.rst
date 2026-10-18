@@ -199,6 +199,8 @@ Version 1.x.x (wip)
 - ``unevaluatedProperties`` and ``unevaluatedItems`` (Draft 2019-09) are rendered like ``additionalProperties`` and
   ``additionalItems``; before, they were ignored.
 - ``propertyNames`` (Draft 6) is rendered; before, it was ignored.
+- ``dependentRequired`` and ``dependentSchemas`` (Draft 2019-09), the two halves of the older ``dependencies``, are rendered
+  like it; before, they were ignored.
 - A ``type`` list that contains both ``object`` and ``array`` now also renders the array keywords such as ``items``;
   before, only the keywords of the object type were shown.
 - Fixed visible backslashes before underscores in inline literals within ``default`` and ``examples`` values

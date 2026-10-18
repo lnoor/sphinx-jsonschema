@@ -295,15 +295,24 @@ class WideFormat(object):
             else:
                 rows.append(self._line(label, self._cell(item)))
 
+        def positions(key):
+            # a list of schemas, one for each array position
+            rows.append(self._line(self._cell(key)))
+            for item in schema[key]:
+                oneline(self._cell('-'), item)
+
         # create description and type rows
         rows = self._simpletype(schema)
 
+        if 'prefixItems' in schema:
+            # Draft 2020-12; `items` then describes the remaining items
+            positions('prefixItems')
+            del schema['prefixItems']
+
         if 'items' in schema:
             if isinstance(schema['items'], list):
-                rows.append(self._line(self._cell('items')))
-                for item in schema['items']:
-                    label = self._cell('-')
-                    oneline(label, item)
+                # Draft 4 to 2019-09
+                positions('items')
             else:
                 oneline(self._cell('items'), schema['items'])
             del schema['items']

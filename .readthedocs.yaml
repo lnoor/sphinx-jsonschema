@@ -14,4 +14,4 @@ python:
     # the documentation uses the extension from this repository
     - method: pip
       path: .
-    - requirements: doc/requirements.txt
+    - requirements: docs/requirements.txt

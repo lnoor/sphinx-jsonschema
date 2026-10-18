@@ -1,0 +1,17 @@
+{
+ "rows": [
+  [
+   "type",
+   "object"
+  ],
+  [
+   "properties"
+  ],
+  [
+   "id",
+   "type",
+   "integer"
+  ]
+ ],
+ "warnings": ""
+}

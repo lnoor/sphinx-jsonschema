@@ -58,7 +58,8 @@ class WideFormat(object):
         'auto_target': False,
         'auto_reference': False,
         'warn_unresolved_refs': False,
-        'show_comments': False
+        'show_comments': False,
+        'show_schema': False
     }
 
     def __init__(self, state, lineno, source, options, app):
@@ -209,6 +210,11 @@ class WideFormat(object):
         elif '$id' in schema:
             body.insert(0, self._line(self._cell(schema['$id'])))
             del schema['$id']
+
+        # the dialect of the schema document, shown first when asked for
+        if self.options['show_schema'] and '$schema' in schema:
+            body.insert(0, self._line(self._cell('$schema'), self._cell(self._escape_value(schema['$schema']))))
+            del schema['$schema']
 
         # patch up if necessary, all rows should be of equal length
         nrcols = self._square(body)

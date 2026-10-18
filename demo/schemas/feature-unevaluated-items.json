@@ -4,6 +4,7 @@
   "type": "array",
   "allOf": [
     {
+      "type": "array",
       "items": [
         {
           "type": "string"

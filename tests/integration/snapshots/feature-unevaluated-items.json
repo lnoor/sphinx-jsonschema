@@ -1,0 +1,26 @@
+{
+ "rows": [
+  [
+   "type",
+   "array"
+  ],
+  [
+   "unevaluatedItems",
+   "false"
+  ],
+  [
+   "allOf",
+   "type",
+   "array"
+  ],
+  [
+   "items"
+  ],
+  [
+   "",
+   "type",
+   "string"
+  ]
+ ],
+ "warnings": ""
+}

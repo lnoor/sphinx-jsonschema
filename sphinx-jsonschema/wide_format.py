@@ -54,6 +54,12 @@ class WideFormat(object):
 
     CONDITIONAL = ["if", "then", "else"]
 
+    # keywords that name a location of a schema, to be referenced by `$ref` or the dynamic references
+    KV_ANCHOR = ['$anchor', '$dynamicAnchor', '$recursiveAnchor']
+
+    # keywords that hold a reference; only `$ref` is shown without its keyword
+    REFERENCES = ['$ref', '$dynamicRef', '$recursiveRef']
+
     option_defaults = {
         'lift_title': True,
         'lift_description': False,
@@ -262,8 +268,9 @@ class WideFormat(object):
             self._check_description(schema, rows)
         rows.extend(self._simpletype(schema))
 
-        if '$ref' in schema:
-            rows.extend(self._reference(schema))
+        for keyword in self.REFERENCES:
+            if keyword in schema:
+                rows.extend(self._reference(schema, keyword))
 
         rows.extend(self._complexstructures(schema))
 
@@ -342,6 +349,11 @@ class WideFormat(object):
             if self.options['show_comments']:
                 rows.append(self._line(self._cell('$comment'), self._cell(self._escape_text(schema['$comment']))))
             del schema['$comment']
+
+        for keyword in self.KV_ANCHOR:
+            if keyword in schema:
+                rows.append(self._line(self._cell(keyword), self._cell(self._escape_value(schema[keyword]))))
+                del schema[keyword]
 
         if 'type' in schema:
             rows.append(
@@ -501,7 +513,9 @@ class WideFormat(object):
         # a $ref that can't resolve to a Sphinx label: an absolute URL or the schema root
         return self._is_root_reference(ref) or ref.startswith(('http://', 'https://'))
 
-    def _reference(self, schema):
+    def _reference(self, schema, keyword='$ref'):
+        # `$dynamicRef` and `$recursiveRef` are resolved like `$ref`; they are shown with their keyword as label
+        schema = {'$ref': schema.pop(keyword)}
         if self.options['auto_reference'] and self.options['lift_title']:
             # first check if references is to own schema
             # when definitions is separated automated they will be linked to the title
@@ -545,7 +559,8 @@ class WideFormat(object):
             row = (self._line(self._cell(self._ref_role(self.filename + schema['$ref']))))
         else:
             row = (self._line(self._cell(self._ref_role(schema['$ref']))))
-        del schema['$ref']
+        if keyword != '$ref':
+            return self._prepend(self._cell(keyword), [row])
         return [row]
 
     def _bool_or_object(self, schema, key):

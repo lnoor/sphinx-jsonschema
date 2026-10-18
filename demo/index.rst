@@ -642,8 +642,6 @@ Anchors
 ``$anchor`` names a location inside a schema so that it can be referenced as ``#name``.
 This feature of JSON Schema is supported since Draft 2019-09.
 
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The anchor itself is not shown.
-
 .. literalinclude:: schemas/feature-anchor.json
    :language: json
    :caption: Source: schemas/feature-anchor.json
@@ -654,9 +652,10 @@ Recursive references
 ^^^^^^^^^^^^^^^^^^^^
 
 ``$recursiveRef`` and ``$recursiveAnchor`` allow extensible recursive schemas.
+The value of ``$recursiveRef`` is always ``#``, which stands for the root of the schema.
+In the example below the items of ``children`` are therefore described by the schema itself.
+If an extending schema sets ``$recursiveAnchor`` as well, the reference points to the extending schema instead.
 This feature of JSON Schema is supported since Draft 2019-09 and was replaced in Draft 2020-12 by ``$dynamicRef``.
-
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The reference is not shown.
 
 .. literalinclude:: schemas/feature-recursive-ref.json
    :language: json
@@ -768,8 +767,6 @@ Dynamic references
 
 ``$dynamicRef`` and ``$dynamicAnchor`` allow extensible recursive schemas.
 This feature of JSON Schema is supported since Draft 2020-12.
-
-.. note:: This feature is not rendered yet by this version of sphinx-jsonschema. The reference is not shown.
 
 .. literalinclude:: schemas/feature-dynamic-ref.json
    :language: json

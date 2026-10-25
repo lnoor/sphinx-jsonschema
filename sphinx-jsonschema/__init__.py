@@ -409,5 +409,5 @@ def setup(app):
     app.add_config_value('jsonschema_options', {}, 'env')
     return {
         'parallel_read_safe': True,
-        'version': '1.20.0'
+        'version': '1.20.1'
     }

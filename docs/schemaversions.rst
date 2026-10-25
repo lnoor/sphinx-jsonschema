@@ -3,7 +3,7 @@ Supported JSON Schema versions
 ==============================
 
 **sphinx-jsonschema** was initially written for `JSON Schema Draft 4 <http://json-schema.org/specification-links.html#draft-4>`_.
-It renders the keywords of the later drafts up to Draft 2020-12 as well.
+It renders the keywords of the later drafts up to `Draft 2020-12 <https://json-schema.org/specification-links#2020-12>`_ as well.
 
 The plugin does not need to know which draft a schema is written for.
 The names of the keywords hardly overlap between the drafts, so every keyword is rendered when it is present and ignored otherwise.

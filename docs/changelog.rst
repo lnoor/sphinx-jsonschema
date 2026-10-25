@@ -1,8 +1,8 @@
 Changelog
 =========
 
-next version (unreleased)
--------------------------
+Version 1.20.1
+--------------
 
 - Added `pyproject.toml` to avoid legacy build path warning and conform with PEP 517/518
   (`issue #138 <https://github.com/lnoor/sphinx-jsonschema/issues/138>``).

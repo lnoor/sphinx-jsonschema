@@ -9,8 +9,6 @@ This package contains sphinx-jsonschema, an extension to Sphinx to allow
 authors to display a `JSON Schema <http://json-schema.org>`_ in their
 documentation.
 
-A dockerized version can be found at: `Extended Sphinx <https://hub.docker.com/r/lnoor/sphinx-extended>`_.
-
 It arose out of a personal itch and implements what I needed.
 Some features of JSON Schema are (not yet) implemented.
 Also I can imagine that other display layouts are desired.
@@ -181,6 +179,8 @@ next version (unreleased)
   (`issue #138 <https://github.com/lnoor/sphinx-jsonschema/issues/138>``).
 - Switched to an SPDC license expression to remove another deprecation warning
   (`issue #135 <https://github.com/lnoor/sphinx-jsonschema/issues/135>``).
+- Removed reference to - currently unmaintained - Docker container images
+  (`issue #141 <https://github.com/lnoor/sphinx-jsonschema/issues/141>``).
 
 Version 1.20.0
 --------------

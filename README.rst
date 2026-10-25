@@ -175,8 +175,13 @@ This software is made available under the GPL v3.
 Changelog
 =========
 
+next version (unreleased)
+
+- Added `pyproject.toml` to avoid legacy build path warning and conform with PEP 517/518
+  (`issue #138 <https://github.com/lnoor/sphinx-jsonschema/issues/138>``).
+
 Version 1.20.0
--------------------
+--------------
 
 - Maintenance handed over to `Volker Wegert <https://github.com/vwegert>`.
 - Fixed and extended automated tests, split into unit and integration tests, the latter using the actual Sphinx environment

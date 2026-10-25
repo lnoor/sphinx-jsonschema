@@ -35,6 +35,12 @@ jobs:
             tox: py311
           - python: "3.12"
             tox: py312
+          - python: "3.13"
+            tox: py313
+          - python: "3.14"
+            tox: py314
+          - python: "3.15"
+            tox: py315
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

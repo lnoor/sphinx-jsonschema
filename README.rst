@@ -181,6 +181,8 @@ next version (unreleased)
   (`issue #135 <https://github.com/lnoor/sphinx-jsonschema/issues/135>``).
 - Removed reference to - currently unmaintained - Docker container images
   (`issue #141 <https://github.com/lnoor/sphinx-jsonschema/issues/141>``).
+- Added Python 3.13, 3.14 and 3.15 to the list of versions tested  
+  (`issue #143 <https://github.com/lnoor/sphinx-jsonschema/issues/143>``).
 
 Version 1.20.0
 --------------

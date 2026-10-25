@@ -20,7 +20,7 @@ setup(
     author='Leo Noordergraaf',
     author_email='leo@noordergraaf.net',
 
-    license='GPLv3',
+    license='GPL-3.0-only',
     platforms='any',
 
     classifiers=[
@@ -28,7 +28,6 @@ setup(
         'Environment :: Plugins',
         'Framework :: Sphinx :: Extension',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Documentation',

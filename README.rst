@@ -179,6 +179,8 @@ next version (unreleased)
 
 - Added `pyproject.toml` to avoid legacy build path warning and conform with PEP 517/518
   (`issue #138 <https://github.com/lnoor/sphinx-jsonschema/issues/138>``).
+- Switched to an SPDC license expression to remove another deprecation warning
+  (`issue #135 <https://github.com/lnoor/sphinx-jsonschema/issues/135>``).
 
 Version 1.20.0
 --------------
